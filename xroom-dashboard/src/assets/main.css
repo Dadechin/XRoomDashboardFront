@@ -1,0 +1,44 @@
+/* main.css */
+@import url("https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css");
+
+:root {
+  --white: rgba(255, 255, 255, 1);
+  --black: rgba(16, 16, 16, 1);
+  --accentcolor-accentcolor-600: rgba(230, 230, 230, 1);
+  --neutralcolorneutralcolor-25: rgba(198, 204, 213, 1);
+  --neutralcolorneutralcolor-300: rgba(141, 153, 171, 1);
+  --neutralcolorneutralcolor-600: rgba(102, 115, 135, 1);
+  --neutralcolorneutralcolor-500: rgba(113, 128, 150, 1);
+  --neutralcolorneutralcolor-800: rgba(79, 90, 105, 1);
+  --neutralcolorneutralcolor-900: rgba(68, 77, 90, 1);
+  --neutralcolorneutralcolor-400: rgba(127, 141, 161, 1);
+  --neutralcolorneutralcolor-50: rgba(184, 192, 203, 1);
+  --successcolor-successcolor-500: rgba(72, 187, 120, 1);
+  --brand-colorbrand-color-400: rgba(97, 121, 237, 1);
+  --neutralcolorneutralcolor-1000: rgba(45, 51, 60, 1);
+  --successcolor-successcolor-300: rgba(109, 201, 147, 1);
+  --brand-colorbrand-color-800: rgba(32, 48, 128, 1);
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0px;
+  height: 100%;
+  background-color: #101010;
+  font-family: "IRANSansXFaNum-Medium", Helvetica;
+}
+
+/* a blue color as a generic focus style */
+button:focus-visible {
+  outline: 2px solid #4a90e2 !important;
+  outline: -webkit-focus-ring-color auto 5px !important;
+}
+
+a {
+  text-decoration: none;
+}

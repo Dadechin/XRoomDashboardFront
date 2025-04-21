@@ -55,24 +55,26 @@ export default {
   },
   methods: {
     async handleSubmit() {
-      // Prepare the data to match API format
-      const signupData = {
-        first_name: this.form.firstName,
-        last_name: this.form.lastName,
-        mobile_number: this.form.mobileNumber,
-        password: this.form.password,
-      };
+  const loginData = {
+    mobile_number: this.form.mobileNumber,
+    password: this.form.password,
+  };
 
-      try {
-        const response = await axios.post('http://194.62.43.230:8000/login', signupData);
-        console.log('Signup success:', response.data);
-        // Redirect to login page upon successful signup
-        this.$router.push('/dashboard');
-      } catch (error) {
-        console.error('Signup error:', error);
-        // Handle error, show alert or error message
-      }
-    },
+  try {
+    const response = await axios.post('http://194.62.43.230:8000/login', loginData);
+    const token = response.data.token;
+    const user = response.data.user;
+
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(user));
+
+    this.$router.push('/dashboard');
+  } catch (error) {
+    console.error('Login error:', error);
+    alert('خطا در ورود. لطفا دوباره تلاش کنید.');
+  }
+},
+
   },
 };
 </script>
