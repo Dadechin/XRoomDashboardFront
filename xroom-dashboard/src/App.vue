@@ -2,7 +2,7 @@
   <div id="app">
     <!-- Main App Layout -->
      
-      <h1 class="app-title">XRoom Dashboard</h1>
+      <h1 class="app-title"> </h1>
    
 
     <!-- The router-view here will display the active route's component -->
