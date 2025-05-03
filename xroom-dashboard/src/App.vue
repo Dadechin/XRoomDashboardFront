@@ -2,17 +2,24 @@
   <div id="app">
     <!-- Main App Layout -->
      
-      <h1 class="app-title"> </h1>
-   
+     
 
     <!-- The router-view here will display the active route's component -->
     <router-view></router-view>
   </div>
+  <Footer />
+
+  
 </template>
 
 <script>
+import Footer from '@/components/Footer.vue'
+
 export default {
   name: 'App',
+  components: {
+    Footer
+  }
 }
 </script>
 
@@ -58,14 +65,14 @@ router-view {
 
 <style>
 @font-face {
-  font-family: 'Yekan';
-  src: url('@/assets/fonts/Yekan.ttf') format('truetype');
+  font-family: 'IRANSans';
+  src: url('@/assets/fonts/IRANSansXFaNum-Medium.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
 
 /* Apply the font globally */
-body {
-  font-family: 'Yekan', sans-serif;
+* {
+  font-family: 'IRANSans', sans-serif !important;
 }
 </style>
