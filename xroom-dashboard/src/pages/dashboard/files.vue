@@ -260,13 +260,7 @@
   </div>
 </dialog>
 
-    <!-- Footer -->
-    <div class="footer">
-      <div class="text-wrapper-13">All Rights Reserved ©Dadechin</div>
-      <div class="logo">
-        <img class="clip-path-group" src="https://c.animaapp.com/m9nvumalUMfQbN/img/clip-path-group.png" />
-      </div>
-    </div>
+     
   </div>
 </template>
 

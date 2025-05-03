@@ -64,6 +64,7 @@ export default {
     const response = await axios.post('http://194.62.43.230:8000/login', loginData);
     const token = response.data.token;
     const user = response.data.user;
+ 
 
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(user));

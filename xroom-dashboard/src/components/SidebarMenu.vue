@@ -13,14 +13,21 @@
       </div>
       <router-link to="/dashboard/edit-profile" class="profile-link">
         <div class="profile-container">
-          <img class="profile" src="https://c.animaapp.com/m9nvumalUMfQbN/img/profile.png" />
+          <!-- Dynamic profile image -->
+          <img 
+            class="profile" 
+            :src="profileImageUrl" 
+            alt="Profile Image"
+            @error="handleImageError"
+          />
           <div class="frame-2">
             <div class="text-wrapper-2">خوش آمدید...</div>
-            <div class="text-wrapper-3">دانیال پژوهش کیا</div>
+            <!-- Dynamic user name -->
+            <div class="text-wrapper-3">{{ fullName }}</div>
           </div>
-          <div class="notifications">
+          <!-- <div class="notifications">
             <div class="notification-badge">4</div>
-          </div> 
+          </div>  -->
         </div>
       </router-link>
     </div>
@@ -71,14 +78,36 @@
 <script>
 export default {
   name: 'SidebarMenu',
-  methods: {
-    isActive(path) {
-      return this.$route.path === path  
-    }
-  },
   data() {
     return {
-      activeMenu: 'dashboard'
+      activeMenu: 'dashboard',
+      defaultProfileImage: 'https://c.animaapp.com/m9nvumalUMfQbN/img/profile.png'
+    }
+  },
+  computed: {
+    user() {
+      const user = localStorage.getItem('user');
+      return user ? JSON.parse(user) : null;
+    },
+    customer() {
+      const customer = localStorage.getItem('customer');
+      return customer ? JSON.parse(customer) : null;
+    },
+    fullName() {
+      if (!this.user) return 'دانیال پژوهش کیا'; // Default name
+      return `${this.user.first_name || ''} ${this.user.last_name || ''}`.trim() || 'کاربر';
+    },
+    profileImageUrl() {
+      if (!this.customer?.profile_img) return this.defaultProfileImage;
+      return `http://194.62.43.230:8000/media/${this.customer.profile_img}`;
+    }
+  },
+  methods: {
+    isActive(path) {
+      return this.$route.path === path;
+    },
+    handleImageError(event) {
+      event.target.src = this.defaultProfileImage;
     }
   }
 }
@@ -155,6 +184,7 @@ export default {
   width: 72px;
   height: 72px;
   margin-left: 20px;
+  border-radius: 12px;
 }
 
 .frame-2 {

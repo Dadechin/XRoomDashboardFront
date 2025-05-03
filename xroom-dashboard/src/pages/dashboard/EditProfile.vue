@@ -72,10 +72,22 @@
             <p class="section-description">
               این نماد در کنار نام شما و برای دیگران در واقعیت مجازی و در پلتفرم وب قابل مشاهده خواهد بود.
             </p>
+
+
+
             <img :src="userProfilePicUrl" class="profile-image" />
+
             <input type="file" @change="uploadProfileImage" class="upload-input" />
+
+
+
+
+
+            
           </div>
 
+
+          
           <!-- User Info Section -->
           <div class="form-section">
             <h3>اطلاعات کاربر</h3>
@@ -124,13 +136,20 @@ export default {
       editForm: { first_name: '', last_name: '', email: '' },
       passwordForm: { current_password: '', new_password: '', confirm_password: '' },
       saving: false,
-      userProfilePicUrl: 'https://i.imgur.com/QbXfV6C.png',
+      // userProfilePicUrl: 'https://i.imgur.com/QbXfV6C.png',
       userAvatarUrl: 'https://i.imgur.com/QbXfV6C.png',
       baseUrl: 'http://194.62.43.230:8000'
     }
   },
   created() {
     this.fetchUserData();
+  },
+  computed: {
+    userProfilePicUrl() {
+      const customer = JSON.parse(localStorage.getItem('customer') || {});
+      if (!customer.profile_img) return this.defaultProfileImage;
+      return `http://194.62.43.230:8000/media/${customer.profile_img}`;
+    }
   },
   methods: {
     async fetchUserData() {
@@ -286,7 +305,7 @@ input:disabled {
 .profile-image {
   width: 80px;
   height: 80px;
-  border-radius: 50%;
+  border-radius: 12px;
   margin-bottom: 12px;
 }
 

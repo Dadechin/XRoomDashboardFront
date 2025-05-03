@@ -60,7 +60,17 @@ router.beforeEach(async (to, from, next) => {
   // If we have a token and it's an auth route, verify it
   if (token) {
     try {
-      await axios.get('/getInfo');
+      // Make getInfo request
+      const response = await axios.get('/getInfo');
+      
+      // Save customer and user data to localStorage
+      if (response.data?.customer) {
+        localStorage.setItem('customer', JSON.stringify(response.data.customer));
+      }
+      if (response.data?.user) {
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+      }
+      localStorage.setItem('baseUrl','http://194.62.43.230:8000');
       
       // If trying to access login page while authenticated, redirect to dashboard
       if (to.path === '/login') {
@@ -72,6 +82,7 @@ router.beforeEach(async (to, from, next) => {
       // Invalid token, clear storage and redirect to login
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+      localStorage.removeItem('customer');
       return next('/login');
     }
   }
