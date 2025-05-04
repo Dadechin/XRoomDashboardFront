@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import SignupPage from '../pages/SignupPage.vue'
 import LoginPage from '../pages/LoginPage.vue'
+import ResetPassword from '../pages/ResetPassword.vue'
 import DashboardPage from '../pages/dashboard/index.vue'    
 import FilesPage from '@/pages/dashboard/files.vue';
 import axios from '@/axios';
@@ -15,6 +16,11 @@ const routes = [
     path: '/login',
     name: 'LoginPage',
     component: LoginPage
+  },
+  {
+    path: '/resetPassword',
+    name: 'ResetPassword',
+    component: ResetPassword
   },
   {
     path: '/dashboard',

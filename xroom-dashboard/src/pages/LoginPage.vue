@@ -2,7 +2,7 @@
   <div class="signup-page">
     <div class="signup-form">
       <h2 class="title">
-        <img :src="require('@/assets/img/logo.png')" alt="Logo" />
+        <img :src="require('@/assets/img/logo.png')" alt="Logo" style="max-width: 150px;" />
       </h2>
       <h3 class="subtitle">ورود به حساب کاربری</h3>
 
@@ -34,12 +34,16 @@
       <div class="login-link">
         <router-link to="/signup">ساخت حساب کاربری</router-link>
       </div>
+      <!-- Login Link -->
+      <div class="login-link">
+        <router-link to="/resetPassword">فراموشی رمز عبور</router-link>
+      </div>
     </div>
   </div>
 </template>
 
-<script>
-import axios from 'axios';
+<script> 
+import apiClient from '@/api/axios'; // Adjust the path if needed
 
 export default {
   data() {
@@ -61,19 +65,18 @@ export default {
   };
 
   try {
-    const response = await axios.post('http://194.62.43.230:8000/login', loginData);
-    const token = response.data.token;
-    const user = response.data.user;
- 
+        const response = await apiClient.post('/login', loginData); // Only endpoint path needed
+        const token = response.data.token;
+        const user = response.data.user;
 
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
 
-    this.$router.push('/dashboard');
-  } catch (error) {
-    console.error('Login error:', error);
-    alert('خطا در ورود. لطفا دوباره تلاش کنید.');
-  }
+        this.$router.push('/dashboard');
+      } catch (error) {
+        console.error('Login error:', error);
+        alert('خطا در ورود. لطفا دوباره تلاش کنید.');
+      }
 },
 
   },
@@ -83,7 +86,7 @@ export default {
 
 
 
- 
+  
 <style scoped>
 /* Basic reset */
 * {
@@ -111,7 +114,7 @@ export default {
   border-radius: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   width: 100%;
-  max-width: 900px;
+  max-width: 682px;
 }
 
 .title {
@@ -126,6 +129,7 @@ export default {
   color: #444;
   text-align: right;
   margin-bottom: 30px;
+  margin-top: 66px;
 }
 
 .form-group {
