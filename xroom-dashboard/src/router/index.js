@@ -89,6 +89,12 @@ router.beforeEach(async (to, from, next) => {
         return next('/dashboard');
       }
       
+      // Check if profile_glb is empty and not already going to ChangeAvatar
+      const customer = response.data.customer || JSON.parse(localStorage.getItem('customer') || '{}');
+      if (!customer.profile_glb && to.name !== 'ChangeAvatar') {
+        return next('/dashboard/ChangeAvatar');
+      }
+      
       return next();
     } catch (err) {
       // Invalid token, clear storage and redirect to login
@@ -101,5 +107,4 @@ router.beforeEach(async (to, from, next) => {
   
   next();
 });
-
 export default router

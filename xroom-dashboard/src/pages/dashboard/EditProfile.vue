@@ -36,8 +36,9 @@
             </p>
             <img :src="userAvatarUrl" class="avatar-image" />
             <div class="avatar-actions">
-              <a @click="changeAvatar">تغییر آواتار</a> |
-              <a @click="regenerateAvatar">ساخت مجدد آواتار</a>
+          
+              <router-link to="/dashboard/ChangeAvatar">تغییر آواتار  </router-link>
+            
             </div>
           </div>
 
@@ -79,11 +80,6 @@
 
             <input type="file" @change="uploadProfileImage" class="upload-input" />
 
-
-
-
-
-            
           </div>
 
 

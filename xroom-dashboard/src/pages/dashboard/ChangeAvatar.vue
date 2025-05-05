@@ -82,15 +82,7 @@
       </div>
     </div>
   </div>
-      <!-- Profile Picture Section -->
-      <div class="profile-picture-section mt-5">
-        <h3>تصویر پروفایل</h3>
-        <p class="section-description">
-          این نماد در کنار نام شما و برای دیگران در واقعیت مجازی و در پلتفرم وب قابل مشاهده خواهد بود.
-        </p>
-        <img :src="userProfilePicUrl" class="profile-image" />
-        <input type="file" @change="uploadProfileImage" class="upload-input" />
-      </div>
+      
     </div>
   </div>
 </template>
@@ -164,37 +156,38 @@ export default {
       this.saving = true;
       this.selectedAvatar = avatar.id;
       
-      try {
-        const response = await axios.post(`${this.baseUrl}/editProfile`, {
-          profile_glb: avatar.src
+      // try {
+          await axios.post(`${this.baseUrl}/editProfile/`, {
+          profile_glb_url: avatar.src
         }, {
           headers: {
             'Content-Type': 'application/json'
           }
         });
 
-        print(response)
+        // print(response)
         // Update local storage if needed
-        const customer = JSON.parse(localStorage.getItem('customer') || '{}');
-        customer.profile_glb = avatar.src;
-        localStorage.setItem('customer', JSON.stringify(customer));
+        // const customer = JSON.parse(localStorage.getItem('customer') || '{}');
+        // customer.profile_glb = avatar.src;
+        // localStorage.setItem('customer', JSON.stringify(customer));
 
         // Show success message
-        this.$toast.success('آواتار با موفقیت انتخاب شد');
-        
+        // this.$toast.success('آواتار با موفقیت انتخاب شد');
+        alert('تغییرات با موفقیت ذخیره شد');
+
         // Optionally refresh user data
-        await this.fetchUserData();
+        // await this.fetchUserData();
         
-      } catch (error) {
-        console.error('Error selecting avatar:', error);
-        const errorMessage = error.response?.data?.detail || 
-                           error.response?.data?.message || 
-                           'خطا در انتخاب آواتار';
-        this.$toast.error(errorMessage);
-      } finally {
-        this.saving = false;
-        this.selectedAvatar = null;
-      }
+      // } catch (error) {
+      //   console.error('Error selecting avatar:', error);
+      //   const errorMessage = error.response?.data?.detail || 
+      //                      error.response?.data?.message || 
+      //                      'خطا در انتخاب آواتار';
+      //   this.$toast.error(errorMessage);
+      // } finally {
+      //   this.saving = false;
+      //   this.selectedAvatar = null;
+      // }
     },
     
     async fetchUserData() {
