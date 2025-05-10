@@ -4,17 +4,17 @@
 
 <div class="dashboard-page">
   <div class="content">
-    <img class="line" src="https://c.animaapp.com/m9nvumalUMfQbN/img/line-1.svg" />
-    <p class="p">از این داشبورد، کار با XRoom را آغاز کنید.</p>
-    <div class="frame-3">
-      <div class="frame-4">
-        <img class="img" src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame-10.svg" />
-        <div class="text-wrapper-5">دانیال پژوهش کیا</div>
-      </div>
-      <div class="frame-wrapper">
-        <img class="frame-5" src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame.svg" />
-      </div>
-    </div>
+
+
+
+    <AppHeader />
+
+    
+    
+
+
+
+
     <div class="group-2">
       <div class="text-wrapper-6">راهنمای شروع</div>
       <img class="tutorials" src="https://c.animaapp.com/m9nvumalUMfQbN/img/tutorials.svg" />
@@ -98,12 +98,14 @@
 <script>
 
 import SidebarMenu from '@/components/SidebarMenu.vue'
+import AppHeader from '@/components/Header.vue';
 
 
 export default {
 name: 'DashboardPage',
 components: {
   SidebarMenu,
+  AppHeader,
  }
 
 }
