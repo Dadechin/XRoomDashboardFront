@@ -26,6 +26,8 @@
         نگران نباشید، شما می توانید ان را در هر زمان دیگری تغییر دهید.
       </h5>
 
+      <router-link to="/dashboard/readyplayer">ساخت آواتار به دلخواه   </router-link>
+
       <div class="avatar-selection-container">
     <!-- Left Column - Women Models -->
     <div class="gender-column">

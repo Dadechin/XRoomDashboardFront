@@ -21,80 +21,14 @@
   
         <div class="page-title">ساخت آواتار جدید</div>
   
-        <!-- Main Content -->
-        <div class="profile-edit-container">
-          <div class="column">
-            <div class="form-section">
-              <h3>آواتار واقعیت مجازی شما</h3>
-              <p class="section-description">
-                می‌توانید با استفاده از ابزار Ready Player Me آواتار خود را شخصی‌سازی کنید.
-              </p>
-              
-              <div v-if="avatarUrl" class="avatar-preview">
-                <img :src="getAvatarThumbnail(avatarUrl)" class="avatar-image" />
-                <p class="avatar-url">آواتار شما با موفقیت ایجاد شد</p>
-              </div>
-              <div v-else class="avatar-placeholder">
-                <p>برای ساخت آواتار روی دکمه زیر کلیک کنید</p>
-              </div>
-  
-              <button class="save-btn" @click="openAvatarEditor" :disabled="saving">
-                {{ saving ? 'در حال ذخیره...' : avatarUrl ? 'ویرایش آواتار' : 'ساخت آواتار' }}
-              </button>
-            </div>
-          </div>
-  
-          <div class="column">
-            <div class="form-section instructions">
-              <h3>راهنمای ساخت آواتار</h3>
-              <ul class="instruction-list">
-                <li>روی دکمه "ساخت آواتار" کلیک کنید</li>
-                <li>در پنجره باز شده، آواتار خود را شخصی‌سازی کنید</li>
-                <li>پس از اتمام، روی دکمه "Done" کلیک کنید</li>
-                <li>آواتار شما ذخیره شده و در این صفحه نمایش داده می‌شود</li>
-              </ul>
-  
-              <div v-if="avatarUrl" class="form-section">
-                <h3>آواتارهای پیش‌فرض</h3>
-                <div class="default-avatars">
-                  <h4>مردان</h4>
-                  <div class="avatar-grid">
-                    <div 
-                      v-for="avatar in maleAvatars" 
-                      :key="avatar.id" 
-                      class="avatar-option"
-                      @click="selectAvatar(avatar)"
-                    >
-                      <img :src="getAvatarThumbnail(avatar.src)" class="avatar-thumbnail" />
-                      <span>{{ avatar.name }}</span>
-                    </div>
-                  </div>
-  
-                  <h4>زنان</h4>
-                  <div class="avatar-grid">
-                    <div 
-                      v-for="avatar in femaleAvatars" 
-                      :key="avatar.id" 
-                      class="avatar-option"
-                      @click="selectAvatar(avatar)"
-                    >
-                      <img :src="getAvatarThumbnail(avatar.src)" class="avatar-thumbnail" />
-                      <span>{{ avatar.name }}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-  
+        
         <!-- Hidden iframe for Ready Player Me -->
         <iframe
           id="frame"
           class="rpm-frame"
           :src="iframeSrc"
           allow="camera *; microphone *; clipboard-write"
-          hidden
+           
         ></iframe>
       </div>
     </div>
@@ -409,7 +343,7 @@
   
   .rpm-frame {
     width: 100%;
-    height: 600px;
+    height: 950px;
     border: none;
     border-radius: 12px;
   }
