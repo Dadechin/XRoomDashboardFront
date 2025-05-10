@@ -41,6 +41,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/dashboard/readyPlayer',
+    name: 'ReadyPlayer',
+    component: () => import('@/pages/dashboard/readyPlayer.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/dashboard/ChangeAvatar',
     name: 'ChangeAvatar',
     component: () => import('@/pages/dashboard/ChangeAvatar.vue'),

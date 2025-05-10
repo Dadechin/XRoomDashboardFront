@@ -99,7 +99,8 @@ export default {
     },
     profileImageUrl() {
       if (!this.customer?.profile_img) return this.defaultProfileImage;
-      return `http://194.62.43.230:8000/media/${this.customer.profile_img}`;
+      return `${this.customer.profile_img}`;
+      // return `http://194.62.43.230:8000/media/${this.customer.profile_img}`;
     }
   },
   methods: {
