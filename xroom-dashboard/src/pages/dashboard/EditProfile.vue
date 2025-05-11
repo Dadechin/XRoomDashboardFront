@@ -5,23 +5,9 @@
     <div class="content">
 
       <!-- Header -->
-      <div class="header-row">
-        <div class="right-actions">
-          <button class="subscription-button">
-            <img src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame-6.svg" class="button-icon" />
-            خرید اشتراک
-          </button>
-        </div>
-        <div class="user-info">
-          <span class="user-name">{{ userData.user.first_name }} {{ userData.user.last_name }}</span>
-          <div class="avatar-box">
-            <img class="avatar-icon" src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame.svg" />
-          </div>
-        </div>
-      </div>
+      <AppHeader pageTitle="ویرایش پروفایل" />
 
-      <div class="page-title">ویرایش پروفایل</div>
-
+ 
       <!-- Two-Column Form Layout -->
       <div class="profile-edit-container">
 
@@ -37,7 +23,7 @@
             <img :src="userAvatarUrl" class="avatar-image" />
             <div class="avatar-actions">
           
-              <router-link to="/dashboard/ChangeAvatar">تغییر آواتار  </router-link>
+              <router-link to="/dashboard/readyPlayer">تغییر آواتار  </router-link>
             
             </div>
           </div>
@@ -116,11 +102,14 @@
 <script>
 import SidebarMenu from '@/components/SidebarMenu.vue'
 import axios from '@/axios';
+import AppHeader from '@/components/Header.vue';
 
 export default {
   name: 'EditProfile',
   components: {
-    SidebarMenu
+    SidebarMenu,
+    AppHeader,
+
   },
   data() {
     return {

@@ -4,25 +4,10 @@
   <div class="dashboard-page">
     <div class="content">
       <!-- Top Header -->
-      <div class="header-row">
-        <div class="right-actions">
-          <button class="subscription-button">
-            <img src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame-6.svg" class="button-icon" />
-            خرید اشتراک
-          </button>
-        </div>
+      <AppHeader pageTitle="فایل ها" />
 
-        <div class="user-info">
-          <span class="user-name">{{ userData.user.first_name }} {{ userData.user.last_name }}</span>
-          <div class="avatar-box">
-            <img class="avatar-icon" src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame.svg" />
-          </div>
-        </div>
-      </div>
 
-      <!-- Page Title -->
-      <div class="page-title">فایل ها</div>
-
+       
       <!-- Description -->
       <div class="section-description">
         <div class="section-title">مدیریت فایل ها</div>
@@ -275,6 +260,7 @@ import axios from 'axios';
  
 import { VideoPlayer } from '@videojs-player/vue';
 import 'video.js/dist/video-js.css';
+import AppHeader from '@/components/Header.vue';
 
 export default {
   name: 'DashboardPage',
@@ -282,6 +268,8 @@ export default {
     SidebarMenu,
     VuePdfEmbed,  
     VideoPlayer,
+    AppHeader,
+
   },
   data() {
     return {
