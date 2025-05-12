@@ -4,6 +4,7 @@ import LoginPage from '../pages/LoginPage.vue'
 import ResetPassword from '../pages/ResetPassword.vue'
 import DashboardPage from '../pages/dashboard/index.vue'    
 import FilesPage from '@/pages/dashboard/files.vue';
+import TeamsPage from '@/pages/dashboard/team.vue';
 import axios from '@/axios';
 
 const routes = [
@@ -32,6 +33,12 @@ const routes = [
     path: '/dashboard/files',
     name: 'files',
     component: FilesPage,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/dashboard/teams',
+    name: 'teams',
+    component: TeamsPage,
     meta: { requiresAuth: true }
   },
   {
