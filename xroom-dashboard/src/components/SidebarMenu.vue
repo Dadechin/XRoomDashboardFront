@@ -59,7 +59,7 @@
         <div class="text-wrapper">فایل ها</div>
       </router-link>
 
-      <router-link to="/team" class="nav-button" :class="{ active: isActive('/team') }">
+      <router-link to="/dashboard/teams" class="nav-button" :class="{ active: isActive('/team') }">
         <img class="img" src="https://c.animaapp.com/m9nvumalUMfQbN/img/property-1-team.svg" />
         <div class="text-wrapper">تیم</div>
       </router-link>
