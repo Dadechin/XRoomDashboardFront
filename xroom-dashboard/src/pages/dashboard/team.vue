@@ -17,64 +17,177 @@
 
 
      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Tab Buttons -->
+<div class="tab-buttons">
+  <button
+    :class="['tab-btn', activeTab === 'users' ? 'active' : '']"
+    @click="activeTab = 'users'"
+  >کاربران</button>
+  <button
+    :class="['tab-btn', activeTab === 'membership' ? 'active' : '']"
+    @click="activeTab = 'membership'"
+  >عضویت</button>
+  <button
+    :class="['tab-btn', activeTab === 'details' ? 'active' : '']"
+    @click="activeTab = 'details'"
+  >جزئیات</button>
+</div>
+
+<!-- Tab Content -->
+<div v-if="activeTab === 'users'">
+  <div class="card license-card">
+    <span>لایسنس های قابل استفاده :</span>
+    <div class="buy-subscription">خرید اشتراک</div>
+  </div>
+
+  <div class="user-cards">
+    <div class="user-card add-card" @click="openAddUserDialog">
+      <span class="add-text">➕ اضافه کردن کاربر جدید</span>
+    </div>
+    <div class="user-card" v-for="(user, index) in userList" :key="index">
+      <div class="user-info-box">
+        <div class="user-role">{{ user.role }}</div>
+        <div class="user-version">{{ user.version }}</div>
+        <div class="user-email">{{ user.email }}</div>
+        <div class="user-name">{{ user.name }}</div>
+        <img :src="user.avatar" class="user-avatar" alt="avatar" />
+      </div>
+      <div class="user-footer">
+        <span>اکانت XRoom</span>
+        <div class="user-actions">
+          <button><i class="icon">🗑️</i></button>
+          <button><i class="icon">⚙️</i></button>
+        </div>
+      </div>
+    </div>
+
+    
+  </div>
+</div>
+
+
+<div v-if="activeTab === 'membership'" class="tab-content">
+  <div class="card">اطلاعات عضویت ۱</div>
+  <div class="card">اطلاعات عضویت ۲</div>
+</div>
+
+<div v-if="activeTab === 'details'" class="tab-content">
+  <div class="card">جزئیات تیم ۱</div>
+  <div class="card">جزئیات تیم ۲</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       
 
-
-
-        <main class="main-content">
-      <section class="team">
-        <h2>تیم</h2>
-        <h3>مدیریت اعضا</h3>
-        <p>
-          در این بخش به شما امکان می‌دهد تا اتاق‌ها و جلسات را با همکارانتان
-          به اشتراک بگذارید. در این بخش می‌توانید تیم خود را مدیریت کنید..
-        </p>
-        <div class="user-list">
-          <div class="user">
-            <img
-              class="user-avatar"
-              src="https://via.placeholder.com/50"
-              alt="User"
-            />
-            <div class="user-info">
-              <span>دانیال پژوهش کیا</span>
-              <span>aminimperator@gmail.com</span>
-            </div>
-            <button class="btn-remove">حذف</button>
-          </div>
-          <div class="user">
-            <img
-              class="user-avatar"
-              src="https://via.placeholder.com/50"
-              alt="User"
-            />
-            <div class="user-info">
-              <span>امین رمضان</span>
-              <span>aminimperator@gmail.com</span>
-            </div>
-            <button class="btn-remove">حذف</button>
-          </div>
-          <div class="user">
-            <img
-              class="user-avatar"
-              src="https://via.placeholder.com/50"
-              alt="User"
-            />
-            <div class="user-info">
-              <span>نوید رمضان</span>
-              <span>aminimperator@gmail.com</span>
-            </div>
-            <button class="btn-remove">حذف</button>
-          </div>
-        </div>
-      </section>
-    </main>
-
+ 
 
 
      
   </div>
   </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <dialog ref="addUserDialog" class="add-user-dialog">
+  <div class="dialog-header">
+    <button class="close-btn" @click="closeAddUserDialog">✕</button>
+    <h3>کاربر جدید</h3>
+  </div>
+  <div class="dialog-body">
+    <h4>دعوت کاربر جدید</h4>
+    <p style="    line-height: 45px;">کاربر یک ایمیل دعوت برای فعال کردن حساب خود دریافت می‌کند.</p>
+    <form class="form-fields" @submit.prevent="submitNewUser">
+      <div class="form-row">
+        <label>نام و نام خانوادگی</label>
+        <input v-model="newUser.name" required />
+      </div>
+      <div class="form-row">
+        <label>ایمیل</label>
+        <input v-model="newUser.email" type="email" required />
+      </div>
+      <div class="form-row">
+        <label>شماره تماس</label>
+        <input v-model="newUser.phone" />
+      </div>
+      <div class="form-row">
+        <label>عنوان شغلی</label>
+        <input v-model="newUser.jobTitle" />
+      </div>
+      <div class="form-row switch-row">
+        <label>مدیر</label>
+        <input type="checkbox" v-model="newUser.isAdmin" />
+      </div>
+      <div class="form-row switch-row">
+        <label>مجوز</label>
+        <input type="checkbox" v-model="newUser.hasAccess" />
+      </div>
+      <div class="dialog-actions">
+        <button type="submit" class="confirm-btn">تایید</button>
+        <button type="button" class="cancel-btn" @click="closeAddUserDialog">بازگشت</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+
+
+
+
+
 </template>
 
 <script>
@@ -98,7 +211,42 @@ export default {
   },
   data() {
     return {
+      newUser: {
+  name: '',
+  email: '',
+  phone: '',
+  jobTitle: '',
+  isAdmin: false,
+  hasAccess: false
+}
+,
       // ... existing data ...
+      userList: [
+  {
+    name: 'دانیال پژوهش کیا',
+    email: 'aminimperator@gmail.com',
+    role: 'نسخه آزمایشی',
+    version: '',
+    avatar: 'https://via.placeholder.com/60',
+  },
+  {
+    name: 'امین رمضانی',
+    email: 'aminimperator@gmail.com',
+    role: 'مدیر',
+    version: 'نسخه آزمایشی',
+    avatar: 'https://via.placeholder.com/60',
+  },
+  {
+    name: 'نوید رمضانی',
+    email: 'aminimperator@gmail.com',
+    role: 'مدیر',
+    version: 'نسخه آزمایشی',
+    avatar: 'https://via.placeholder.com/60',
+  }
+]
+,
+      activeTab: 'users',
+
       previewUrl: '',
     currentPreviewIndex: null,
     currentPreviewType: null,
@@ -135,6 +283,19 @@ export default {
     this.fetchUserData();
   },
   methods: {
+    openAddUserDialog() {
+  this.$refs.addUserDialog.showModal();
+},
+closeAddUserDialog() {
+  this.$refs.addUserDialog.close();
+},
+submitNewUser() {
+  // اینجا می‌تونی ارسال به API اضافه کنی
+  console.log('کاربر جدید:', this.newUser);
+  alert('کاربر با موفقیت اضافه شد');
+  this.closeAddUserDialog();
+}
+,
     handleBackdropClick(event) {
     // Check if click was directly on the dialog element (backdrop)
     if (event.target === this.$refs.filePreviewDialog) {
@@ -1046,5 +1207,227 @@ export default {
   padding: 8px 16px;
   cursor: pointer;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.tab-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  color: gray;
+  font-size: 14px;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease-in-out;
+}
+
+.tab-btn.active {
+  color: #3a57e8;
+  border-bottom: 2px solid #3a57e8;
+}
+
+.tab-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.card {
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  min-width: 200px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.license-card {
+  max-width: 1600px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.buy-subscription {
+  color: #48bb78; /* Tailwind-style green */
+  font-weight: 600;
+  cursor: pointer;
+}
+
+
+.user-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 20px;
+      height: 280px;
+}
+
+.user-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+  position: relative;
+}
+
+.user-info-box {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.user-role {
+  color: #3a57e8;
+  font-weight: 600;
+}
+
+.user-name {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.user-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  align-self: flex-end;
+  margin-top: 10px;
+}
+
+.user-footer {
+  background: #3a57e8;
+  color: #fff;
+  border-radius: 0 0 12px 12px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.user-actions button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.add-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #3a57e8;
+  font-weight: 600;
+  font-size: 14px;
+  border: 2px dashed #3a57e8;
+  height: 275px;
+}
+
+.add-text {
+  text-align: center;
+}
+
+/* dialog */
+.add-user-dialog {
+  border: none;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  padding: 0;
+}
+
+.dialog-header {
+  background: black;
+  color: white;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.dialog-body {
+  padding: 24px;
+  direction: rtl;
+}
+
+.form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+    
+
+}
+
+.form-row input {
+  flex: 1;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+    max-width: 300px;
+    margin-left: 19px;
+}
+
+.switch-row input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 24px;
+}
+
+.confirm-btn {
+  background: #3a57e8;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+}
+
+.cancel-btn {
+  background: #e2e8f0;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+}
+
+/* dialog  */
   </style>
   
