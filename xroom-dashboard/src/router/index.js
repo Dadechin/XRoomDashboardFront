@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import SignupPage from '../pages/SignupPage.vue'
 import LoginPage from '../pages/LoginPage.vue'
 import ResetPassword from '../pages/ResetPassword.vue'
+import SmsVerification from '../pages/SmsVerification.vue'
 import DashboardPage from '../pages/dashboard/index.vue'    
 import FilesPage from '@/pages/dashboard/files.vue';
 import TeamsPage from '@/pages/dashboard/team.vue';
@@ -27,6 +28,11 @@ const routes = [
     path: '/resetPassword',
     name: 'ResetPassword',
     component: ResetPassword
+  },
+  {
+    path: '/SmsVerification',
+    name: 'SmsVerification',
+    component: SmsVerification
   },
   {
     path: '/dashboard',
@@ -109,10 +115,15 @@ router.beforeEach(async (to, from, next) => {
       
       // Check if profile_glb is empty and not already going to ChangeAvatar
       const customer = response.data.customer || JSON.parse(localStorage.getItem('customer') || '{}');
-      if (!customer.profile_glb && to.name !== 'ChangeAvatar') {
-        return next('/dashboard/ChangeAvatar');
+     
+      if (!customer.is_sms_verified && to.name !== 'SmsVerification') {
+        return next('/SmsVerification');
       }
-      
+      else if (!customer.profile_glb && to.name !== 'ReadyPlayer') {
+        return next('/dashboard/readyPlayer');
+      }
+
+
       return next();
     } catch (err) {
       // Invalid token, clear storage and redirect to login

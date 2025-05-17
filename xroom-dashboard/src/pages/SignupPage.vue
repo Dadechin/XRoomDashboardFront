@@ -45,7 +45,7 @@
 
       <!-- Login Link -->
       <div class="login-link">
-        <router-link to="/login">حساب کاربری دارید؟ وارد شوید</router-link>
+        <router-link to="/">حساب کاربری دارید؟ وارد شوید</router-link>
       </div>
     </div>
   </div>
@@ -80,7 +80,7 @@ export default {
         const response = await axios.post('http://194.62.43.230:8000/signup', signupData);
         console.log('Signup success:', response.data);
         // Redirect to login page upon successful signup
-        this.$router.push('/login');
+        this.$router.push('/');
       } catch (error) {
         console.error('Signup error:', error);
         // Handle error, show alert or error message

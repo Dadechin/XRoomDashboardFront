@@ -4,14 +4,18 @@
       <h2 class="title">
         <img :src="require('@/assets/img/logo.png')" alt="Logo" style="max-width: 150px;" />
       </h2>
-      <h3 class="subtitle">فراموشی رمز عبور</h3>
+      <h3 class="subtitle"> تایید شماره موبایل </h3>
 
       <h5 class="descript-xroom">
-        رمز عبور خود را فراموش کرده اید؟ شماره موبایل خود را وارد کنید تا کد تأیید برای شما ارسال شود.
+        پیامکی شامل کد تایید به موبایل شما ارسال شده است. 
       </h5>
 
+       <button type="submit" style="margin-bottom: 35px;" class="submit-btn" @click="sendSms">
+          ارسال  مجدد کد
+        </button>
+
       <!-- Step 1: Mobile Number Input -->
-      <form v-if="!codeSent" @submit.prevent="requestResetCode">
+      <!-- <form v-if="!codeSent" @submit.prevent="requestResetCode">
         <div class="form-group">
           <label for="phone">شماره تماس</label>
           <input
@@ -22,13 +26,11 @@
             required
           />
         </div>
-        <button type="submit" class="submit-btn">
-          ارسال کد تأیید
-        </button>
-      </form>
+       
+      </form> -->
 
       <!-- Step 2: Code and New Password Input -->
-      <form v-else @submit.prevent="resetPassword">
+      <form   @submit.prevent="submitSmsVerification">
         <div class="form-group">
           <label for="code">کد تأیید</label>
           <input
@@ -39,25 +41,17 @@
             required
           />
         </div>
-        <div class="form-group">
-          <label for="password">رمز عبور جدید</label>
-          <input
-            v-model="form.password"
-            type="password"
-            id="password"
-            placeholder="رمز عبور جدید"
-            required
-          />
-        </div>
+      
+        
         <button type="submit" class="submit-btn">
-          بازنشانی رمز عبور
+          تایید کد
         </button>
       </form>
 
       <!-- Links -->
       <div class="login-link">
-        <router-link to="/signup">ساخت حساب کاربری</router-link> |
-        <router-link to="/">ورود</router-link>
+        <router-link to="/signup">ساخت حساب کاربری</router-link>  
+      
       </div>
     </div>
   </div>
@@ -79,11 +73,23 @@ export default {
     };
   },
   methods: {
-    async requestResetCode() {
+    async sendSms() {
       try {
-        const response = await apiClient.post('/requestResetCode', {
-          mobile_number: this.form.mobileNumber,
-        });
+          const token = localStorage.getItem('token');
+         
+        const response = await apiClient.get('/sendSmsVerification', {
+          // mobile_number: this.form.mobileNumber,
+        }, {
+            'Authorization': `Token ${token}`,
+            'Content-Type': 'multipart/form-data'
+          });
+      //  const response =     await axios.post(uploadUrl, formData, {
+      //     headers: {
+      //       'Authorization': `Token ${token}`,
+      //       'Content-Type': 'multipart/form-data'
+      //     }
+      //   });
+
         if (response.data.success) {
           this.codeSent = true;
           alert('کد تأیید به شماره موبایل شما ارسال شد.');
@@ -93,16 +99,16 @@ export default {
         alert('خطا در ارسال کد تأیید. لطفاً دوباره تلاش کنید.');
       }
     },
-    async resetPassword() {
+    async submitSmsVerification() {
       try {
-        const response = await apiClient.post('/verifyResetCode', {
-          mobile_number: this.form.mobileNumber,
-          code: this.form.code,
-          password: this.form.password,
+        const response = await apiClient.post('/submitSmsVerification', {
+          
+          verification_sms_code: this.form.code,
+        
         });
-        if (response.data.success) {
+        if (response.status == 200) {
           alert('رمز عبور با موفقیت بازنشانی شد.');
-          this.$router.push('/login');
+          this.$router.push('/dashboard');
         }
       } catch (error) {
         console.error('Error resetting password:', error);
