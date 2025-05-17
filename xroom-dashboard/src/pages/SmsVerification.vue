@@ -10,9 +10,21 @@
         پیامکی شامل کد تایید به موبایل شما ارسال شده است. 
       </h5>
 
-       <button type="submit" style="margin-bottom: 35px;" class="submit-btn" @click="sendSms">
-          ارسال  مجدد کد
-        </button>
+      <button
+        type="button"
+        class="submit-btn"
+        style="margin-bottom: 35px;"
+        :disabled="isButtonDisabled"
+        @click="sendSms"
+      >
+        <span v-if="isButtonDisabled">
+          ارسال مجدد کد ({{ Math.floor(countdown / 60) }}:{{ String(countdown % 60).padStart(2, '0') }})
+        </span>
+        <span v-else>
+          ارسال مجدد کد
+        </span>
+      </button>
+
 
       <!-- Step 1: Mobile Number Input -->
       <!-- <form v-if="!codeSent" @submit.prevent="requestResetCode">
@@ -59,7 +71,8 @@
 
 
 <script>
-import apiClient from '@/api/axios'; // Adjust the path based on your project structure
+// import apiClient from '@/api/axios'; // Adjust the path based on your project structure
+import axios from '@/axios';
 
 export default {
   data() {
@@ -70,42 +83,93 @@ export default {
         password: '',
       },
       codeSent: false, // Tracks if the code has been sent
+
+      
+      isButtonDisabled: false,
+      countdown: 120, // in seconds (2 minutes)
+      countdownInterval: null,
     };
+  },
+  mounted() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          window.location.reload();
+        } else {
+          this.sendSms(); // Automatically call sendSms on mount
+        }
   },
   methods: {
     async sendSms() {
-      try {
-          const token = localStorage.getItem('token');
-         
-        const response = await apiClient.get('/sendSmsVerification', {
-          // mobile_number: this.form.mobileNumber,
-        }, {
-            'Authorization': `Token ${token}`,
-            'Content-Type': 'multipart/form-data'
-          });
-      //  const response =     await axios.post(uploadUrl, formData, {
-      //     headers: {
-      //       'Authorization': `Token ${token}`,
-      //       'Content-Type': 'multipart/form-data'
-      //     }
-      //   });
+  try {
+    const token = localStorage.getItem('token');
 
-        if (response.data.success) {
-          this.codeSent = true;
-          alert('کد تأیید به شماره موبایل شما ارسال شد.');
-        }
-      } catch (error) {
-        console.error('Error requesting reset code:', error);
-        alert('خطا در ارسال کد تأیید. لطفاً دوباره تلاش کنید.');
+    const response = await axios.get('/sendSmsVerification', {
+      headers: {
+        'Authorization': `Token ${token}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    if (response.status == 200) {
+      this.codeSent = true;
+      alert('کد تأیید به شماره موبایل شما ارسال شد.');
+      this.startCountdown(); // Start countdown when code is sent
+    }
+  } catch (error) {
+    console.error('Error requesting reset code:', error);
+    alert('خطا در ارسال کد تأیید. لطفاً دوباره تلاش کنید.');
+  }
+},
+
+
+ startCountdown() {
+    this.isButtonDisabled = true;
+    this.countdown = 120; // Reset to 2 minutes
+
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+    }
+
+    this.countdownInterval = setInterval(() => {
+      if (this.countdown > 0) {
+        this.countdown--;
+      } else {
+        this.isButtonDisabled = false;
+        clearInterval(this.countdownInterval);
       }
-    },
+    }, 1000);
+  },
+
     async submitSmsVerification() {
       try {
-        const response = await apiClient.post('/submitSmsVerification', {
+      const token = localStorage.getItem('token');
+
+
+
+       
+      
+
+
+          const response =     await axios.post('/submitSmsVerification', 
+          {
+                verification_sms_code: this.form.code,
+         
+          }, {headers:  {
           
-          verification_sms_code: this.form.code,
+   'Authorization': `Token ${token}`,
+            'Content-Type': 'multipart/form-data'
+      
         
-        });
+        }
+        }
+        );
+
+        // const response = await apiClient.post('/submitSmsVerification', {
+          
+
+        //   verification_sms_code: this.form.code,
+        
+        // });
         if (response.status == 200) {
           alert('رمز عبور با موفقیت بازنشانی شد.');
           this.$router.push('/dashboard');

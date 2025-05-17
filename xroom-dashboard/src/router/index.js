@@ -13,12 +13,7 @@ const routes = [
     path: '/signup',
     name: 'SignupPage',
     component: SignupPage
-  },
-  {
-    path: '/login',
-    name: 'LoginPage',
-    component: LoginPage
-  },
+  }, 
   {
     path: '/',
     name: 'LoginPage',
@@ -90,7 +85,7 @@ router.beforeEach(async (to, from, next) => {
   
   // If route requires auth but no token, redirect to login
   if (requiresAuth && !token) {
-    return next('/login');
+    return next('/');
   }
   
   // If we have a token and it's an auth route, verify it
@@ -109,7 +104,7 @@ router.beforeEach(async (to, from, next) => {
       localStorage.setItem('baseUrl','http://194.62.43.230:8000');
       
       // If trying to access login page while authenticated, redirect to dashboard
-      if (to.path === '/login') {
+      if (to.path === '/') {
         return next('/dashboard');
       }
       
@@ -130,7 +125,7 @@ router.beforeEach(async (to, from, next) => {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       localStorage.removeItem('customer');
-      return next('/login');
+      return next('/');
     }
   }
   

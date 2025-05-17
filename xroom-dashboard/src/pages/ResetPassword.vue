@@ -102,7 +102,7 @@ export default {
         });
         if (response.data.success) {
           alert('رمز عبور با موفقیت بازنشانی شد.');
-          this.$router.push('/login');
+          this.$router.push('/');
         }
       } catch (error) {
         console.error('Error resetting password:', error);

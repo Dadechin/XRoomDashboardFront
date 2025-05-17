@@ -79,6 +79,11 @@ export default {
       try {
         const response = await axios.post('http://194.62.43.230:8000/signup', signupData);
         console.log('Signup success:', response.data);
+        const token = response.data.token;
+      
+
+        localStorage.setItem('token', token);
+    
         // Redirect to login page upon successful signup
         this.$router.push('/');
       } catch (error) {
