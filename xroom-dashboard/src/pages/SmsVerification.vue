@@ -171,12 +171,12 @@ export default {
         
         // });
         if (response.status == 200) {
-          alert('رمز عبور با موفقیت بازنشانی شد.');
+          alert('حد صحیح است');
           this.$router.push('/dashboard');
         }
       } catch (error) {
         console.error('Error resetting password:', error);
-        alert('خطا در بازنشانی رمز عبور. لطفاً کد یا رمز عبور را بررسی کنید.');
+        alert('کد خطا دارد');
       }
     },
   },

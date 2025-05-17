@@ -133,7 +133,7 @@ export default {
     userProfilePicUrl() {
       const customer = JSON.parse(localStorage.getItem('customer') || {});
       if (!customer.profile_img) return this.defaultProfileImage;
-      return `http://194.62.43.230:8000/media/${customer.profile_img}`;
+      return `${customer.profile_img}`;
     }
   },
   methods: {
@@ -145,7 +145,7 @@ export default {
           first_name: response.data.user.first_name,
           last_name: response.data.user.last_name,
           email: response.data.user.email,
-          userAvatarUrl: this.baseUrl+ "/"+ response.data.customer.profile_img
+          userAvatarUrl:   response.data.customer.profile_img
         };
       } catch (error) {
         console.error('Error fetching user data:', error);

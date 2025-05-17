@@ -64,22 +64,26 @@
     <div class="user-card add-card" @click="openAddUserDialog">
       <span class="add-text">➕ اضافه کردن کاربر جدید</span>
     </div>
+    
+    
     <div class="user-card" v-for="(user, index) in userList" :key="index">
-      <div class="user-info-box">
-        <div class="user-role">{{ user.role }}</div>
-        <div class="user-version">{{ user.version }}</div>
-        <div class="user-email">{{ user.email }}</div>
-        <div class="user-name">{{ user.name }}</div>
-        <img :src="user.avatar" class="user-avatar" alt="avatar" />
-      </div>
-      <div class="user-footer">
-        <span>اکانت XRoom</span>
-        <div class="user-actions">
-          <button><i class="icon">🗑️</i></button>
-          <button><i class="icon">⚙️</i></button>
-        </div>
-      </div>
+  <div class="user-card-header">
+    <img :src="user.avatar" class="user-avatar" alt="avatar" />
+    <div class="user-info-box">
+      <div class="user-name">{{ user.name }}</div>
+      <div class="user-email">{{ user.email }}</div>
+      <div class="user-role">{{ user.role }}</div>
+      <div class="user-version">{{ user.version }}</div>
     </div>
+  </div>
+  <div class="user-footer">
+    <span>اکانت XRoom</span>
+    <div class="user-actions">
+      <button><i class="icon">🗑️</i></button>
+      <button><i class="icon">⚙️</i></button>
+    </div>
+  </div>
+</div>
 
     
   </div>
@@ -269,21 +273,21 @@ export default {
     email: 'aminimperator@gmail.com',
     role: 'نسخه آزمایشی',
     version: '',
-    avatar: 'https://via.placeholder.com/60',
+    avatar: 'https://models.readyplayer.me/681f59760bc631a87ad25172.png',
   },
   {
     name: 'امین رمضانی',
     email: 'aminimperator@gmail.com',
     role: 'مدیر',
     version: 'نسخه آزمایشی',
-    avatar: 'https://via.placeholder.com/60',
+    avatar: 'https://models.readyplayer.me/681f59760bc631a87ad25172.png',
   },
   {
     name: 'نوید رمضانی',
     email: 'aminimperator@gmail.com',
     role: 'مدیر',
     version: 'نسخه آزمایشی',
-    avatar: 'https://via.placeholder.com/60',
+    avatar: 'https://models.readyplayer.me/681f59760bc631a87ad25172.png',
   }
 ]
 ,
@@ -1328,7 +1332,8 @@ submitNewUser() {
   background: #fff;
   border-radius: 16px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-  width: 300px;
+     width: 440px;
+    height: 158px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -1560,5 +1565,94 @@ submitNewUser() {
 }
 
 /* tab 2 */
-  </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.user-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  width: 440px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+  position: relative;
+}
+
+.user-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.user-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.user-info-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-end;
+  flex: 1;
+  text-align: right;
+  gap: 4px;
+}
+
+.user-name {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.user-email, .user-role, .user-version {
+  font-size: 14px;
+  color: #4a5568;
+}
+
+.user-footer {
+  background: #3a57e8;
+  color: #fff;
+  border-radius: 0 0 12px 12px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.user-actions button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+
+
+
+
+
+
+
+
+
+</style>
   

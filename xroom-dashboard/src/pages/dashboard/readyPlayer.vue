@@ -148,6 +148,8 @@ import AppHeader from '@/components/Header.vue';
             await this.saveAvatarUrl(json.data.url);
             
             alert('آواتار با موفقیت ذخیره شد');
+            this.$router.push('/dashboard');
+
           } catch (error) {
             console.error('Error saving avatar:', error);
             alert('خطا در ذخیره آواتار');
@@ -173,7 +175,9 @@ import AppHeader from '@/components/Header.vue';
         try {
           await this.saveAvatarUrl(avatar.src);
           this.avatarUrl = avatar.src;
-          alert('آواتار پیش‌فرض با موفقیت انتخاب شد');
+          alert('آواتار با موفقیت انتخاب شد');
+          this.$router.push('/dashboard');
+
         } catch (error) {
           console.error('Error selecting avatar:', error);
           alert(error.response?.data?.detail || error.message || 'خطا در انتخاب آواتار');
