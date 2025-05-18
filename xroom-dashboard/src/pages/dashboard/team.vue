@@ -43,15 +43,25 @@
     :class="['tab-btn', activeTab === 'users' ? 'active' : '']"
     @click="activeTab = 'users'"
   >کاربران</button>
+   <button
+  :class="['tab-btn', activeTab === 'buy-subscription' ? 'active' : '']"
+  @click="activeTab = 'buy-subscription'"
+>
+  خرید اشتراک
+</button>
   <button
     :class="['tab-btn', activeTab === 'membership' ? 'active' : '']"
     @click="activeTab = 'membership'"
-  >عضویت</button>
+  >اشتراک ها</button>
   <button
     :class="['tab-btn', activeTab === 'details' ? 'active' : '']"
     @click="activeTab = 'details'"
   >جزئیات</button>
+ 
+
 </div>
+
+
 
 <!-- Tab Content -->
 <div v-if="activeTab === 'users'">
@@ -93,18 +103,30 @@
 <div v-if="activeTab === 'membership'" class="tab-content">
   <div class="access-container">
   <!-- Title Section -->
-  <div class="access-header">
+  <div class="access-header" style="
+    background: white;
+    border-radius: 20px;
+    padding: 20px;"
+    >
+
+    <img :src="require('@/assets/img/lock Icon.png')" alt="logout"  class="lock-icon"/>
+
     <div class="header-text">
       <h3>فعال‌سازی دسترسی XRoom</h3>
       <p>دسترسی کامل به امکانات XRoom بدون واترمارک</p>
     </div>
-    <img src="https://cdn-icons-png.flaticon.com/512/1828/1828489.png" alt="Lock Icon" class="lock-icon" />
+  
+
+      <!-- Subscription Button -->
+      <button class="primary-button">
+    <img style="margin-left:10px" :src="require('@/assets/img/hand.png')" alt="logout"  />
+        
+         انتخاب طرح اشتراکی
+      </button>
+
+
   </div>
 
-  <!-- Subscription Button -->
-  <button class="primary-button">
-    👆 انتخاب طرح اشتراکی
-  </button>
 
   <!-- Info Cards -->
   <div class="info-cards">
@@ -143,7 +165,85 @@
 </div>
 
 
+<div v-if="activeTab === 'buy-subscription'" class="tab-content">
+  <div class="buy-subscription-container">
 
+
+
+
+
+
+
+
+
+
+    <div style="text-align: center; margin-bottom: 20px;">
+      <label for="memberCount" style="margin-left: 10px;">تعداد کاربران:</label>
+      <select
+        id="memberCount"
+        v-model.number="memberCount"
+        @change="selectedPlan && selectPlan(selectedPlan.name === 'هفتگی' ? 'weekly' : selectedPlan.name === 'ماهانه' ? 'monthly' : 'yearly')"
+        style="padding: 8px 12px; border-radius: 8px; border: 1px solid #ccc;"
+      >
+        <option v-for="count in availableMemberOptions" :key="count" :value="count">
+          {{ count }} کاربر
+        </option>
+      </select>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <h3 style="text-align: center; margin-bottom: 20px;">لطفا نوع اشتراک خود را انتخاب کنید</h3>
+
+    <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+      <div class="plan-card">
+        <h4>هفتگی</h4>
+        <p>۲۵۰٬۰۰۰ تومان<br><small>برای یک کاربر، در هفته</small></p>
+        <button class="primary-button" @click="selectPlan('weekly')">انتخاب طرح اشتراک</button>
+      </div>
+
+      <div class="plan-card">
+        <h4>ماهانه</h4>
+        <p>۶۷۰٬۰۰۰ تومان<br><small>برای یک کاربر، در هفته</small></p>
+        <button class="primary-button" @click="selectPlan('monthly')">انتخاب طرح اشتراک</button>
+      </div>
+
+      <div class="plan-card">
+        <h4>سالانه</h4>
+        <p>۴٬۶۰۰٬۰۰۰ تومان<br><small>برای یک کاربر، در هفته</small></p>
+        <button class="primary-button" @click="selectPlan('yearly')">انتخاب طرح اشتراک</button>
+      </div>
+    </div>
+
+    <!-- فاکتور -->
+    <div v-if="selectedPlan" class="invoice-box" style="margin-top: 40px; background: white; padding: 20px; border-radius: 12px; max-width: 400px; margin-right: auto; margin-left: auto;">
+      <h4 style="margin-bottom: 16px;">پیش‌فاکتور اشتراک {{ selectedPlan.name }}</h4>
+      <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+        <span>قیمت پایه:</span>
+        <span>{{ selectedPlan.price.toLocaleString() }} تومان</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+        <span>مالیات (۹٪):</span>
+        <span>{{ selectedPlan.tax.toLocaleString() }} تومان</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 16px; margin-bottom: 20px;">
+        <span>مبلغ قابل پرداخت:</span>
+        <span>{{ selectedPlan.total.toLocaleString() }} تومان</span>
+      </div>
+
+      <button class="primary-button" style="width: 100%;" @click="pay">پرداخت</button>
+    </div>
+
+  </div>
+</div>
 
 
 
@@ -198,29 +298,24 @@
     <p style="    line-height: 45px;">کاربر یک ایمیل دعوت برای فعال کردن حساب خود دریافت می‌کند.</p>
     <form class="form-fields" @submit.prevent="submitNewUser">
       <div class="form-row">
-        <label>نام و نام خانوادگی</label>
-        <input v-model="newUser.name" required />
+        <label>نام  </label>
+        <input v-model="newUser.first_name" required />
       </div>
       <div class="form-row">
-        <label>ایمیل</label>
-        <input v-model="newUser.email" type="email" required />
+        <label>نام خانوادگی</label>
+        <input v-model="newUser.last_name" required />
       </div>
+      
+      
       <div class="form-row">
         <label>شماره تماس</label>
         <input v-model="newUser.phone" />
       </div>
       <div class="form-row">
-        <label>عنوان شغلی</label>
-        <input v-model="newUser.jobTitle" />
+        <label>پسورد </label>
+        <input type="password" v-model="newUser.password" />
       </div>
-      <div class="form-row switch-row">
-        <label>مدیر</label>
-        <input type="checkbox" v-model="newUser.isAdmin" />
-      </div>
-      <div class="form-row switch-row">
-        <label>مجوز</label>
-        <input type="checkbox" v-model="newUser.hasAccess" />
-      </div>
+      
       <div class="dialog-actions">
         <button type="submit" class="confirm-btn">تایید</button>
         <button type="button" class="cancel-btn" @click="closeAddUserDialog">بازگشت</button>
@@ -231,6 +326,13 @@
 
 
 
+
+
+
+
+
+
+ 
 
 
 
@@ -257,15 +359,27 @@ export default {
   },
   data() {
     return {
+      memberCount: 5,
+      availableMemberOptions: [5, 10, 20, 100],
+
       newUser: {
-  name: '',
-  email: '',
-  phone: '',
-  jobTitle: '',
-  isAdmin: false,
-  hasAccess: false
-}
-,
+      first_name: '',
+      last_name: '',
+      phone: '',
+      password: '',
+      isAdmin: false,
+      hasAccess: false,
+
+      }
+      ,
+
+    selectedPlan: null,
+    plans: {
+      weekly: { name: 'هفتگی', price: 250000 },
+      monthly: { name: 'ماهانه', price: 670000 },
+      yearly: { name: 'سالانه', price: 4600000 }
+    },
+
       // ... existing data ...
       userList: [
   {
@@ -329,6 +443,31 @@ export default {
     this.fetchUserData();
   },
   methods: {
+
+    
+    
+     selectPlan(planKey) {
+  const plan = this.plans[planKey];
+  if (!plan) return;
+
+  const base = plan.price * this.memberCount;
+  const tax = Math.round(base * 0.09);
+
+  this.selectedPlan = {
+    ...plan,
+    basePrice: base,
+    tax,
+    total: base + tax
+  };
+      } 
+    ,
+  pay() {
+  alert(`پرداخت با موفقیت انجام شد برای ${this.memberCount} کاربر`);
+  this.selectedPlan = null;
+},
+
+
+
     openAddUserDialog() {
   this.$refs.addUserDialog.showModal();
 },
@@ -654,6 +793,7 @@ submitNewUser() {
     display: flex;
     flex-direction: column;
     gap: 32px;
+    min-height: 80vh;
   }
   
   .header-row {
@@ -1337,7 +1477,7 @@ submitNewUser() {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 20px;
+ 
   position: relative;
 }
 
@@ -1346,6 +1486,7 @@ submitNewUser() {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  margin-top: 20px;
 }
 
 .user-role {
@@ -1365,17 +1506,7 @@ submitNewUser() {
   align-self: flex-end;
   margin-top: 10px;
 }
-
-.user-footer {
-  background: #3a57e8;
-  color: #fff;
-  border-radius: 0 0 12px 12px;
-  padding: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 20px;
-}
+ 
 
 .user-actions button {
   background: none;
@@ -1393,7 +1524,8 @@ submitNewUser() {
   font-weight: 600;
   font-size: 14px;
   border: 2px dashed #3a57e8;
-  height: 275px;
+  width: 440px;
+    height: 158px;
 }
 
 .add-text {
@@ -1486,6 +1618,7 @@ submitNewUser() {
   font-family: IRANSansXFaNum, sans-serif;
   padding: 20px;
   background-color: #f9f9fb;
+      width: -webkit-fill-available;
 }
 
 .access-header {
@@ -1577,19 +1710,7 @@ submitNewUser() {
 
 
 
-
-
-.user-card {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-  width: 440px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 20px;
-  position: relative;
-}
+ 
 
 .user-card-header {
   display: flex;
@@ -1600,7 +1721,7 @@ submitNewUser() {
 
 .user-avatar {
   width: 70px;
-  height: 70px;
+      height: 86px;
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
@@ -1610,7 +1731,7 @@ submitNewUser() {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  align-items: flex-end;
+  
   flex: 1;
   text-align: right;
   gap: 4px;
@@ -1634,7 +1755,7 @@ submitNewUser() {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 20px;
+  /* margin-top: 20px; */
 }
 
 .user-actions button {
@@ -1649,7 +1770,28 @@ submitNewUser() {
 
 
 
+.plan-card {
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px;
+  width: 250px;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
 
+.plan-card h4 {
+  font-size: 18px;
+  color: #1a202c;
+  margin-bottom: 10px;
+}
+
+.plan-card p {
+  font-size: 16px;
+  color: #4a5568;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
 
 
 
