@@ -84,7 +84,7 @@
             </div>
             <div class="form-group">
               <label for="position">جایگاه</label>
-              <input type="text" id="position" placeholder="جایگاه شغلی (اختیاری)" />
+              <input v-model="editForm.semat"  type="text" id="position" placeholder="جایگاه شغلی (اختیاری)" />
             </div>
             <button class="save-btn" @click="saveProfile" :disabled="saving">
               {{ saving ? 'در حال ذخیره...' : 'ذخیره' }}
@@ -116,7 +116,7 @@ export default {
       selectedProfileImage: null,
 
       userData: {
-        user: { first_name: '', last_name: '', email: '' }
+        user: { first_name: '', last_name: '', email: '', semat: '' }
       },
       editForm: { first_name: '', last_name: '', email: '' },
       passwordForm: { current_password: '', new_password: '', confirm_password: '' },
@@ -145,6 +145,7 @@ export default {
           first_name: response.data.user.first_name,
           last_name: response.data.user.last_name,
           email: response.data.user.email,
+          semat: response.data.user.semat,
           userAvatarUrl:   response.data.customer.profile_img
         };
       } catch (error) {
@@ -157,6 +158,7 @@ export default {
     const formData = new FormData();
     formData.append('first_name', this.editForm.first_name);
     formData.append('last_name', this.editForm.last_name);
+    formData.append('semat', this.editForm.semat);
 
     if (this.selectedProfileImage) {
       formData.append('profile_img', this.selectedProfileImage);

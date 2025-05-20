@@ -19,6 +19,12 @@
           <input v-model="form.lastName" type="text" id="lastName" placeholder="نام خانوادگی" />
         </div>
 
+        <!-- Last Name -->
+        <div class="form-group">
+          <label for="lastName">جایگاه شغلی (سمت) </label>
+          <input v-model="form.semat" type="text" id="semat" placeholder="سمت " />
+        </div>
+
         <!-- Mobile Number -->
         <div class="form-group">
           <label for="phone">شماره تماس</label>
@@ -60,6 +66,7 @@ export default {
       form: {
         firstName: '',
         lastName: '',
+        semat: '',
         mobileNumber: '',
         password: '',
         terms: false,
@@ -72,6 +79,7 @@ export default {
       const signupData = {
         first_name: this.form.firstName,
         last_name: this.form.lastName,
+        semat: this.form.semat,
         mobile_number: this.form.mobileNumber,
         password: this.form.password,
       };
