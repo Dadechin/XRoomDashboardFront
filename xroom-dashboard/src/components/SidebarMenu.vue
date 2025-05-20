@@ -49,7 +49,7 @@
         <div class="text-wrapper">جلسات</div>
       </router-link>
 
-      <router-link to="/download" class="nav-button" :class="{ active: isActive('/download') }">
+      <router-link to="/dashboard/download" class="nav-button" :class="{ active: isActive('/download') }">
         <img class="img" src="https://c.animaapp.com/m9nvumalUMfQbN/img/property-1-download.svg" />
         <div class="text-wrapper">دانلود</div>
       </router-link>

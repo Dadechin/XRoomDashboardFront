@@ -138,13 +138,14 @@ export default {
 .welcome-container {
   flex: 1;
   text-align: right;
-  padding-right: 20px;
+  /* padding-right: 20px; */
 }
 
 .welcome-message {
-  font-size: 14px;
-  color: #666666;
+  color: #111;
   margin: 0;
+  font-size: 19px;
+  font-weight: 600;
 }
 
 .user-info-container {
@@ -287,47 +288,6 @@ export default {
   position: relative;
   z-index: 100; /* Lower than dropdown but higher than page content */
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 .dropdown-menu {
   position: absolute;
