@@ -92,8 +92,8 @@ router.beforeEach(async (to, from, next) => {
   if (token) {
     try {
       // Make getInfo request
-      const response = await axios.get('/getInfo');
-      
+      let response = await axios.get('/getInfo');
+      response = response.data;
       // Save customer and user data to localStorage
       if (response.data?.customer) {
         localStorage.setItem('customer', JSON.stringify(response.data.customer));

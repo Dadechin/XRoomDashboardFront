@@ -65,19 +65,25 @@ export default {
   };
 
   try {
-        const response = await apiClient.post('/login', loginData); // Only endpoint path needed
-        const token = response.data.token;
-        const user = response.data.user;
+    const response = await apiClient.post('/login', loginData);
+    
+    if (response.data.status === 200) {
+      const token = response.data.data.token;
+      const user = response.data.data.user;
 
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
 
-        this.$router.push('/dashboard');
-      } catch (error) {
-        console.error('Login error:', error);
-        alert('خطا در ورود. لطفا دوباره تلاش کنید.');
-      }
-},
+      this.$router.push('/dashboard');
+    } else {
+      alert(response.data.message || 'خطا در ورود. لطفا دوباره تلاش کنید.');
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    alert('خطا در ورود. لطفا دوباره تلاش کنید.');
+  }
+}
+
 
   },
 };

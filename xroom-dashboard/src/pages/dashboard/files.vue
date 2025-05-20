@@ -462,12 +462,12 @@ export default {
       try {
         const token = localStorage.getItem('token');
         
-        const response = await axios.get(`${this.baseUrl}/getInfo`, {
+        let response = await axios.get(`${this.baseUrl}/getInfo`, {
           headers: {
             'Authorization': `Token ${token}`
           }
         });
-        
+        response = response.data;
         this.userData = response.data;
       } catch (error) {
         console.error('Error fetching user data:', error);
