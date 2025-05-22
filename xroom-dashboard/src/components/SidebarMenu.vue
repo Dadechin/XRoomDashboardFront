@@ -44,12 +44,12 @@
         <div class="text-wrapper">فضاها</div>
       </router-link>
 
-      <router-link to="/meetings" class="nav-button" :class="{ active: isActive('/meetings') }">
+      <router-link to="/dashboard/meetings" class="nav-button" :class="{ active: isActive('/dashboard/meetings') }">
         <img class="img" src="https://c.animaapp.com/m9nvumalUMfQbN/img/menu-icon-1.svg" />
         <div class="text-wrapper">جلسات</div>
       </router-link>
 
-      <router-link to="/dashboard/download" class="nav-button" :class="{ active: isActive('/download') }">
+      <router-link to="/dashboard/download" class="nav-button" :class="{ active: isActive('/dashboard/download') }">
         <img class="img" src="https://c.animaapp.com/m9nvumalUMfQbN/img/property-1-download.svg" />
         <div class="text-wrapper">دانلود</div>
       </router-link>
@@ -132,7 +132,18 @@ export default {
   direction: rtl;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  /* hidden scrollbar */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
+
+.sidebar::-webkit-scrollbar {
+  display: none;
+}
+
 
 .group {
   width: 228px;

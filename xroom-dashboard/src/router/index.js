@@ -6,7 +6,8 @@ import SmsVerification from '../pages/SmsVerification.vue'
 import DashboardPage from '../pages/dashboard/index.vue'    
 import FilesPage from '@/pages/dashboard/files.vue';
 import TeamsPage from '@/pages/dashboard/team.vue';
-import DownloadPage from '@/pages/dashboard/Download.vue';
+import DownloadPage  from '@/pages/dashboard/Download.vue';
+import MeetingPage from '@/pages/dashboard/Meeting.vue';
 import axios from '@/axios';
 
 const routes = [
@@ -46,6 +47,12 @@ const routes = [
     path: '/dashboard/download',
     name: 'download',
     component: DownloadPage,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/dashboard/meetings',
+    name: 'meetings',
+    component: MeetingPage,
     meta: { requiresAuth: true }
   },
   {
