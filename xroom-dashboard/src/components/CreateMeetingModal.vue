@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isOpen" class="modal-overlay" @click="closeModal">
+  <div v-if="isOpen && !isRoomSelectionOpen" class="modal-overlay" @click="closeModal">
     <div class="modal-content" @click.stop>
       <div class="popUp-header">
         <h2>ایجاد جلسه جدید</h2>
@@ -284,10 +284,10 @@
             </div>
           </div>
           <div class="form-group">
-            <label style="font-size: 19px;font-weight: 600;">اتاق های جلسات</label>
+            <label style="font-size: 19px; font-weight: 600;">اتاق‌های جلسات</label>
             <div class="rooms-selecter">
-              <span>0 انتخاب شده</span>
-              <button type="button" @click="openRoomSelection">انتخاب اتاق جلسه</button>
+              <span>{{ form.selectedRooms.length }} انتخاب شده</span>
+              <button type="button" @click="openRoomSelection" style="cursor: pointer;">انتخاب اتاق جلسه</button>
             </div>
           </div>
           <div class="participants-objects">
@@ -358,16 +358,23 @@
       </div>
     </div>
   </div>
+    <RoomSelectionModal
+      :is-open="isRoomSelectionOpen"
+      @close="isRoomSelectionOpen = false"
+      @submit-rooms="handleRoomSelection"
+    />
 </template>
 
 <script>
 import VuePersianDatetimePicker from 'vue3-persian-datetime-picker';
 import moment from 'moment-jalaali';
+import RoomSelectionModal from './RoomSelectionModal.vue';
 
 export default {
   name: 'MeetingModal',
   components: {
     VuePersianDatetimePicker,
+    RoomSelectionModal,
   },
   props: {
     isOpen: {
@@ -385,11 +392,13 @@ export default {
         startMinute: 0,
         endHour: 18,
         endMinute: 0,
+        selectedRooms: [],
       },
       participants: [],
       newParticipantEmail: '',
       defaultProfileIcon: 'https://c.animaapp.com/m9nvumalUMfQbN/img/frame.svg',
       error: null,
+      isRoomSelectionOpen: false,
     };
   },
   computed: {
@@ -412,19 +421,24 @@ export default {
   },
   methods: {
     openRoomSelection() {
-      this.$emit('open-room-selection');
+      this.isRoomSelectionOpen = true;
+    },
+    handleRoomSelection(rooms) {
+      this.form.selectedRooms = rooms;
+      this.isRoomSelectionOpen = false;
     },
     addParticipant() {
       if (!this.newParticipantEmail || !this.validateEmail(this.newParticipantEmail)) {
         this.error = 'لطفاً ایمیل معتبر وارد کنید';
         return;
       }
-
-      if (this.participants.some(p => p.email === this.newParticipantEmail) || this.newParticipantEmail === this.userEmail) {
+      if (
+        this.participants.some((p) => p.email === this.newParticipantEmail) ||
+        this.newParticipantEmail === this.userEmail
+      ) {
         this.error = 'این ایمیل قبلاً اضافه شده است';
         return;
       }
-
       this.participants.push({
         email: this.newParticipantEmail,
         name: 'کاربر مهمان',
@@ -435,7 +449,7 @@ export default {
       this.error = null;
     },
     removeParticipant(email) {
-      this.participants = this.participants.filter(p => p.email !== email);
+      this.participants = this.participants.filter((p) => p.email !== email);
     },
     validateEmail(email) {
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -453,12 +467,14 @@ export default {
         startMinute: 0,
         endHour: 18,
         endMinute: 0,
+        selectedRooms: [],
       };
       this.participants = [];
       this.newParticipantEmail = '';
       this.error = null;
+      this.isRoomSelectionOpen = false;
     },
-       incrementTime(field) {
+    incrementTime(field) {
       if (field === 'startHour' && this.form.startHour < 23) {
         this.form.startHour++;
       } else if (field === 'startMinute' && this.form.startMinute < 59) {
@@ -485,20 +501,17 @@ export default {
         this.error = 'لطفاً نام جلسه و تاریخ را وارد کنید.';
         return;
       }
-
       const momentDate = moment(this.form.date, 'jYYYY/jMM/jDD');
       if (!momentDate.isValid()) {
         this.error = 'تاریخ وارد شده معتبر نیست.';
         return;
       }
-
       const startTimeInMinutes = this.form.startHour * 60 + this.form.startMinute;
       const endTimeInMinutes = this.form.endHour * 60 + this.form.endMinute;
       if (endTimeInMinutes <= startTimeInMinutes) {
         this.error = 'زمان پایان باید بعد از زمان شروع باشد.';
         return;
       }
-
       const startDateTime = momentDate
         .clone()
         .set({
@@ -507,7 +520,6 @@ export default {
           second: 0,
         })
         .toISOString();
-
       const endDateTime = momentDate
         .clone()
         .set({
@@ -516,29 +528,29 @@ export default {
           second: 0,
         })
         .toISOString();
-
       const meetingData = {
         title: this.form.title,
         description: this.form.description,
         startDateTime,
         endDateTime,
+        rooms: this.form.selectedRooms,
         participants: [
           ...(this.userEmail ? [{ email: this.userEmail, role: this.userRole }] : []),
-          ...this.participants.map(p => ({
+          ...this.participants.map((p) => ({
             email: p.email,
             role: p.role,
           })),
         ],
       };
-
       console.log('داده‌های جلسه:', meetingData);
-
       this.$emit('submit', meetingData);
       this.closeModal();
     },
   },
 };
 </script>
+
+
 
 
 <style scoped>
