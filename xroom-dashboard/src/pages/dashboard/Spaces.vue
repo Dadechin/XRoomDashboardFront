@@ -450,6 +450,7 @@ export default {
     font-weight: 500;
     color: #101010;
     margin-top: 4rem;
+    margin-bottom: 12rem;
     text-align: center;
 }
 
