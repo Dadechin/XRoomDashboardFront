@@ -7,6 +7,7 @@ import DashboardPage from '../pages/dashboard/index.vue'
 import FilesPage from '@/pages/dashboard/files.vue';
 import TeamsPage from '@/pages/dashboard/team.vue';
 import DownloadPage  from '@/pages/dashboard/Download.vue';
+import spacesPage from '@/pages/dashboard/Spaces.vue';
 import MeetingPage from '@/pages/dashboard/Meeting.vue';
 import axios from '@/axios';
 
@@ -47,6 +48,12 @@ const routes = [
     path: '/dashboard/download',
     name: 'download',
     component: DownloadPage,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/dashboard/spaces',
+    name: 'spaces',
+    component: spacesPage,
     meta: { requiresAuth: true }
   },
   {

@@ -352,7 +352,7 @@ export default {
       rooms: [
         {
           id: 1,
-          image: require('@/assets/img/img.png'),
+          image: require('@/assets/img/img.jpg'),
           name: 'Interview room 1',
           capacity: 33,
           type: 'فضا تیم',
@@ -360,7 +360,7 @@ export default {
         },
         {
           id: 2,
-          image: require('@/assets/img/img.png'),
+          image: require('@/assets/img/img.jpg'),
           name: 'Interview room 2',
           capacity: 24,
           type: 'آموزشی',
@@ -368,7 +368,7 @@ export default {
         },
         {
           id: 3,
-          image: require('@/assets/img/img.png'),
+          image: require('@/assets/img/img.jpg'),
           name: 'Interview room 3',
           capacity: 60,
           type: 'جلسه تیمی',
@@ -376,7 +376,7 @@ export default {
         },
         {
           id: 4,
-          image: require('@/assets/img/img.png'),
+          image: require('@/assets/img/img.jpg'),
           name: 'Interview room 4',
           capacity: 33,
           type: 'فضا تیم',
@@ -384,7 +384,7 @@ export default {
         },
         {
           id: 5,
-          image: require('@/assets/img/img.png'),
+          image: require('@/assets/img/img.jpg'),
           name: 'Interview room 5',
           capacity: 24,
           type: 'آموزشی',
@@ -392,7 +392,7 @@ export default {
         },
         {
           id: 6,
-          image: require('@/assets/img/img.png'),
+          image: require('@/assets/img/img.jpg'),
           name: 'Interview room 6',
           capacity: 60,
           type: 'جلسه تیمی',
@@ -400,7 +400,7 @@ export default {
         },
         {
           id: 7,
-          image: require('@/assets/img/img.png'),
+          image: require('@/assets/img/img.jpg'),
           name: 'Interview room 7',
           capacity: 33,
           type: 'فضا تیم',
@@ -408,7 +408,7 @@ export default {
         },
         {
           id: 8,
-          image: require('@/assets/img/img.png'),
+          image: require('@/assets/img/img.jpg'),
           name: 'Interview room 8',
           capacity: 24,
           type: 'آموزشی',
@@ -463,7 +463,7 @@ export default {
     createTemporaryRoom() {
       const newRoom = {
         id: this.rooms.length + this.Temporaryrooms.length + 1,
-        image: this.newTempRoom.image || require('@/assets/img/img.png'),
+        image: this.newTempRoom.image || require('@/assets/img/img.jpg'),
         name: this.newTempRoom.name,
         capacity: this.newTempRoom.capacity,
         type: this.newTempRoom.type,
@@ -720,4 +720,9 @@ export default {
     display: block;
     margin-right: auto;
 }
+
+.room-image {
+  border-radius: 10px;
+}
+
 </style>

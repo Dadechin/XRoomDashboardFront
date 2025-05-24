@@ -158,7 +158,7 @@ export default {
           id: 1,
           title: 'Interview room',
           date: '2025-05-25T10:00:00',
-          image: require('@/assets/img/img.png'),
+          image: require('@/assets/img/img.jpg'),
           type: 'فضا تیم',
           maxCapacity: 33,
         },
@@ -166,7 +166,7 @@ export default {
           id: 2,
           title: 'جلسه بررسی پیشرفت',
           date: '2025-05-18T14:00:00',
-          image: require('@/assets/img/img.png'),
+          image: require('@/assets/img/img.jpg'),
           type: 'مدیریتی',
           maxCapacity: 8,
         },
@@ -174,7 +174,7 @@ export default {
           id: 3,
           title: 'جلسه تیم فنی',
           date: '2025-06-01T09:00:00',
-          image: require('@/assets/img/img.png'),
+          image: require('@/assets/img/img.jpg'),
           type: 'فنی',
           maxCapacity: 12,
         },
@@ -330,11 +330,9 @@ export default {
         color: #FFFFFF;
         font-size: 15px;
         font-weight: 500;
-        height: 38px;
-        width: 51px;
         border-radius: 8px;
         border: none;
-        padding: 7px 10px;
+        padding: 7px 12px;
         cursor: pointer;
         margin-left: 1rem;
     }
@@ -344,8 +342,6 @@ export default {
         background-color: #FFFFFF;
         font-size: 15px;
         font-weight: 500;
-        height: 38px;
-        width: 51px;
         border-radius: 8px;
         border: none;
         padding: 7px 10px;
@@ -376,16 +372,16 @@ export default {
     }
 
     .create-meet {
-    width: 191px;
-    height: 46px;
-    padding: 12px 24px 12px 24px;
-    background-color: #3A57E8;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 500;
-    color: #FFFFFF;
-    border: none;
-    cursor: pointer;
+        padding: 12px 24px 12px 24px;
+        background-color: #3A57E8;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 500;
+        color: #FFFFFF;
+        border: none;
+        cursor: pointer;
+        width: max-content;
+      
     }
 
     .meetings-list {
@@ -426,6 +422,10 @@ export default {
         color: #3A57E8;
         display: flex;
         align-items: center;
+    }
+
+    .meeting-image {
+      border-radius: 10px;
     }
 
 

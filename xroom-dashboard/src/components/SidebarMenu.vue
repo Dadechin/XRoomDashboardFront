@@ -39,7 +39,7 @@
         <div class="text-wrapper">داشبورد</div>
       </router-link>
 
-      <router-link to="/spaces" class="nav-button" :class="{ active: isActive('/spaces') }">
+      <router-link to="/dashboard/spaces" class="nav-button" :class="{ active: isActive('/dashboard/spaces') }">
         <img class="img" src="https://c.animaapp.com/m9nvumalUMfQbN/img/menu-icon-4.svg" />
         <div class="text-wrapper">فضاها</div>
       </router-link>
