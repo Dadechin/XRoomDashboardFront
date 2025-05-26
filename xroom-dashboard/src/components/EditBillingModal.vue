@@ -2,7 +2,7 @@
   <div v-if="isVisible" class="modal-overlay" @click="$emit('close')">
     <div class="modal-content" @click.stop>
       <div class="popUp-header">
-        <h2>ایجاد جلسه جدید</h2>
+        <h2>ویرایش صورت حساب</h2>
         <button @click="$emit('close')">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -31,36 +31,74 @@
         </button>
       </div>
       <div class="popUp-title">
-        <h2>اضافه کردن فضای جدید</h2>
-        <span>برای ایجاد فضای جدید فرم زیر را تکمیل نمایید.</span>
+        <h2>اطلاعات صورت حساب</h2>
+        <span>لطفا جزئیات صورت حساب خود را وارد کنید تا صورت حساب خود را تنظیم کنید.</span>
       </div>
       <div class="popUp-objects">
-        <form @submit.prevent="handleSubmit">
-          <div class="form-group">
-            <label for="spaceName">نام:</label>
+        <form @submit.prevent="handleSubmit" autocomplete="off">
+          <div class="form-group" style="justify-content: normal;">
+            <span>سفارش به عنوان یک شرکت</span>
             <input
-              id="spaceName"
+              type="checkbox"
+              id="toggle"
+              class="checkbox"
+              v-model="form.isCompany"
+            />
+            <label for="toggle" class="switch"></label>
+          </div>
+          <div class="form-group">
+            <label for="name">نام</label>
+            <input
+              id="name"
               v-model="form.name"
               type="text"
               required
             />
           </div>
           <div class="form-group">
-            <label for="spaceCapacity">ظرفیت:</label>
+            <label for="address">آدرس</label>
             <input
-              id="spaceCapacity"
-              v-model.number="form.capacity"
-              type="number"
+              id="address"
+              v-model="form.address"
+              type="text"
               required
             />
           </div>
           <div class="form-group">
-            <label for="spaceType">امکانات فضای مد نظر:</label>
-            <textarea
-              id="spaceType"
-              v-model="form.features"
+            <label for="city">شهر</label>
+            <input
+              id="city"
+              v-model="form.city"
+              type="text"
               required
-            ></textarea>
+            />
+          </div>
+          <div class="form-group">
+            <label for="postalCode">کدپستی</label>
+            <input
+              id="postalCode"
+              v-model="form.postalCode"
+              type="text"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="phone">شماره تماس</label>
+            <input
+              id="phone"
+              v-model="form.phone"
+              type="tel"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="email">ایمیل</label>
+            <input
+              id="email"
+              v-model="form.email"
+              type="email"
+              required
+            />
           </div>
         </form>
       </div>
@@ -84,35 +122,41 @@ export default {
   data() {
     return {
       form: {
+        isCompany: false,
         name: '',
-        capacity: null,
-        features: '',
+        address: '',
+        city: '',
+        postalCode: '',
+        phone: '',
+        email: '',
       },
     };
   },
   methods: {
     handleSubmit() {
-      if (this.form.name && this.form.capacity && this.form.features) {
-        console.log('داده‌های فرم:', {
-          name: this.form.name,
-          capacity: this.form.capacity,
-          features: this.form.features,
-        });
-        this.form = {
-          name: '',
-          capacity: null,
-          features: '',
-        };
-        this.$emit('close');
-      }
+      console.log('اطلاعات صورت حساب:', JSON.stringify(this.form, null, 2));
+    /*  console.log('اطلاعات صورت حساب:', this.form);  */
+      this.$emit('close');
+      this.resetForm();
+    },
+    resetForm() {
+      this.form = {
+        isCompany: false,
+        name: '',
+        address: '',
+        city: '',
+        postalCode: '',
+        phone: '',
+        email: '',
+      };
     },
   },
 };
 </script>
 
 
-
 <style scoped>
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -135,7 +179,7 @@ export default {
   direction: rtl;
   border-radius: 20px;
   padding-bottom: 1.5rem;
-  height: max-content;
+  height: 95vh;
   overflow-y: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -220,7 +264,7 @@ export default {
   border: 1px solid #718096;
   border-radius: 8px;
   font-size: 1rem;
-  max-width: 25rem
+  max-width: 22rem
 }
 
 .form-group textarea {
@@ -275,4 +319,41 @@ export default {
   font-weight: 500;
   font-size: 18px;
 }
+
+/* checkbox toggler */
+
+.switch { 
+    position : relative ;
+    display : inline-block;
+    width: 60px !important;
+    height: 25px;
+    background-color: #CCCCCC;
+    border-radius: 20px;
+    margin-right: 4rem;
+ }
+
+ .switch::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: white;
+    top: 2px;
+    right: 3px;
+    transition: all 0.3s;
+}
+
+.checkbox:checked + .switch::after {
+    right: 37px; 
+}
+.checkbox:checked + .switch {
+    background-color: #3a57e8;
+}
+
+.checkbox { 
+    display : none;
+}
+
+
 </style>

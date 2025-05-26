@@ -15,28 +15,6 @@
 در این بخش به شما امکان می‌دهد تا اتاق‌ها، فایل‌ها و جلسات را با همکاران خود به اشتراک بگذارید. در این بخش می‌توانید تیم خود را مدیریت کنید.        </p>
       </div>
 
-
-     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <!-- Tab Buttons -->
 <div class="tab-buttons">
   <button
@@ -139,7 +117,7 @@
         شماره تماس: ۰۹۳۷۹۸۹۸۶۲۳<br />
         ایمیل: aminimperator@gmail.com
       </p>
-      <button class="secondary-button">ویرایش جزئیات صورتحساب</button>
+      <button class="secondary-button" @click="openBillingModal">ویرایش جزئیات صورتحساب</button>
     </div>
 
     <!-- Membership Info -->
@@ -155,6 +133,10 @@
       <p>هیچ روش پرداختی برای صورتحساب مرتبط نیست.</p>
     </div>
   </div>
+    <EditBillingModal
+  :isVisible="isBillingModalVisible"
+  @close="closeBillingModal"
+  />
 </div>
 
 </div>
@@ -167,15 +149,6 @@
 
 <div v-if="activeTab === 'buy-subscription'" class="tab-content">
   <div class="buy-subscription-container">
-
-
-
-
-
-
-
-
-
 
     <div style="text-align: center; margin-bottom: 20px;">
       <label for="memberCount" style="margin-left: 10px;">تعداد کاربران:</label>
@@ -190,16 +163,6 @@
         </option>
       </select>
     </div>
-
-
-
-
-
-
-
-
-
-
 
     <h3 style="text-align: center; margin-bottom: 20px;">لطفا نوع اشتراک خود را انتخاب کنید</h3>
 
@@ -246,30 +209,6 @@
 </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-
- 
-
-
-     
   </div>
   </div>
 
@@ -316,6 +255,7 @@ import 'video.js/dist/video-js.css';
 import '@videojs/themes/dist/sea/index.css';
 import '@google/model-viewer'
 import SidebarMenu from '@/components/SidebarMenu.vue'
+import EditBillingModal from '@/components/EditBillingModal.vue';
 import axios from 'axios';
 
  
@@ -326,12 +266,13 @@ export default {
   name: 'DashboardPage',
   components: {
     SidebarMenu,
-    
+    EditBillingModal,
     AppHeader,
 
   },
   data() {
     return {
+      isBillingModalVisible: false,
       memberCount: 5,
       availableMemberOptions: [5, 10, 20, 100],
 
@@ -416,7 +357,12 @@ export default {
     this.fetchUserData();
   },
   methods: {
-
+    openBillingModal() {
+      this.isBillingModalVisible = true;
+    },
+    closeBillingModal() {
+      this.isBillingModalVisible = false;
+    },
     
     
      selectPlan(planKey) {
