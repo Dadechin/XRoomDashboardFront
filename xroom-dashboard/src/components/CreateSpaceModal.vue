@@ -1,53 +1,97 @@
 <template>
-  <div v-if="isVisible" class="modal-overlay">
-    <div class="modal-content">
-      <button class="close-btn" @click="closeModal">✕</button>
-      <h2 class="modal-title">انتخاب فضای اختصاصی</h2>
-      
-      <!-- Space Selection Cards -->
-      <div v-if="spaces.length > 0" class="space-selection">
-        <div 
-          v-for="(space, index) in spaces" 
-          :key="index" 
-          class="space-card" 
-          @click="selectSpace(space)"
-          :class="{ selected: selectedSpace === space }"  
-        >
-          <img :src="'http://my.xroomapp.com:8000' + space.img" alt="فضای اختصاصی" class="space-img" />
-          <div class="space-info">
-            <h3 class="space-name">{{ space.name }}</h3>
-            <p class="space-type">{{ space.type }}</p>
-            <p class="space-capacity">حداکثر: {{ space.capacity }} کاربر</p> <!-- Map maxPerson -->
+  <div v-if="isVisible" class="modal-overlay" @click="closeModal">
+    <div class="modal-content" @click.stop>
+      <div class="popUp-header">
+        <h2>فضا جدید</h2>
+        <button @click="$emit('close')">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="35"
+            height="35"
+            viewBox="0 0 32 32"
+            fill="none"
+          >
+            <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" fill="#101010" />
+            <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" stroke="#E2DEE9" />
+            <path
+              d="M21 11L11 21"
+              stroke="white"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M11 11L21 21"
+              stroke="white"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+      </div>
+      <div class="popUp-title">
+        <!-- Space Selection Cards -->
+        <div v-if="spaces.length > 0" class="space-selection">
+          <div 
+            v-for="(space, index) in spaces" 
+            :key="index" 
+            class="space-card" 
+            @click="selectSpace(space)"
+            :class="{ selected: selectedSpace === space }"  
+          >
+            <img :src="'http://my.xroomapp.com:8000' + space.img" alt="فضای اختصاصی" class="space-img" />
+            <div class="space-info">
+              <h3 class="space-name">{{ space.name }}</h3>
+              <p class="space-type">{{ space.type }}</p>
+              <p class="space-capacity">حداکثر: {{ space.capacity }} کاربر</p>
+            </div>
           </div>
+        </div> 
+
+        <div v-else class="loading-message">
+          <p>در حال بارگذاری فضاها...</p>
         </div>
       </div>
+      
+      <div class="popUp-objects">
+        <div class="popUp-title-object">
+          <h2>اضافه کردن فضا جدید</h2>
+          <span>برای ایجاد فضای جدید فرم زیر را تکمیل نمایید .</span>
+        </div>
 
-      <div v-else class="loading-message">
-        <p>در حال بارگذاری فضاها...</p>
+
+        <!-- Form to enter additional information -->
+        <div v-if="selectedSpace" class="space-form">
+          <form @submit.prevent="submitForm">
+
+            <div class="form-group">
+              <label for="name">نام:</label>
+              <input type="text" v-model="form.name" id="name" required />
+            </div>
+            
+            <div class="form-group">
+              <label for="capacity">ظرفیت:</label>
+              <input type="number" v-model="form.capacity" id="capacity" required />
+            </div>
+            
+            <div class="form-group">
+              <label for="description">توضیحات:</label>
+              <textarea v-model="form.description" id="description" required></textarea>
+            </div>
+          </form>
+        </div>
       </div>
-
-      <!-- Form to enter additional information -->
-      <div v-if="selectedSpace" class="space-form">
-        <h3>اطلاعات فضا</h3>
-        <form @submit.prevent="submitForm">
-          <label for="name">نام:</label>
-          <input type="text" v-model="form.name" id="name" required />
-          
-          <label for="capacity">ظرفیت:</label>
-          <input type="number" v-model="form.capacity" id="capacity" required />
-          
-          <label for="description">توضیحات:</label>
-          <textarea v-model="form.description" id="description" required></textarea>
-          
-          <button type="submit" class="submit-btn">تایید</button>
-        </form>
+      <div class="form-actions" v-if="selectedSpace">
+          <button type="button" class="cancel-btn" @click="closeModal">بازگشت</button>
+          <button type="submit" class="submit-btn" @click="submitForm">تایید</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios'; // Import Axios for API requests
+import axios from 'axios';
 
 export default {
   props: {
@@ -55,32 +99,42 @@ export default {
   },
   data() {
     return {
-      spaces: [], // To store the fetched spaces
-      selectedSpace: null, // Store the selected space
+      spaces: [],
+      selectedSpace: null,
       form: {
         name: '',
         capacity: '',
-        description: '',  // New field for description
+        description: '',
       },
     };
   },
   methods: {
     closeModal() {
-      this.$emit('close'); // Emit the close event to parent
+      this.$emit('close');
+      this.resetForm()
+    },
+    resetForm() {
+      this.spaces = [],
+      this.selectedSpace = null,
+      this.form = {
+        name : '',
+        capacity : '',
+        description : '',
+      }
     },
     selectSpace(space) {
-      this.selectedSpace = space; // Set the selected space
+      this.selectedSpace = space;
     },
     async fetchSpaces() {
       try {
-        const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+        const token = localStorage.getItem('token');
         if (!token) {
           console.error('No token found!');
           return;
         }
 
         const response = await axios.get(
-          'http://my.xroomapp.com:8000/get_assigned_assetbundle_rooms', // API endpoint
+          'http://my.xroomapp.com:8000/get_assigned_assetbundle_rooms',
           {
             headers: {
               Authorization: `Token ${token}`,
@@ -89,57 +143,50 @@ export default {
           }
         );
 
-        // Log the response to check if `maxPerson` is included in the API response
-        console.log(response.data); // Log the API response to the console
+        console.log(response.data);
 
-        // Store the spaces data in the spaces array
         this.spaces = response.data.assetbundle_rooms.map(room => ({
           name: room.name,
-          img: room.img,  // Assuming 'img' exists in the API response
-          capacity: room.maxPerson, // Map maxPerson to capacity
-          type: room.Private ? 'Private' : 'Public', // Adjust if you have a different field
-          maxPerson: room.maxPerson, // Store maxPerson for display
-          id: room.id, // Store the room id for space selection
+          img: room.img,
+          capacity: room.maxPerson,
+          type: room.Private ? 'Private' : 'Public',
+          maxPerson: room.maxPerson,
+          id: room.id,
         }));
       } catch (error) {
         console.error('Error fetching spaces:', error);
       }
     },
     async submitForm() {
-      // Collect data to be sent to the API
       const spaceData = {
-        assetBundleRoomId: this.selectedSpace.id,  // Use selected space ID (the room ID)
+        assetBundleRoomId: this.selectedSpace.id,
         name: this.form.name,
-        description: this.form.description,  // Include description from form
+        description: this.form.description,
         capacity: this.form.capacity,
       };
 
       try {
-        const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+        const token = localStorage.getItem('token');
         if (!token) {
           console.error('No token found!');
           return;
         }
 
-        // Make POST request to add the space
         const response = await axios.post(
-          'http://my.xroomapp.com:8000/add_space',  // API endpoint to add space
+          'http://my.xroomapp.com:8000/add_space',
           spaceData,
           {
             headers: {
-              Authorization: `Token ${token}`,  // Pass the token
+              Authorization: `Token ${token}`,
               'Content-Type': 'application/json',
             },
           }
         );
 
-        // Log the response from the API
         console.log(response.data);
-
-        // Close the modal and emit success
-        this.$emit('submit', response.data);  // Pass the response data to the parent
+        this.$emit('submit', response.data);
         this.closeModal(); // Close the modal
-
+        window.location.reload(); // Refresh the page
       } catch (error) {
         console.error('Error submitting form:', error);
         alert('خطا در ارسال اطلاعات، لطفا دوباره تلاش کنید');
@@ -149,7 +196,7 @@ export default {
   watch: {
     isVisible(newVal) {
       if (newVal) {
-        this.fetchSpaces(); // Fetch spaces only when the modal becomes visible
+        this.fetchSpaces();
       }
     },
   },
@@ -157,7 +204,6 @@ export default {
 </script>
 
 <style scoped>
-/* Styling for the modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -168,40 +214,138 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 }
 
 .modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  max-width: 600px;
+  background: #F7F5FA;
+  border-radius: 8px;
   width: 100%;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 700px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  direction: rtl;
+  border-radius: 20px;
+  padding-bottom: 1.5rem;
+  height: 95vh;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-.close-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
+
+.modal-content::-webkit-scrollbar {
+  display: none;
 }
 
-.modal-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #3A57E8;
-  text-align: center;
-  margin-bottom: 20px;
+
+.popUp-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #101010;
+    color: #fff;
+    width: 100%;
+    padding: 20px 26px;
+    margin-bottom: 1.5rem;
+    border-radius: 20px 20px 0px 0px;
 }
+
+.popUp-header h2 {
+  font-size: 22px;
+}
+
+.popUp-header button {
+    background-color: #101010;
+    border: none;
+    cursor: pointer;
+}
+
+.popUp-title {
+    padding: 20px;
+    padding-right: 50px;
+}
+
+.popUp-title-object {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+
+
+
+.popUp-title-object h2{
+    font-size: 20px;
+    font-weight: 600;
+    color: #101010;
+}
+
+.popUp-title-object span {
+    font-size: 16px;
+    font-weight: 500;
+    color: #4F5A69;
+    margin-top: 1rem;
+}
+
+.popUp-objects {
+    margin-top: 0rem !important;
+    padding: 20px;
+    background-color: #FFFFFF;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 620px;
+    display: block;
+    margin: auto;
+}
+
+.form-group {
+  margin-bottom: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 500;
+  width: 50%;
+  font-size: 16px;
+}
+
+.form-group input {
+  height: 45px;
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #718096;
+  border-radius: 8px;
+  font-size: 1rem;
+  max-width: 22rem
+}
+
+.form-group textarea {
+  height: 140px;
+  width: 75%;
+  padding: 8px;
+  border: 1px solid #718096;
+  border-radius: 8px;
+  font-size: 1rem;
+  max-width: 25rem;
+  resize: none;
+}
+
+.form-group input:focus {
+    outline: none;
+}
+
+.form-group textarea:focus {
+    outline: none;
+}
+
 
 .space-selection {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
-  justify-content: space-between;
+  gap: 2rem 16px;
+  justify-content: flex-start;
   margin-bottom: 20px;
 }
 
@@ -210,7 +354,8 @@ export default {
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  width: 150px;
+  width: 31%;
+  height: 15rem;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -227,7 +372,7 @@ export default {
 
 .space-img {
   width: 100%;
-  height: 120px;
+  height: 8rem;
   object-fit: cover;
   border-bottom: 1px solid #ddd;
 }
@@ -235,13 +380,15 @@ export default {
 .space-info {
   padding: 10px;
   text-align: center;
+  gap: 1rem;
+  display: grid;
 }
 
 .space-name {
   font-size: 16px;
   font-weight: 600;
   color: #444;
-  margin: 5px 0;
+  margin-top: 5px;
 }
 
 .space-type, .space-capacity {
@@ -253,91 +400,45 @@ export default {
   text-align: center;
   font-size: 16px;
   color: #718096;
+  margin-bottom: 1rem;
 }
 
 .space-form {
-  margin-top: 20px;
+  margin-top: 3rem;
 }
 
-.space-form label {
-  display: block;
-  margin-bottom: 5px;
-  font-size: 14px;
-}
-
-.space-form input, .space-form textarea {
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 0px; 
+  padding-bottom: 0;
   width: 100%;
-  padding: 8px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  max-width: 620px;
+  margin: auto;
+}
+
+.submit-btn,
+.cancel-btn {
+  text-align: center;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  height: 50px;
+  width: 47%;
 }
 
 .submit-btn {
   background-color: #3A57E8;
   color: white;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
+  font-weight: 500;
+  font-size: 18px;
 }
 
-.submit-btn:hover {
-  background-color: #2c48b4;
+.cancel-btn {
+  background-color: #EBEEFD;
+  color: #101010;
+  font-weight: 500;
+  font-size: 18px;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-/* Modal styling */
-.create-space-modal {
-  position: fixed; 
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent backdrop */
-  z-index: 9999; /* Ensure it's above other content */
-}
-
-/* Modal content */
-.modal-content {
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  max-width: 600px;
-  width: 100%;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  z-index: 10000; /* Higher than backdrop */
-}
-
-/* Add transition for smooth opening/closing */
-.create-space-modal-enter-active, .create-space-modal-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.create-space-modal-enter, .create-space-modal-leave-to {
-  opacity: 0;
-}
 </style>
