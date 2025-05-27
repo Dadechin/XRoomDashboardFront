@@ -1,9 +1,9 @@
 <template>
-  <div v-if="isVisible" class="modal-overlay" @click="$emit('close')">
+  <div v-if="isVisible" class="modal-overlay" @click="close">
     <div class="modal-content" @click.stop>
       <div class="popUp-header">
-        <h2>ویرایش صورت حساب</h2>
-        <button @click="$emit('close')">
+        <h2>کاربر جدید</h2>
+        <button @click="close">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="35"
@@ -31,63 +31,17 @@
         </button>
       </div>
       <div class="popUp-title">
-        <h2>اطلاعات صورت حساب</h2>
-        <span>لطفا جزئیات صورت حساب خود را وارد کنید تا صورت حساب خود را تنظیم کنید.</span>
+        <h2>دعوت کاربر جدید</h2>
+        <span>کاربر یک ایمیل دعوت برای فعال کردن حساب خود دریافت می‌کند.</span>
       </div>
       <div class="popUp-objects">
         <form @submit.prevent="handleSubmit" autocomplete="off">
-          <div class="form-group" style="justify-content: normal;">
-            <span>سفارش به عنوان یک شرکت</span>
-            <input
-              type="checkbox"
-              id="toggle"
-              class="checkbox"
-              v-model="form.isCompany"
-            />
-            <label for="toggle" class="switch"></label>
-          </div>
           <div class="form-group">
-            <label for="name">نام</label>
+            <label for="full_name">نام و نام خانوادگی</label>
             <input
-              id="name"
-              v-model="form.name"
+              id="full_name"
+              v-model="newUser.full_name"
               type="text"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="address">آدرس</label>
-            <input
-              id="address"
-              v-model="form.address"
-              type="text"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="city">شهر</label>
-            <input
-              id="city"
-              v-model="form.city"
-              type="text"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="postalCode">کدپستی</label>
-            <input
-              id="postalCode"
-              v-model="form.postalCode"
-              type="text"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="phone">شماره تماس</label>
-            <input
-              id="phone"
-              v-model="form.phone"
-              type="tel"
               required
             />
           </div>
@@ -95,15 +49,54 @@
             <label for="email">ایمیل</label>
             <input
               id="email"
-              v-model="form.email"
+              v-model="newUser.email"
               type="email"
               required
+              style="text-align: left;"
             />
+          </div>
+          <div class="form-group">
+            <label for="phone">شماره تماس</label>
+            <input
+              id="phone"
+              v-model="newUser.phone"
+              type="tel"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="job_title">عنوان شغلی</label>
+            <input
+              id="job_title"
+              v-model="newUser.job_title"
+              type="text"
+              required
+            />
+          </div>
+          <div class="form-group" style="justify-content: normal;">
+            <span>مدیر</span>
+            <input
+              type="checkbox"
+              id="is_manager"
+              class="checkbox"
+              v-model="newUser.is_manager"
+            />
+            <label for="is_manager" class="switch"></label>
+          </div>
+          <div class="form-group" style="justify-content: normal;">
+            <span>مجوز</span>
+            <input
+              type="checkbox"
+              id="has_permission"
+              class="checkbox"
+              v-model="newUser.has_permission"
+            />
+            <label for="has_permission" class="switch"></label>
           </div>
         </form>
       </div>
       <div class="form-actions">
-        <button type="button" class="cancel-btn" @click="$emit('close')">بازگشت</button>
+        <button type="button" class="cancel-btn" @click="close">بازگشت</button>
         <button type="submit" class="submit-btn" @click="handleSubmit">تایید</button>
       </div>
     </div>
@@ -112,7 +105,7 @@
 
 <script>
 export default {
-  name: 'CreateSpaceModal',
+  name: 'AddUserModal',
   props: {
     isVisible: {
       type: Boolean,
@@ -121,48 +114,45 @@ export default {
   },
   data() {
     return {
-      form: {
-        isCompany: false,
-        name: '',
-        address: '',
-        city: '',
-        postalCode: '',
+      newUser: {
+        full_name: '',
         phone: '',
         email: '',
+        job_title: '',
+        is_manager: false,
+        has_permission: false,
       },
     };
   },
   methods: {
-    handleSubmit() {
-      console.log('اطلاعات صورت حساب:', JSON.stringify(this.form, null, 2));
-    /*  console.log('اطلاعات صورت حساب:', this.form);  */
-      this.$emit('close');
-      this.resetForm();
-    },
-    resetForm() {
-      this.form = {
-        isCompany: false,
-        name: '',
-        address: '',
-        city: '',
-        postalCode: '',
+    close() {
+      this.newUser = {
+        full_name: '',
         phone: '',
         email: '',
+        job_title: '',
+        is_manager: false,
+        has_permission: false,
       };
+      this.$emit('close');
+    },
+    handleSubmit() {
+      if (!this.newUser.full_name || !this.newUser.email || !this.newUser.phone || !this.newUser.job_title) {
+        alert('لطفاً تمام فیلدها را پر کنید.');
+        return;
+      }
+      this.$emit('add-user', { ...this.newUser });
+      console.log('اطلاعات کاربر اضافه شده:', JSON.stringify(this.newUser, null, 2));
+      this.close();
     },
   },
 };
 </script>
 
-
 <style scoped>
-
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0; /* جایگزین top: 0; left: 0; right: 0; bottom: 0 */
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
@@ -172,12 +162,11 @@ export default {
 
 .modal-content {
   background: #F7F5FA;
-  border-radius: 8px;
+  border-radius: 20px;
   width: 100%;
   max-width: 700px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   direction: rtl;
-  border-radius: 20px;
   padding-bottom: 1.5rem;
   height: 95vh;
   overflow-y: auto;
@@ -185,20 +174,19 @@ export default {
   -ms-overflow-style: none;
 }
 
-
 .modal-content::-webkit-scrollbar {
   display: none;
 }
+
 .popUp-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #101010;
-    color: #fff;
-    width: 100%;
-    padding: 20px 26px;
-    margin-bottom: 1.5rem;
-    border-radius: 20px 20px 0px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #101010;
+  color: #fff;
+  padding: 20px 26px;
+  margin-bottom: 1.5rem;
+  border-radius: 20px 20px 0 0;
 }
 
 .popUp-header h2 {
@@ -206,41 +194,39 @@ export default {
 }
 
 .popUp-header button {
-    background-color: #101010;
-    border: none;
-    cursor: pointer;
+  background-color: inherit; /* استفاده از inherit برای حذف تکرار #101010 */
+  border: none;
+  cursor: pointer;
 }
 
 .popUp-title {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    padding: 20px;
-    padding-right: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* اصلاح start به flex-start برای استاندارد بودن */
+  padding: 20px 50px 20px 20px;
 }
 
 .popUp-title h2 {
-    font-size: 20px;
-    font-weight: 600;
-    color: #101010;
-} 
+  font-size: 20px;
+  font-weight: 600;
+  color: #101010;
+}
 
 .popUp-title span {
-    font-size: 16px;
-    font-weight: 500;
-    color: #4F5A69;
-    margin-top: 1rem;
+  font-size: 16px;
+  font-weight: 500;
+  color: #4F5A69;
+  margin-top: 1rem;
 }
 
 .popUp-objects {
-    margin-top: 1rem !important;
-    padding: 20px;
-    background-color: #FFFFFF;
-    border-radius: 16px;
-    width: 100%;
-    max-width: 620px;
-    display: block;
-    margin: auto;
+  margin: 1rem auto 0; /* ترکیب margin-top و margin: auto */
+  padding: 20px;
+  background-color: #FFFFFF;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 620px;
+  display: block;
 }
 
 .form-group {
@@ -251,46 +237,40 @@ export default {
 }
 
 .form-group label {
-  display: block;
   font-weight: 500;
   width: 50%;
   font-size: 16px;
 }
 
-.form-group input {
-  height: 45px;
+.form-group input,
+.form-group textarea {
   width: 100%;
   padding: 8px;
   border: 1px solid #718096;
   border-radius: 8px;
   font-size: 1rem;
-  max-width: 22rem
+  resize: none; /* برای textarea */
+}
+
+.form-group input {
+  height: 45px;
+  max-width: 22rem;
 }
 
 .form-group textarea {
   height: 140px;
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #718096;
-  border-radius: 8px;
-  font-size: 1rem;
   max-width: 25rem;
-  resize: none;
 }
 
-.form-group input:focus {
-    outline: none;
-}
-
+.form-group input:focus,
 .form-group textarea:focus {
-    outline: none;
+  outline: none;
 }
 
 .form-actions {
   display: flex;
   justify-content: space-between;
-  padding: 20px 0px; 
-  padding-bottom: 0;
+  padding: 20px 0 0;
   width: 100%;
   max-width: 620px;
   margin: auto;
@@ -298,26 +278,24 @@ export default {
 
 .submit-btn,
 .cancel-btn {
-  text-align: center;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   height: 50px;
   width: 47%;
+  font-weight: 500;
+  font-size: 18px;
+  text-align: center;
 }
 
 .submit-btn {
   background-color: #3A57E8;
   color: white;
-  font-weight: 500;
-  font-size: 18px;
 }
 
 .cancel-btn {
   background-color: #EBEEFD;
   color: #101010;
-  font-weight: 500;
-  font-size: 18px;
 }
 
 /* checkbox toggler */
@@ -329,7 +307,7 @@ export default {
     height: 25px;
     background-color: #CCCCCC;
     border-radius: 20px;
-    margin-right: 4rem;
+    margin-right: 12.5rem;
  }
 
  .switch::after {
@@ -354,6 +332,5 @@ export default {
 .checkbox { 
     display : none;
 }
-
 
 </style>

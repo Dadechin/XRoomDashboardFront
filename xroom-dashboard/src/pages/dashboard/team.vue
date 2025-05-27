@@ -1,266 +1,195 @@
 <template>
   <SidebarMenu />
-  
+
   <div class="dashboard-page">
     <div class="content">
       <!-- Top Header -->
       <AppHeader pageTitle="تیم ها" />
-
-
-       
       <!-- Description -->
       <div class="section-description">
-          <div class="section-title">مدیریت اعضا</div>
+        <div class="section-title">مدیریت اعضا</div>
         <p>
-در این بخش به شما امکان می‌دهد تا اتاق‌ها، فایل‌ها و جلسات را با همکاران خود به اشتراک بگذارید. در این بخش می‌توانید تیم خود را مدیریت کنید.        </p>
+          در این بخش به شما امکان می‌دهد تا اتاق‌ها، فایل‌ها و جلسات را با همکاران خود به اشتراک بگذارید. در این بخش می‌توانید تیم خود را مدیریت کنید.
+        </p>
       </div>
-
-<!-- Tab Buttons -->
-<div class="tab-buttons">
-  <button
-    :class="['tab-btn', activeTab === 'users' ? 'active' : '']"
-    @click="activeTab = 'users'"
-  >کاربران</button>
-   <button
-  :class="['tab-btn', activeTab === 'buy-subscription' ? 'active' : '']"
-  @click="activeTab = 'buy-subscription'"
->
-  خرید اشتراک
-</button>
-  <button
-    :class="['tab-btn', activeTab === 'membership' ? 'active' : '']"
-    @click="activeTab = 'membership'"
-  >اشتراک ها</button>
-  <button
-    :class="['tab-btn', activeTab === 'details' ? 'active' : '']"
-    @click="activeTab = 'details'"
-  >جزئیات</button>
- 
-
-</div>
-
-
-
-<!-- Tab Content -->
-<div v-if="activeTab === 'users'">
-  <div class="card license-card">
-    <span>لایسنس های قابل استفاده :</span>
-    <div class="buy-subscription">خرید اشتراک</div>
-  </div>
-
-  <div class="user-cards">
-    <div class="user-card add-card" @click="openAddUserDialog">
-      <span class="add-text">➕ اضافه کردن کاربر جدید</span>
+      <!-- Tab Buttons -->
+      <div class="tab-buttons">
+        <button
+          :class="['tab-btn', activeTab === 'users' ? 'active' : '']"
+          @click="activeTab = 'users'"
+        >
+          کاربران
+        </button>
+        <button
+          :class="['tab-btn', activeTab === 'buy-subscription' ? 'active' : '']"
+          @click="activeTab = 'buy-subscription'"
+        >
+          خرید اشتراک
+        </button>
+        <button
+          :class="['tab-btn', activeTab === 'membership' ? 'active' : '']"
+          @click="activeTab = 'membership'"
+        >
+          اشتراک ها
+        </button>
+        <button
+          :class="['tab-btn', activeTab === 'details' ? 'active' : '']"
+          @click="activeTab = 'details'"
+        >
+          جزئیات
+        </button>
+      </div>
+      <!-- Tab Content -->
+      <div v-if="activeTab === 'users'">
+      <TeamUser 
+          :userList="userList" 
+          @add-user="submitNewUser" 
+          @change-tab="changeTab" 
+        />
+      </div>
+      <div v-if="activeTab === 'membership'" class="tab-content">
+        <div class="access-container">
+          <!-- Title Section -->
+          <div
+            class="access-header"
+            style="background: white; border-radius: 20px; padding: 20px;"
+          >
+            <img
+              :src="require('@/assets/img/lock Icon.png')"
+              alt="logout"
+              class="lock-icon"
+            />
+            <div class="header-text">
+              <h3>فعال‌سازی دسترسی XRoom</h3>
+              <p>دسترسی کامل به امکانات XRoom بدون واترمارک</p>
+            </div>
+            <!-- Subscription Button -->
+            <button class="primary-button">
+              <img
+                style="margin-left: 10px"
+                :src="require('@/assets/img/hand.png')"
+                alt="logout"
+              />
+              انتخاب طرح اشتراکی
+            </button>
+          </div>
+          <!-- Info Cards -->
+          <div class="info-cards">
+            <!-- Billing Info -->
+            <div class="info-card">
+              <h4>جزئیات صورتحساب</h4>
+              <p>
+                اصفهان، خیابان وحید، نبش خیابان حسین آباد، مجتمع عسگری ۳، واحد ۳<br />
+                ۸۱۷۵۹۴۹۹۹۱<br />
+                شماره تماس: ۰۹۳۷۹۸۹۸۶۲۳<br />
+                ایمیل: aminimperator@gmail.com
+              </p>
+              <button class="secondary-button" @click="openBillingModal">
+                ویرایش جزئیات صورتحساب
+              </button>
+            </div>
+            <!-- Membership Info -->
+            <div class="info-card">
+              <h4>عضویت ها</h4>
+              <p>
+                هنوز مجوزی فعال نیست. کاربران شما نمی‌توانند از XRoom با واترمارک استفاده کنند.
+              </p>
+              <button class="secondary-button">مدیریت عضویت ها</button>
+            </div>
+            <!-- Payment Method -->
+            <div class="info-card">
+              <h4>روش پرداخت</h4>
+              <p>هیچ روش پرداختی برای صورتحساب مرتبط نیست.</p>
+            </div>
+          </div>
+          <EditBillingModal
+            :isVisible="isBillingModalVisible"
+            @close="closeBillingModal"
+          />
+        </div>
+      </div>
+      <div v-if="activeTab === 'details'" class="tab-content">
+        <div class="card">جزئیات تیم ۱</div>
+        <div class="card">جزئیات تیم ۲</div>
+      </div>
+      <div v-if="activeTab === 'buy-subscription'" class="tab-content">
+        <div class="buy-subscription-container">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <label for="memberCount" style="margin-left: 10px;">تعداد کاربران:</label>
+            <select
+              id="memberCount"
+              v-model.number="memberCount"
+              @change="selectedPlan && selectPlan(selectedPlan.name === 'هفتگی' ? 'weekly' : selectedPlan.name === 'ماهانه' ? 'monthly' : 'yearly')"
+              style="padding: 8px 12px; border-radius: 8px; border: 1px solid #ccc;"
+            >
+              <option v-for="count in availableMemberOptions" :key="count" :value="count">
+                {{ count }} کاربر
+              </option>
+            </select>
+          </div>
+          <h3 style="text-align: center; margin-bottom: 20px;">
+            لطفا نوع اشتراک خود را انتخاب کنید
+          </h3>
+          <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+            <div class="plan-card">
+              <h4>هفتگی</h4>
+              <p>۲۵۰٬۰۰۰ تومان<br /><small>برای یک کاربر، در هفته</small></p>
+              <button class="primary-button" @click="selectPlan('weekly')">
+                انتخاب طرح اشتراک
+              </button>
+            </div>
+            <div class="plan-card">
+              <h4>ماهانه</h4>
+              <p>۶۷۰٬۰۰۰ تومان<br /><small>برای یک کاربر، در هفته</small></p>
+              <button class="primary-button" @click="selectPlan('monthly')">
+                انتخاب طرح اشتراک
+              </button>
+            </div>
+            <div class="plan-card">
+              <h4>سالانه</h4>
+              <p>۴٬۶۰۰٬۰۰۰ تومان<br /><small>برای یک کاربر، در هفته</small></p>
+              <button class="primary-button" @click="selectPlan('yearly')">
+                انتخاب طرح اشتراک
+              </button>
+            </div>
+          </div>
+          <!-- فاکتور -->
+          <div
+            v-if="selectedPlan"
+            class="invoice-box"
+            style="margin-top: 40px; background: white; padding: 20px; border-radius: 12px; max-width: 400px; margin-right: auto; margin-left: auto;"
+          >
+            <h4 style="margin-bottom: 16px;">پیش‌فاکتور اشتراک {{ selectedPlan.name }}</h4>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+              <span>قیمت پایه:</span>
+              <span>{{ selectedPlan.price.toLocaleString() }} تومان</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+              <span>مالیات (۹٪):</span>
+              <span>{{ selectedPlan.tax.toLocaleString() }} تومان</span>
+            </div>
+            <div
+              style="display: flex; justify-content: space-between; font-weight: bold; font-size: 16px; margin-bottom: 20px;"
+            >
+              <span>مبلغ قابل پرداخت:</span>
+              <span>{{ selectedPlan.total.toLocaleString() }} تومان</span>
+            </div>
+            <button class="primary-button" style="width: 100%;" @click="pay">
+              پرداخت
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
-    
-    
-    <div class="user-card" v-for="(user, index) in userList" :key="index">
-  <div class="user-card-header">
-    <img :src="user.avatar" class="user-avatar" alt="avatar" />
-    <div class="user-info-box">
-      <div class="user-name">{{ user.name }}</div>
-      <div class="user-email">{{ user.email }}</div>
-      <div class="user-role">{{ user.role }}</div>
-      <div class="user-version">{{ user.version }}</div>
-    </div>
   </div>
-  <div class="user-footer">
-    <span>اکانت XRoom</span>
-    <div class="user-actions">
-      <button><i class="icon">🗑️</i></button>
-      <button><i class="icon">⚙️</i></button>
-    </div>
-  </div>
-</div>
-
-    
-  </div>
-</div>
-
-
-<div v-if="activeTab === 'membership'" class="tab-content">
-  <div class="access-container">
-  <!-- Title Section -->
-  <div class="access-header" style="
-    background: white;
-    border-radius: 20px;
-    padding: 20px;"
-    >
-
-    <img :src="require('@/assets/img/lock Icon.png')" alt="logout"  class="lock-icon"/>
-
-    <div class="header-text">
-      <h3>فعال‌سازی دسترسی XRoom</h3>
-      <p>دسترسی کامل به امکانات XRoom بدون واترمارک</p>
-    </div>
-  
-
-      <!-- Subscription Button -->
-      <button class="primary-button">
-    <img style="margin-left:10px" :src="require('@/assets/img/hand.png')" alt="logout"  />
-        
-         انتخاب طرح اشتراکی
-      </button>
-
-
-  </div>
-
-
-  <!-- Info Cards -->
-  <div class="info-cards">
-    <!-- Billing Info -->
-    <div class="info-card">
-      <h4>جزئیات صورتحساب</h4>
-      <p>
-        اصفهان، خیابان وحید، نبش خیابان حسین آباد، مجتمع عسگری ۳، واحد ۳<br />
-        ۸۱۷۵۹۴۹۹۹۱<br />
-        شماره تماس: ۰۹۳۷۹۸۹۸۶۲۳<br />
-        ایمیل: aminimperator@gmail.com
-      </p>
-      <button class="secondary-button" @click="openBillingModal">ویرایش جزئیات صورتحساب</button>
-    </div>
-
-    <!-- Membership Info -->
-    <div class="info-card">
-      <h4>عضویت ها</h4>
-      <p>هنوز مجوزی فعال نیست. کاربران شما نمی‌توانند از XRoom با واترمارک استفاده کنند.</p>
-      <button class="secondary-button">مدیریت عضویت ها</button>
-    </div>
-
-    <!-- Payment Method -->
-    <div class="info-card">
-      <h4>روش پرداخت</h4>
-      <p>هیچ روش پرداختی برای صورتحساب مرتبط نیست.</p>
-    </div>
-  </div>
-    <EditBillingModal
-  :isVisible="isBillingModalVisible"
-  @close="closeBillingModal"
-  />
-</div>
-
-</div>
-
-<div v-if="activeTab === 'details'" class="tab-content">
-  <div class="card">جزئیات تیم ۱</div>
-  <div class="card">جزئیات تیم ۲</div>
-</div>
-
-
-<div v-if="activeTab === 'buy-subscription'" class="tab-content">
-  <div class="buy-subscription-container">
-
-    <div style="text-align: center; margin-bottom: 20px;">
-      <label for="memberCount" style="margin-left: 10px;">تعداد کاربران:</label>
-      <select
-        id="memberCount"
-        v-model.number="memberCount"
-        @change="selectedPlan && selectPlan(selectedPlan.name === 'هفتگی' ? 'weekly' : selectedPlan.name === 'ماهانه' ? 'monthly' : 'yearly')"
-        style="padding: 8px 12px; border-radius: 8px; border: 1px solid #ccc;"
-      >
-        <option v-for="count in availableMemberOptions" :key="count" :value="count">
-          {{ count }} کاربر
-        </option>
-      </select>
-    </div>
-
-    <h3 style="text-align: center; margin-bottom: 20px;">لطفا نوع اشتراک خود را انتخاب کنید</h3>
-
-    <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
-      <div class="plan-card">
-        <h4>هفتگی</h4>
-        <p>۲۵۰٬۰۰۰ تومان<br><small>برای یک کاربر، در هفته</small></p>
-        <button class="primary-button" @click="selectPlan('weekly')">انتخاب طرح اشتراک</button>
-      </div>
-
-      <div class="plan-card">
-        <h4>ماهانه</h4>
-        <p>۶۷۰٬۰۰۰ تومان<br><small>برای یک کاربر، در هفته</small></p>
-        <button class="primary-button" @click="selectPlan('monthly')">انتخاب طرح اشتراک</button>
-      </div>
-
-      <div class="plan-card">
-        <h4>سالانه</h4>
-        <p>۴٬۶۰۰٬۰۰۰ تومان<br><small>برای یک کاربر، در هفته</small></p>
-        <button class="primary-button" @click="selectPlan('yearly')">انتخاب طرح اشتراک</button>
-      </div>
-    </div>
-
-    <!-- فاکتور -->
-    <div v-if="selectedPlan" class="invoice-box" style="margin-top: 40px; background: white; padding: 20px; border-radius: 12px; max-width: 400px; margin-right: auto; margin-left: auto;">
-      <h4 style="margin-bottom: 16px;">پیش‌فاکتور اشتراک {{ selectedPlan.name }}</h4>
-      <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-        <span>قیمت پایه:</span>
-        <span>{{ selectedPlan.price.toLocaleString() }} تومان</span>
-      </div>
-      <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-        <span>مالیات (۹٪):</span>
-        <span>{{ selectedPlan.tax.toLocaleString() }} تومان</span>
-      </div>
-      <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 16px; margin-bottom: 20px;">
-        <span>مبلغ قابل پرداخت:</span>
-        <span>{{ selectedPlan.total.toLocaleString() }} تومان</span>
-      </div>
-
-      <button class="primary-button" style="width: 100%;" @click="pay">پرداخت</button>
-    </div>
-
-  </div>
-</div>
-
-
-  </div>
-  </div>
-
-  <dialog ref="addUserDialog" class="add-user-dialog">
-  <div class="dialog-header">
-    <button class="close-btn" @click="closeAddUserDialog">✕</button>
-    <h3>کاربر جدید</h3>
-  </div>
-  <div class="dialog-body">
-    <h4>دعوت کاربر جدید</h4>
-    <p style="    line-height: 45px;">کاربر یک ایمیل دعوت برای فعال کردن حساب خود دریافت می‌کند.</p>
-    <form class="form-fields" @submit.prevent="submitNewUser">
-      <div class="form-row">
-        <label>نام  </label>
-        <input v-model="newUser.first_name" required />
-      </div>
-      <div class="form-row">
-        <label>نام خانوادگی</label>
-        <input v-model="newUser.last_name" required />
-      </div>
-      
-      
-      <div class="form-row">
-        <label>شماره تماس</label>
-        <input v-model="newUser.phone" />
-      </div>
-      <div class="form-row">
-        <label>پسورد </label>
-        <input type="password" v-model="newUser.password" />
-      </div>
-      
-      <div class="dialog-actions">
-        <button type="submit" class="confirm-btn">تایید</button>
-        <button type="button" class="cancel-btn" @click="closeAddUserDialog">بازگشت</button>
-      </div>
-    </form>
-  </div>
-</dialog>
-
 </template>
 
 <script>
-import 'video.js/dist/video-js.css';
-import '@videojs/themes/dist/sea/index.css';
-import '@google/model-viewer'
-import SidebarMenu from '@/components/SidebarMenu.vue'
+import SidebarMenu from '@/components/SidebarMenu.vue';
 import EditBillingModal from '@/components/EditBillingModal.vue';
-import axios from 'axios';
-
- 
- import 'video.js/dist/video-js.css';
 import AppHeader from '@/components/Header.vue';
+import TeamUser from '@/components/TeamUser.vue';
+import axios from 'axios';
 
 export default {
   name: 'DashboardPage',
@@ -268,81 +197,66 @@ export default {
     SidebarMenu,
     EditBillingModal,
     AppHeader,
-
+    TeamUser,
   },
   data() {
     return {
       isBillingModalVisible: false,
       memberCount: 5,
       availableMemberOptions: [5, 10, 20, 100],
-
-      newUser: {
-      first_name: '',
-      last_name: '',
-      phone: '',
-      password: '',
-      isAdmin: false,
-      hasAccess: false,
-
-      }
-      ,
-
-    selectedPlan: null,
-    plans: {
-      weekly: { name: 'هفتگی', price: 250000 },
-      monthly: { name: 'ماهانه', price: 670000 },
-      yearly: { name: 'سالانه', price: 4600000 }
-    },
-
-      // ... existing data ...
+      selectedPlan: null,
+      plans: {
+        weekly: { name: 'هفتگی', price: 250000 },
+        monthly: { name: 'ماهانه', price: 670000 },
+        yearly: { name: 'سالانه', price: 4600000 },
+      },
       userList: [
-  {
-    name: 'دانیال پژوهش کیا',
-    email: 'aminimperator@gmail.com',
-    role: 'نسخه آزمایشی',
-    version: '',
-    avatar: 'https://models.readyplayer.me/681f59760bc631a87ad25172.png',
-  },
-  {
-    name: 'امین رمضانی',
-    email: 'aminimperator@gmail.com',
-    role: 'مدیر',
-    version: 'نسخه آزمایشی',
-    avatar: 'https://models.readyplayer.me/681f59760bc631a87ad25172.png',
-  },
-  {
-    name: 'نوید رمضانی',
-    email: 'aminimperator@gmail.com',
-    role: 'مدیر',
-    version: 'نسخه آزمایشی',
-    avatar: 'https://models.readyplayer.me/681f59760bc631a87ad25172.png',
-  }
-]
-,
+        {
+          name: 'دانیال پژوهش کیا',
+          email: 'aminimperator@gmail.com',
+          role: 'نسخه آزمایشی',
+          version: '',
+          avatar: 'https://models.readyplayer.me/681f59760bc631a87ad25172.png',
+        },
+        {
+          name: 'امین رمضانی',
+          email: 'aminimperator@gmail.com',
+          role: 'مدیر',
+          version: 'نسخه آزمایشی',
+          avatar: 'https://models.readyplayer.me/681f59760bc631a87ad25172.png',
+        },
+        {
+          name: 'نوید رمضانی',
+          email: 'aminimperator@gmail.com',
+          role: 'مدیر',
+          version: 'نسخه آزمایشی',
+          avatar: 'https://models.readyplayer.me/681f59760bc631a87ad25172.png',
+        },
+      ],
       activeTab: 'users',
-
       previewUrl: '',
-    currentPreviewIndex: null,
-    currentPreviewType: null,
-    videoOptions: {
+      currentPreviewIndex: null,
+      currentPreviewType: null,
+      videoOptions: {
         autoplay: false,
         controls: true,
-        sources: [{
-          type: 'video/mp4',
-          src: '' // Will be set dynamically
-        }]
+        sources: [
+          {
+            type: 'video/mp4',
+            src: '',
+          },
+        ],
       },
-    
       userData: {
         customer: {},
         user: {
           first_name: '',
-          last_name: ''
+          last_name: '',
         },
         images: [],
         pdfs: [],
         videos: [],
-        glbs: []
+        glbs: [],
       },
       newFileName: '',
       selectedFile: null,
@@ -350,62 +264,51 @@ export default {
       baseUrl: 'http://194.62.43.230:8000',
       currentUploadType: 'image',
       dialogTitle: 'آپلود فایل جدید',
-      fileAccept: '*/*'
-    }
+      fileAccept: '*/*',
+    };
   },
   created() {
     this.fetchUserData();
   },
   methods: {
+    changeTab(tabName) {
+      this.activeTab = tabName;
+    },
+
     openBillingModal() {
       this.isBillingModalVisible = true;
     },
     closeBillingModal() {
       this.isBillingModalVisible = false;
     },
-    
-    
-     selectPlan(planKey) {
-  const plan = this.plans[planKey];
-  if (!plan) return;
+    selectPlan(planKey) {
+      const plan = this.plans[planKey];
+      if (!plan) return;
 
-  const base = plan.price * this.memberCount;
-  const tax = Math.round(base * 0.09);
+      const base = plan.price * this.memberCount;
+      const tax = Math.round(base * 0.09);
 
-  this.selectedPlan = {
-    ...plan,
-    basePrice: base,
-    tax,
-    total: base + tax
-  };
-      } 
-    ,
-  pay() {
-  alert(`پرداخت با موفقیت انجام شد برای ${this.memberCount} کاربر`);
-  this.selectedPlan = null;
-},
-
-
-
-    openAddUserDialog() {
-  this.$refs.addUserDialog.showModal();
-},
-closeAddUserDialog() {
-  this.$refs.addUserDialog.close();
-},
-submitNewUser() {
-  // اینجا می‌تونی ارسال به API اضافه کنی
-  console.log('کاربر جدید:', this.newUser);
-  alert('کاربر با موفقیت اضافه شد');
-  this.closeAddUserDialog();
-}
-,
+      this.selectedPlan = {
+        ...plan,
+        basePrice: base,
+        tax,
+        total: base + tax,
+      };
+    },
+    pay() {
+      alert(`پرداخت با موفقیت انجام شد برای ${this.memberCount} کاربر`);
+      this.selectedPlan = null;
+    },
+    submitNewUser(newUser) {
+      console.log('کاربر جدید:', newUser);
+      alert('کاربر با موفقیت اضافه شد');
+      // می‌توانید اینجا کد مربوط به ارسال به API را اضافه کنید
+    },
     handleBackdropClick(event) {
-    // Check if click was directly on the dialog element (backdrop)
-    if (event.target === this.$refs.filePreviewDialog) {
-      this.closePreviewDialog();
-    }
-  },
+      if (event.target === this.$refs.filePreviewDialog) {
+        this.closePreviewDialog();
+      }
+    },
     openPreviewDialog(type, index, url) {
       if (type === 'video') {
         this.videoOptions.sources[0].src = url;
@@ -414,150 +317,131 @@ submitNewUser() {
         });
       }
       if (!this.$refs.filePreviewDialog) {
-      console.error('Dialog element not found');
-      return;
-    }
-    
-    this.currentPreviewType = type;
-    this.currentPreviewIndex = index;
-    this.previewUrl = url;
-    // Special handling for video
-     
-    this.currentPreviewType = type;
-    this.currentPreviewIndex = index;
-    
-    if (type === 'video') {
-      this.videoOptions.sources[0].src = url;
-      this.videoOptions.poster = this.getVideoThumbnail();
-      this.previewUrl = url;
-    } else {
-      this.previewUrl = url;
-    }
-    
-    this.$nextTick(() => {
-      this.$refs.filePreviewDialog?.showModal();
-    });
-
-    if (type === 'image') {
-      this.previewImageUrl = url;
-      this.previewPdfUrl = '';
-    } else if (type === 'pdf') {
-      this.previewPdfUrl = url;
-      this.previewImageUrl = '';
-    }
-    
-    // this.$refs.imagePreviewDialog.showModal();
-    this.$refs.filePreviewDialog.showModal();
-
-  },
-  getVideoThumbnail(videoUrl) {
-    // You can implement a proper thumbnail generation here
-    // For now, we'll just return a placeholder
-    videoUrl = 'https://cdn-icons-png.flaticon.com/512/2839/2839038.png'
-    return videoUrl;
-  },
-  closePreviewDialog() {
-    // Safely access the dialog reference
-    const dialog = this.$refs.filePreviewDialog;
-    
-    if (dialog && typeof dialog.close === 'function') {
-      dialog.close();
-    } else {
-      console.warn('Dialog reference not found or close method unavailable');
-    }
-    
-    // Reset preview state
-    this.previewUrl = '';
-    this.currentPreviewIndex = null;
-    this.currentPreviewType = null;
-  },
-  async downloadFile() {
-    const url = this.currentPreviewType === 'image' 
-      ? this.previewImageUrl 
-      : this.previewPdfUrl;
-    
-    if (!url) return;
-    
-    try {
-      const response = await fetch(url);
-      const blob = await response.blob();
-      const downloadUrl = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = downloadUrl;
-      
-      // Set appropriate filename
-      if (this.currentPreviewType === 'image') {
-        a.download = `image-${new Date().getTime()}.${url.split('.').pop()}`;
-      } else if (this.currentPreviewType === 'pdf') {
-        a.download = `document-${new Date().getTime()}.pdf`;
+        console.error('Dialog element not found');
+        return;
       }
-      
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(downloadUrl);
-      document.body.removeChild(a);
-    } catch (error) {
-      console.error('Error downloading file:', error);
-      alert('خطا در دانلود فایل');
-    }
-  },
-  
-  async deleteFile() {
-    if (this.currentPreviewIndex === null || !this.currentPreviewType) return;
-    
-    try {
-      const token = localStorage.getItem('token');
-      let deleteUrl = '';
-      let itemId = '';
-      let fileArray = [];
-      
-      switch(this.currentPreviewType) {
-        case 'image':
-          fileArray = this.userData.images;
-          itemId = fileArray[this.currentPreviewIndex].id;
-          deleteUrl = `${this.baseUrl}/deleteImage/${itemId}/`;
-          break;
-        case 'pdf':
-          fileArray = this.userData.pdfs;
-          itemId = fileArray[this.currentPreviewIndex].id;
-          deleteUrl = `${this.baseUrl}/deletePdf/${itemId}/`;
-          break;
-        case 'video':
-          fileArray = this.userData.videos;
-          itemId = fileArray[this.currentPreviewIndex].id;
-          deleteUrl = `${this.baseUrl}/deleteVideo/${itemId}/`;
-          break;
-        case 'glb':
-          fileArray = this.userData.glbs;
-          itemId = fileArray[this.currentPreviewIndex].id;
-          deleteUrl = `${this.baseUrl}/deleteGlb/${itemId}/`;
-          break;
+
+      this.currentPreviewType = type;
+      this.currentPreviewIndex = index;
+      this.previewUrl = url;
+
+      if (type === 'video') {
+        this.videoOptions.sources[0].src = url;
+        this.videoOptions.poster = this.getVideoThumbnail();
+        this.previewUrl = url;
+      } else {
+        this.previewUrl = url;
       }
-      
-      await axios.delete(deleteUrl, {
-        headers: {
-          'Authorization': `Token ${token}`
-        }
+
+      this.$nextTick(() => {
+        this.$refs.filePreviewDialog?.showModal();
       });
-      
-      this.closePreviewDialog();
-      await this.fetchUserData();
-      alert('فایل با موفقیت حذف شد');
-    } catch (error) {
-      console.error('Error deleting file:', error);
-      alert('خطا در حذف فایل');
-    }
-  },
+
+      if (type === 'image') {
+        this.previewImageUrl = url;
+        this.previewPdfUrl = '';
+      } else if (type === 'pdf') {
+        this.previewPdfUrl = url;
+        this.previewImageUrl = '';
+      }
+
+      this.$refs.filePreviewDialog.showModal();
+    },
+    getVideoThumbnail() {
+      return 'https://cdn-icons-png.flaticon.com/512/2839/2839038.png';
+    },
+    closePreviewDialog() {
+      const dialog = this.$refs.filePreviewDialog;
+      if (dialog && typeof dialog.close === 'function') {
+        dialog.close();
+      } else {
+        console.warn('Dialog reference not found or close method unavailable');
+      }
+      this.previewUrl = '';
+      this.currentPreviewIndex = null;
+      this.currentPreviewType = null;
+    },
+    async downloadFile() {
+      const url =
+        this.currentPreviewType === 'image' ? this.previewImageUrl : this.previewPdfUrl;
+      if (!url) return;
+
+      try {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+
+        if (this.currentPreviewType === 'image') {
+          a.download = `image-${new Date().getTime()}.${url.split('.').pop()}`;
+        } else if (this.currentPreviewType === 'pdf') {
+          a.download = `document-${new Date().getTime()}.pdf`;
+        }
+
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(downloadUrl);
+        document.body.removeChild(a);
+      } catch (error) {
+        console.error('Error downloading file:', error);
+        alert('خطا در دانلود فایل');
+      }
+    },
+    async deleteFile() {
+      if (this.currentPreviewIndex === null || !this.currentPreviewType) return;
+
+      try {
+        const token = localStorage.getItem('token');
+        let deleteUrl = '';
+        let itemId = '';
+        let fileArray = [];
+
+        switch (this.currentPreviewType) {
+          case 'image':
+            fileArray = this.userData.images;
+            itemId = fileArray[this.currentPreviewIndex].id;
+            deleteUrl = `${this.baseUrl}/deleteImage/${itemId}/`;
+            break;
+          case 'pdf':
+            fileArray = this.userData.pdfs;
+            itemId = fileArray[this.currentPreviewIndex].id;
+            deleteUrl = `${this.baseUrl}/deletePdf/${itemId}/`;
+            break;
+          case 'video':
+            fileArray = this.userData.videos;
+            itemId = fileArray[this.currentPreviewIndex].id;
+            deleteUrl = `${this.baseUrl}/deleteVideo/${itemId}/`;
+            break;
+          case 'glb':
+            fileArray = this.userData.glbs;
+            itemId = fileArray[this.currentPreviewIndex].id;
+            deleteUrl = `${this.baseUrl}/deleteGlb/${itemId}/`;
+            break;
+        }
+
+        await axios.delete(deleteUrl, {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        });
+
+        this.closePreviewDialog();
+        await this.fetchUserData();
+        alert('فایل با موفقیت حذف شد');
+      } catch (error) {
+        console.error('Error deleting file:', error);
+        alert('خطا در حذف فایل');
+      }
+    },
     async fetchUserData() {
       try {
         const token = localStorage.getItem('token');
-        
         const response = await axios.get(`${this.baseUrl}/getInfo`, {
           headers: {
-            'Authorization': `Token ${token}`
-          }
+            Authorization: `Token ${token}`,
+          },
         });
-        
         this.userData = response.data;
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -574,8 +458,8 @@ submitNewUser() {
     },
     openDialog(type) {
       this.currentUploadType = type;
-      
-      switch(type) {
+
+      switch (type) {
         case 'image':
           this.dialogTitle = 'آپلود تصویر جدید';
           this.fileAccept = 'image/*';
@@ -593,7 +477,7 @@ submitNewUser() {
           this.fileAccept = '.glb';
           break;
       }
-      
+
       this.$refs.newFileDialog.showModal();
     },
     closeDialog() {
@@ -606,39 +490,32 @@ submitNewUser() {
     },
     async uploadFile() {
       if (!this.selectedFile) return;
-      
+
       this.uploading = true;
-      
+
       const formData = new FormData();
-      // formData.append('file', this.selectedFile);
       formData.append('name', this.newFileName || this.selectedFile.name);
-      
 
-
-         
-        switch(this.currentUploadType) {
-          case 'image':
-            formData.append('image', this.selectedFile);
-            break;
-          case 'pdf':
-            formData.append('pdf', this.selectedFile);
-            break;
-          case 'video':
-            formData.append('video', this.selectedFile);
-
-            break;
-          case 'glb':
-            formData.append('glb', this.selectedFile);
-
-            break;
-        }
-
+      switch (this.currentUploadType) {
+        case 'image':
+          formData.append('image', this.selectedFile);
+          break;
+        case 'pdf':
+          formData.append('pdf', this.selectedFile);
+          break;
+        case 'video':
+          formData.append('video', this.selectedFile);
+          break;
+        case 'glb':
+          formData.append('glb', this.selectedFile);
+          break;
+      }
 
       try {
         const token = localStorage.getItem('token');
         let uploadUrl = '';
-        
-        switch(this.currentUploadType) {
+
+        switch (this.currentUploadType) {
           case 'image':
             uploadUrl = `${this.baseUrl}/uploadImage/`;
             break;
@@ -652,19 +529,16 @@ submitNewUser() {
             uploadUrl = `${this.baseUrl}/uploadGlb/`;
             break;
         }
-        
+
         await axios.post(uploadUrl, formData, {
           headers: {
-            'Authorization': `Token ${token}`,
-            'Content-Type': 'multipart/form-data'
-          }
+            Authorization: `Token ${token}`,
+            'Content-Type': 'multipart/form-data',
+          },
         });
-        
+
         this.closeDialog();
-        // Refresh the data after successful upload
         await this.fetchUserData();
-        
-        // Show success message
         alert('فایل با موفقیت آپلود شد');
       } catch (error) {
         console.error('Error uploading file:', error);
@@ -672,12 +546,10 @@ submitNewUser() {
       } finally {
         this.uploading = false;
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
-
- 
 <!-- Your existing styles remain the same -->
   
   <style scoped>
@@ -712,7 +584,6 @@ submitNewUser() {
     display: flex;
     flex-direction: column;
     gap: 32px;
-    min-height: 80vh;
   }
   
   .header-row {
@@ -744,17 +615,13 @@ submitNewUser() {
     height: 20px;
   }
   
-  .user-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  
-  .user-name {
-    font-size: 14px;
-    font-weight: 500;
-    color: #2d3748;
-  }
+.user-info-box {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 20px;
+}
   
   .avatar-box {
     width: 40px;
@@ -785,13 +652,13 @@ submitNewUser() {
   }
   
   .section-title {
-    font-size: 17px;
+    font-size: 20px;
     font-weight: 700;
     color: #1a202c;
   }
   
   .section-description p {
-    font-size: 14px;
+    font-size: 15px;
     color: #4a5568;
     line-height: 1.8;
   }
@@ -1294,11 +1161,7 @@ submitNewUser() {
   border-bottom: 1px solid #ddd;
 }
 
-.user-avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-}
+
 
 .user-info {
   flex-grow: 1;
@@ -1338,7 +1201,7 @@ submitNewUser() {
   background: none;
   border: none;
   color: gray;
-  font-size: 14px;
+  font-size: 17px;
   padding: 8px 16px;
   cursor: pointer;
   border-bottom: 2px solid transparent;
@@ -1348,6 +1211,7 @@ submitNewUser() {
 .tab-btn.active {
   color: #3a57e8;
   border-bottom: 2px solid #3a57e8;
+  font-size: 20px;
 }
 
 .tab-content {
@@ -1373,26 +1237,33 @@ submitNewUser() {
 }
 
 .buy-subscription {
+  display: flex;
+  align-items: center;
   color: #48bb78; /* Tailwind-style green */
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
+}
+
+.buy-subscription span {
+  margin-right : 0.5rem;
 }
 
 
 .user-cards {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
-  margin-top: 20px;
-      height: 280px;
+  gap: 2rem;
+  margin-top: 2.5rem;
+  height: 100%;
+  justify-content: space-between;
 }
 
 .user-card {
   background: #fff;
   border-radius: 16px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-     width: 440px;
-    height: 158px;
+  box-shadow: 0 1px 4px 0 #00000029;
+  width: 48%;
+  height: 158px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -1400,55 +1271,41 @@ submitNewUser() {
   position: relative;
 }
 
-.user-info-box {
-  text-align: right;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: 20px;
-}
+
 
 .user-role {
-  color: #3a57e8;
+  color: #3a57e8 !important;
   font-weight: 600;
+  font-size: 17px !important;
 }
+
+
 
 .user-name {
   font-weight: 700;
   font-size: 16px;
 }
 
-.user-avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  align-self: flex-end;
-  margin-top: 10px;
-}
+
  
 
-.user-actions button {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-}
+
 
 .add-card {
   display: flex;
   align-items: center;
   justify-content: center;
   color: #3a57e8;
-  font-weight: 600;
-  font-size: 14px;
-  border: 2px dashed #3a57e8;
-  width: 440px;
-    height: 158px;
+  font-weight: 500;
+  font-size: 20px;
+  width: 48%;
+  height: 158px;
+  cursor: pointer;
 }
 
 .add-text {
   text-align: center;
+  cursor: pointer;
 }
 
 /* dialog */
@@ -1458,6 +1315,10 @@ submitNewUser() {
   width: 90%;
   max-width: 500px;
   padding: 0;
+}
+
+.license-card span{
+  font-size: 17px;
 }
 
 .dialog-header {
@@ -1631,30 +1492,10 @@ submitNewUser() {
 
  
 
-.user-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
-}
 
-.user-avatar {
-  width: 70px;
-      height: 86px;
-  border-radius: 50%;
-  object-fit: cover;
-  flex-shrink: 0;
-}
 
-.user-info-box {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  
-  flex: 1;
-  text-align: right;
-  gap: 4px;
-}
+
+
 
 .user-name {
   font-weight: 700;
@@ -1662,7 +1503,7 @@ submitNewUser() {
 }
 
 .user-email, .user-role, .user-version {
-  font-size: 14px;
+  font-size: 15px;
   color: #4a5568;
 }
 
@@ -1671,10 +1512,15 @@ submitNewUser() {
   color: #fff;
   border-radius: 0 0 12px 12px;
   padding: 10px;
+  padding-bottom: 5px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   /* margin-top: 20px; */
+}
+
+.user-footer span{
+  font-size: 17px;
 }
 
 .user-actions button {
@@ -1684,6 +1530,8 @@ submitNewUser() {
   font-size: 16px;
   cursor: pointer;
 }
+
+
 
 
 
