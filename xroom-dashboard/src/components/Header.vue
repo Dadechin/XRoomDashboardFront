@@ -1,6 +1,5 @@
 <template>
   <header class="header-container">
-    <img class="line" src="https://c.animaapp.com/m9nvumalUMfQbN/img/line-1.svg" />
     <div class="welcome-container">
       <p class="welcome-message">{{ pageTitle }} </p>
     </div>
@@ -10,7 +9,11 @@
           <img class="user-avatar" :src="profileIcon"   />
         </div>
         <div class="user-name">{{ fullName }}</div>
-        <img class="user-icon"  src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame-10.svg"   />
+        <span>          
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7.19922 10L11.9992 14L16.7992 10" stroke="#8D99AB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
         
         <!-- Dropdown positioned relative to user-info-container -->
         <div v-if="showDropdown" class="dropdown-menu">
@@ -101,14 +104,16 @@ export default {
 
 <style scoped>
 .header-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #eaeaea;
-  position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    border-bottom: 1px solid #eaeaea;
+    position: relative;
+    z-index: 100;
+    padding-right: 0;
 }
+
 
 /* New green button styles */
 .green-button {
@@ -169,9 +174,9 @@ export default {
 }
 
 .user-name {
-  font-size: 14px;
-  font-weight: 500;
-  color: #333333;
+    font-size: 16px;
+    font-weight: 500;
+    color: #101010;
 }
 
 .avatar-wrapper {
@@ -279,16 +284,7 @@ export default {
 }
 
 /* Ensure header has proper z-index */
-.header-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #eaeaea;
-  position: relative;
-  z-index: 100; /* Lower than dropdown but higher than page content */
-}
+
 
 .dropdown-menu {
   position: absolute;
