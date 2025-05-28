@@ -102,6 +102,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'AddUserModal',
   props: {
@@ -139,9 +141,38 @@ export default {
         alert('لطفاً تمام فیلدها را پر کنید.');
         return;
       }
+<<<<<<< HEAD
       
       this.$emit('add-user', { ...this.newUser });
       this.close();
+=======
+
+      const token = localStorage.getItem('token');
+      const userData = {
+        mobile_number: this.newUser.mobile_number,
+        first_name: this.newUser.first_name,
+        last_name: this.newUser.last_name,
+        semat: this.newUser.semat,
+        password: this.newUser.password,
+        isAdmin: this.newUser.isAdmin ? 'true' : 'false', // Sending as string "true" or "false"
+      };
+
+      axios.post('http://my.xroomapp.com:8000/add_teamMember', userData, {
+        headers: {
+          Authorization: `Token ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((response) => {
+        console.log('کاربر جدید:', response.data);
+        alert('کاربر با موفقیت اضافه شد');
+        this.close();
+      })
+      .catch((error) => {
+        console.error('Error adding user:', error);
+        alert('خطا در افزودن کاربر');
+      });
+>>>>>>> a042a56a6722c011d4746a55c172b4927d2b7fef
     },
   },
 };
