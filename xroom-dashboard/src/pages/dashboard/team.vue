@@ -41,41 +41,47 @@
       </div>
       <!-- Tab Content -->
       <div v-if="activeTab === 'users'">
-      <TeamUser 
+        <TeamUser 
           :userList="userList" 
+          :teamMemberCapacity="teamMemberCapacity"
+          :subscriptionCount="subscriptionCount"
           @add-user="submitNewUser" 
           @change-tab="changeTab" 
         />
       </div>
       <div v-if="activeTab === 'membership'" class="tab-content">
         <div class="access-container">
-          <!-- Title Section -->
-          <div
-            class="access-header"
-            style="background: white; border-radius: 20px; padding: 20px;"
-          >
-            <img
-              :src="require('@/assets/img/lock Icon.png')"
-              alt="logout"
-              class="lock-icon"
-            />
+
+          <div class="access-header" style="background: white; border-radius: 20px; padding: 20px;">
+            <img :src="require('@/assets/img/lock Icon.png')" alt="lock" class="lock-icon" />
             <div class="header-text">
               <h3>فعال‌سازی دسترسی XRoom</h3>
               <p>دسترسی کامل به امکانات XRoom بدون واترمارک</p>
             </div>
-            <!-- Subscription Button -->
-            <button class="primary-button">
-              <img
-                style="margin-left: 10px"
-                :src="require('@/assets/img/hand.png')"
-                alt="logout"
-              />
+            <button class="primary-button" @click="changeTab('buy-subscription')">
+              <img style="margin-left: 10px" :src="require('@/assets/img/hand.png')" alt="hand" />
               انتخاب طرح اشتراکی
             </button>
           </div>
-          <!-- Info Cards -->
-          <div class="info-cards">
-            <!-- Billing Info -->
+
+          <!-- subscription card -->
+          <div class="info-cards" >
+            <div class="info-card">
+              <h4>وضعیت اشتراک تیم</h4>
+              <p v-if="subscriptionCount - teamMemberCapacity > 0">
+                ظرفیت کل تیم: <strong>{{ subscriptionCount }} کاربر</strong><br />
+                ظرفیت باقی‌مانده: <strong>{{  subscriptionCount - teamMemberCapacity}} کاربر</strong><br />
+                کاربران اضافه کرده: <strong>{{  teamMemberCapacity }} کاربر</strong>
+              </p>
+              <p class="invalid-subscription" v-else> شما اشتراک فعالی ندارین , لطفا اشتراک جدیدی خریداری نمایید.</p>
+              <button class="disable-button" v-if="subscriptionCount - teamMemberCapacity > 0">
+                اشتراک فعال دارید
+              </button>
+              <button class="secondary-button" @click="changeTab('buy-subscription')" v-else>
+                خرید اشتراک جدید
+              </button>
+            </div>
+
             <div class="info-card">
               <h4>جزئیات صورتحساب</h4>
               <p>
@@ -88,24 +94,19 @@
                 ویرایش جزئیات صورتحساب
               </button>
             </div>
-            <!-- Membership Info -->
             <div class="info-card">
-              <h4>عضویت ها</h4>
+              <h4>عضویت‌ها</h4>
               <p>
                 هنوز مجوزی فعال نیست. کاربران شما نمی‌توانند از XRoom با واترمارک استفاده کنند.
               </p>
-              <button class="secondary-button">مدیریت عضویت ها</button>
+              <button class="secondary-button">مدیریت عضویت‌ها</button>
             </div>
-            <!-- Payment Method -->
             <div class="info-card">
               <h4>روش پرداخت</h4>
               <p>هیچ روش پرداختی برای صورتحساب مرتبط نیست.</p>
             </div>
           </div>
-          <EditBillingModal
-            :isVisible="isBillingModalVisible"
-            @close="closeBillingModal"
-          />
+          <EditBillingModal :isVisible="isBillingModalVisible" @close="closeBillingModal" />
         </div>
       </div>
       <div v-if="activeTab === 'details'" class="tab-content">
@@ -265,16 +266,18 @@ export default {
       currentUploadType: 'image',
       dialogTitle: 'آپلود فایل جدید',
       fileAccept: '*/*',
+      teamMemberCapacity: 0,
+      subscriptionCount: 0,
     };
   },
   created() {
     this.fetchUserData();
+    this.fetchTeamMemberInfo();
   },
   methods: {
     changeTab(tabName) {
       this.activeTab = tabName;
     },
-
     openBillingModal() {
       this.isBillingModalVisible = true;
     },
@@ -295,14 +298,111 @@ export default {
         total: base + tax,
       };
     },
-    pay() {
-      alert(`پرداخت با موفقیت انجام شد برای ${this.memberCount} کاربر`);
-      this.selectedPlan = null;
+    async pay() {
+      if (!this.selectedPlan) {
+        alert('لطفاً ابتدا یک طرح اشتراک انتخاب کنید.');
+        return;
+      }
+
+      try {
+
+        const startTime = new Date().toISOString();
+        let endTime;
+        if (this.selectedPlan.name === 'هفتگی') {
+          endTime = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
+        } else if (this.selectedPlan.name === 'ماهانه') {
+          endTime = new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
+        } else if (this.selectedPlan.name === 'سالانه') {
+          endTime = new Date(new Date().getTime() + 365 * 24 * 60 * 60 * 1000).toISOString();
+        }
+
+        const subscriptionData = {
+          user_count: this.memberCount,
+          license_number: `ABC-${Math.random().toString(36).substr(2, 6).toUpperCase()}-XYZ`,
+          startTime: startTime,
+          endTime: endTime,
+          price: this.selectedPlan.total,
+        };
+
+        const token = localStorage.getItem('token');
+        await axios.post(`${this.baseUrl}/add_subscription/`, subscriptionData, {
+          headers: {
+            Authorization: `Token ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+
+        await this.fetchTeamMemberInfo();
+
+        alert(`پرداخت با موفقیت انجام شد برای ${this.memberCount} کاربر`);
+        this.selectedPlan = null;
+        this.activeTab = 'membership';
+      } catch (error) {
+        console.error('خطا در ارسال اطلاعات اشتراک:', error);
+        alert('خطا در ثبت اشتراک. لطفاً دوباره تلاش کنید.');
+      }
     },
-    submitNewUser(newUser) {
-      console.log('کاربر جدید:', newUser);
-      alert('کاربر با موفقیت اضافه شد');
-      // می‌توانید اینجا کد مربوط به ارسال به API را اضافه کنید
+    async fetchTeamMemberInfo() {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`${this.baseUrl}/get_team_member_info`, {
+          headers: {
+            Authorization: `Token ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        this.teamMemberCapacity = response.data.data.team_member_capacity;
+        this.subscriptionCount = response.data.data.subscriptionCount;
+      } catch (error) {
+        console.error('خطا در دریافت اطلاعات اشتراک:', error);
+        alert('خطا در بارگذاری اطلاعات اشتراک. لطفاً دوباره تلاش کنید.');
+      }
+    },
+    async submitNewUser(newUser) {
+
+        console.log('اطلاعات کاربر جدید:', newUser);
+        
+        this.teamMemberCapacity++ ;
+
+      const remainingCapacity = this.subscriptionCount - this.teamMemberCapacity;
+      if (remainingCapacity <= 0) {
+        alert('ظرفیت تیم پر شده است. لطفاً اشتراک جدیدی خریداری کنید.');
+        this.activeTab = 'buy-subscription';
+        return;
+      }
+
+      try {
+        const token = localStorage.getItem('token');
+
+        await axios.post(
+          `${this.baseUrl}/add_teamMember/`,
+          newUser,
+          {
+            headers: {
+              Authorization: `Token ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+
+        this.userList.push({
+          ...newUser,
+          avatar: 'https://models.readyplayer.me/681f59760bc631a87ad25172.png',
+          role: newUser.role || 'کاربر',
+          version: newUser.version || 'نسخه آزمایشی',
+        });
+
+
+        await this.fetchTeamMemberInfo();
+
+        alert('کاربر با موفقیت اضافه شد');
+      } catch (error) {
+        console.error('خطا در اضافه کردن کاربر:', error);
+        alert('خطا در اضافه کردن کاربر. لطفاً دوباره تلاش کنید.');
+      }
     },
     handleBackdropClick(event) {
       if (event.target === this.$refs.filePreviewDialog) {
@@ -1532,11 +1632,6 @@ export default {
 }
 
 
-
-
-
-
-
 .plan-card {
   background-color: white;
   border: 1px solid #e2e8f0;
@@ -1560,6 +1655,22 @@ export default {
   line-height: 1.6;
 }
 
+
+.invalid-subscription {
+  color: #f44336 !important;
+}
+
+
+.disable-button {
+  background-color: #EBEEFD;
+  color: #101010;
+  border: none;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+}
 
 
 

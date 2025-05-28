@@ -1,8 +1,8 @@
 <template>
-  <div v-if="isVisible" class="modal-overlay" @click="$emit('close')">
+  <div v-if="isVisible" class="modal-overlay" @click="closeModal">
     <div class="modal-content" @click.stop>
       <div class="popUp-header">
-        <h2>ایجاد جلسه جدید</h2>
+        <h2>فضا جدید</h2>
         <button @click="$emit('close')">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -31,86 +31,177 @@
         </button>
       </div>
       <div class="popUp-title">
-        <h2>اضافه کردن فضای جدید</h2>
-        <span>برای ایجاد فضای جدید فرم زیر را تکمیل نمایید.</span>
+        <!-- Space Selection Cards -->
+        <div v-if="spaces.length > 0" class="space-selection">
+          <div 
+            v-for="(space, index) in spaces" 
+            :key="index" 
+            class="space-card" 
+            @click="selectSpace(space)"
+            :class="{ selected: selectedSpace === space }"  
+          >
+            <img :src="'http://my.xroomapp.com:8000' + space.img" alt="فضای اختصاصی" class="space-img" />
+            <div class="space-info">
+              <h3 class="space-name">{{ space.name }}</h3>
+              <p class="space-type">{{ space.type }}</p>
+              <p class="space-capacity">حداکثر: {{ space.capacity }} کاربر</p>
+            </div>
+          </div>
+        </div> 
+
+        <div v-else class="loading-message">
+          <p>در حال بارگذاری فضاها...</p>
+        </div>
       </div>
+      
       <div class="popUp-objects">
-        <form @submit.prevent="handleSubmit">
-          <div class="form-group">
-            <label for="spaceName">نام:</label>
-            <input
-              id="spaceName"
-              v-model="form.name"
-              type="text"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="spaceCapacity">ظرفیت:</label>
-            <input
-              id="spaceCapacity"
-              v-model.number="form.capacity"
-              type="number"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="spaceType">امکانات فضای مد نظر:</label>
-            <textarea
-              id="spaceType"
-              v-model="form.features"
-              required
-            ></textarea>
-          </div>
-        </form>
+        <div class="popUp-title-object">
+          <h2>اضافه کردن فضا جدید</h2>
+          <span>برای ایجاد فضای جدید فرم زیر را تکمیل نمایید .</span>
+        </div>
+
+
+        <!-- Form to enter additional information -->
+        <div v-if="selectedSpace" class="space-form">
+          <form @submit.prevent="submitForm">
+
+            <div class="form-group">
+              <label for="name">نام:</label>
+              <input type="text" v-model="form.name" id="name" required />
+            </div>
+            
+            <div class="form-group">
+              <label for="capacity">ظرفیت:</label>
+              <input type="number" v-model="form.capacity" id="capacity" required />
+            </div>
+            
+            <div class="form-group">
+              <label for="description">توضیحات:</label>
+              <textarea v-model="form.description" id="description" required></textarea>
+            </div>
+          </form>
+        </div>
       </div>
-      <div class="form-actions">
-        <button type="button" class="cancel-btn" @click="$emit('close')">بازگشت</button>
-        <button type="submit" class="submit-btn" @click="handleSubmit">تایید</button>
+      <div class="form-actions" v-if="selectedSpace">
+          <button type="button" class="cancel-btn" @click="closeModal">بازگشت</button>
+          <button type="submit" class="submit-btn" @click="submitForm">تایید</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
-  name: 'CreateSpaceModal',
   props: {
-    isVisible: {
-      type: Boolean,
-      default: false,
-    },
+    isVisible: Boolean,
   },
   data() {
     return {
+      spaces: [],
+      selectedSpace: null,
       form: {
         name: '',
-        capacity: null,
-        features: '',
+        capacity: '',
+        description: '',
       },
     };
   },
   methods: {
-    handleSubmit() {
-      if (this.form.name && this.form.capacity && this.form.features) {
-        console.log('داده‌های فرم:', {
-          name: this.form.name,
-          capacity: this.form.capacity,
-          features: this.form.features,
-        });
-        this.form = {
-          name: '',
-          capacity: null,
-          features: '',
-        };
-        this.$emit('close');
+    closeModal() {
+      this.$emit('close');
+      this.resetForm()
+    },
+    resetForm() {
+      this.spaces = [],
+      this.selectedSpace = null,
+      this.form = {
+        name : '',
+        capacity : '',
+        description : '',
+      }
+    },
+    selectSpace(space) {
+      this.selectedSpace = space;
+    },
+    async fetchSpaces() {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          console.error('No token found!');
+          return;
+        }
+
+        const response = await axios.get(
+          'http://my.xroomapp.com:8000/get_assigned_assetbundle_rooms',
+          {
+            headers: {
+              Authorization: `Token ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        console.log(response.data);
+
+        this.spaces = response.data.assetbundle_rooms.map(room => ({
+          name: room.name,
+          img: room.img,
+          capacity: room.maxPerson,
+          type: room.Private ? 'Private' : 'Public',
+          maxPerson: room.maxPerson,
+          id: room.id,
+        }));
+      } catch (error) {
+        console.error('Error fetching spaces:', error);
+      }
+    },
+    async submitForm() {
+      const spaceData = {
+        assetBundleRoomId: this.selectedSpace.id,
+        name: this.form.name,
+        description: this.form.description,
+        capacity: this.form.capacity,
+      };
+
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          console.error('No token found!');
+          return;
+        }
+
+        const response = await axios.post(
+          'http://my.xroomapp.com:8000/add_space',
+          spaceData,
+          {
+            headers: {
+              Authorization: `Token ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        console.log(response.data);
+        this.$emit('submit', response.data);
+        this.closeModal(); // Close the modal
+        window.location.reload(); // Refresh the page
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        alert('خطا در ارسال اطلاعات، لطفا دوباره تلاش کنید');
+      }
+    },
+  },
+  watch: {
+    isVisible(newVal) {
+      if (newVal) {
+        this.fetchSpaces();
       }
     },
   },
 };
 </script>
-
-
 
 <style scoped>
 .modal-overlay {
@@ -135,7 +226,7 @@ export default {
   direction: rtl;
   border-radius: 20px;
   padding-bottom: 1.5rem;
-  height: max-content;
+  height: 95vh;
   overflow-y: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -145,6 +236,8 @@ export default {
 .modal-content::-webkit-scrollbar {
   display: none;
 }
+
+
 .popUp-header {
     display: flex;
     align-items: center;
@@ -168,20 +261,25 @@ export default {
 }
 
 .popUp-title {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
     padding: 20px;
     padding-right: 50px;
 }
 
-.popUp-title h2 {
+.popUp-title-object {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+
+
+
+.popUp-title-object h2{
     font-size: 20px;
     font-weight: 600;
     color: #101010;
-} 
+}
 
-.popUp-title span {
+.popUp-title-object span {
     font-size: 16px;
     font-weight: 500;
     color: #4F5A69;
@@ -189,7 +287,7 @@ export default {
 }
 
 .popUp-objects {
-    margin-top: 1rem !important;
+    margin-top: 0rem !important;
     padding: 20px;
     background-color: #FFFFFF;
     border-radius: 16px;
@@ -220,12 +318,12 @@ export default {
   border: 1px solid #718096;
   border-radius: 8px;
   font-size: 1rem;
-  max-width: 25rem
+  max-width: 22rem
 }
 
 .form-group textarea {
   height: 140px;
-  width: 100%;
+  width: 75%;
   padding: 8px;
   border: 1px solid #718096;
   border-radius: 8px;
@@ -242,10 +340,77 @@ export default {
     outline: none;
 }
 
+
+.space-selection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem 16px;
+  justify-content: flex-start;
+  margin-bottom: 20px;
+}
+
+.space-card {
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  width: 31%;
+  height: 15rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.space-card:hover {
+  transform: scale(1.05);
+}
+
+/* Add selected class styles */
+.space-card.selected {
+  border: 2px solid #3A57E8;
+  box-shadow: 0 4px 8px rgba(58, 87, 232, 0.5); /* Blue border and shadow */
+}
+
+.space-img {
+  width: 100%;
+  height: 8rem;
+  object-fit: cover;
+  border-bottom: 1px solid #ddd;
+}
+
+.space-info {
+  padding: 10px;
+  text-align: center;
+  gap: 1rem;
+  display: grid;
+}
+
+.space-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #444;
+  margin-top: 5px;
+}
+
+.space-type, .space-capacity {
+  font-size: 14px;
+  color: #718096;
+}
+
+.loading-message {
+  text-align: center;
+  font-size: 16px;
+  color: #718096;
+  margin-bottom: 1rem;
+}
+
+.space-form {
+  margin-top: 3rem;
+}
+
 .form-actions {
   display: flex;
   justify-content: space-between;
-  padding: 20px;
+  padding: 20px 0px; 
   padding-bottom: 0;
   width: 100%;
   max-width: 620px;
@@ -275,4 +440,5 @@ export default {
   font-weight: 500;
   font-size: 18px;
 }
+
 </style>

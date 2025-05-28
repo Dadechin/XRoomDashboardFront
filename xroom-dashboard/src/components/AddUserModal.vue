@@ -142,7 +142,6 @@ export default {
         return;
       }
       this.$emit('add-user', { ...this.newUser });
-      console.log('اطلاعات کاربر اضافه شده:', JSON.stringify(this.newUser, null, 2));
       this.close();
     },
   },

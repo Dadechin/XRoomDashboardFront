@@ -67,21 +67,27 @@
 </template>
 
 <script>
-
 import AddUserModal from '@/components/AddUserModal.vue';
-
 
 export default {
   name: 'UsersTab',
-    components: {
-        AddUserModal,
+  components: {
+    AddUserModal,
+  },
+  props: {
+    userList: {
+      type: Array,
+      default: () => [],
     },
-    props: {
-        userList: {
-        type: Array,
-        default: () => [],
-        },
+    teamMemberCapacity: {
+      type: Number,
+      default: 0,
     },
+    subscriptionCount: {
+      type: Number,
+      default: 0,
+    },
+  },
   data() {
     return {
       isAddUserModalVisible: false,
@@ -89,6 +95,12 @@ export default {
   },
   methods: {
     openAddUserModal() {
+      const remainingCapacity = this.subscriptionCount - this.teamMemberCapacity;
+      if (remainingCapacity <= 0) {
+        alert('ظرفیت تیم پر شده است. لطفاً اشتراک جدیدی خریداری کنید.');
+        this.goToBuySubscription();
+        return;
+      }
       this.isAddUserModalVisible = true;
     },
     closeAddUserModal() {
@@ -96,6 +108,7 @@ export default {
     },
     submitNewUser(user) {
       this.$emit('add-user', user);
+      
       this.closeAddUserModal();
     },
     goToBuySubscription() {
@@ -104,7 +117,6 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 /* User Info Section */
 .user-info {

@@ -189,6 +189,8 @@ export default {
 .modal-content::-webkit-scrollbar {
   display: none;
 }
+
+
 .popUp-header {
     display: flex;
     align-items: center;
