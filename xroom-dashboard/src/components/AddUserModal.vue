@@ -37,38 +37,46 @@
       <div class="popUp-objects">
         <form @submit.prevent="handleSubmit" autocomplete="off">
           <div class="form-group">
-            <label for="full_name">نام و نام خانوادگی</label>
+            <label for="first_name">نام</label>
             <input
-              id="full_name"
-              v-model="newUser.full_name"
+              id="first_name"
+              v-model="newUser.first_name"
               type="text"
               required
             />
           </div>
           <div class="form-group">
-            <label for="email">ایمیل</label>
+            <label for="last_name">نام خانوادگی</label>
             <input
-              id="email"
-              v-model="newUser.email"
-              type="email"
+              id="last_name"
+              v-model="newUser.last_name"
+              type="text"
               required
-              style="text-align: left;"
             />
           </div>
           <div class="form-group">
-            <label for="phone">شماره تماس</label>
+            <label for="mobile_number">شماره تماس</label>
             <input
-              id="phone"
-              v-model="newUser.phone"
+              id="mobile_number"
+              v-model="newUser.mobile_number"
               type="tel"
               required
             />
           </div>
           <div class="form-group">
-            <label for="job_title">عنوان شغلی</label>
+            <label for="password">رمز عبور</label>
             <input
-              id="job_title"
-              v-model="newUser.job_title"
+              id="password"
+              v-model="newUser.password"
+              type="password"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="semat">عنوان شغلی</label>
+            <input
+              id="semat"
+              v-model="newUser.semat"
               type="text"
               required
             />
@@ -77,21 +85,11 @@
             <span>مدیر</span>
             <input
               type="checkbox"
-              id="is_manager"
+              id="isAdmin"
               class="checkbox"
-              v-model="newUser.is_manager"
+              v-model="newUser.isAdmin"
             />
-            <label for="is_manager" class="switch"></label>
-          </div>
-          <div class="form-group" style="justify-content: normal;">
-            <span>مجوز</span>
-            <input
-              type="checkbox"
-              id="has_permission"
-              class="checkbox"
-              v-model="newUser.has_permission"
-            />
-            <label for="has_permission" class="switch"></label>
+            <label for="isAdmin" class="switch"></label>
           </div>
         </form>
       </div>
@@ -104,6 +102,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'AddUserModal',
   props: {
@@ -115,34 +115,58 @@ export default {
   data() {
     return {
       newUser: {
-        full_name: '',
-        phone: '',
-        email: '',
-        job_title: '',
-        is_manager: false,
-        has_permission: false,
+        first_name: '',
+        last_name: '',
+        mobile_number: '',
+        password: '',
+        semat: '',
+        isAdmin: false,
       },
     };
   },
   methods: {
     close() {
       this.newUser = {
-        full_name: '',
-        phone: '',
-        email: '',
-        job_title: '',
-        is_manager: false,
-        has_permission: false,
+        first_name: '',
+        last_name: '',
+        mobile_number: '',
+        password: '',
+        semat: '',
+        isAdmin: false,
       };
       this.$emit('close');
     },
     handleSubmit() {
-      if (!this.newUser.full_name || !this.newUser.email || !this.newUser.phone || !this.newUser.job_title) {
+      if (!this.newUser.first_name || !this.newUser.last_name || !this.newUser.mobile_number || !this.newUser.password || !this.newUser.semat) {
         alert('لطفاً تمام فیلدها را پر کنید.');
         return;
       }
-      this.$emit('add-user', { ...this.newUser });
-      this.close();
+
+      const token = localStorage.getItem('token');
+      const userData = {
+        mobile_number: this.newUser.mobile_number,
+        first_name: this.newUser.first_name,
+        last_name: this.newUser.last_name,
+        semat: this.newUser.semat,
+        password: this.newUser.password,
+        isAdmin: this.newUser.isAdmin ? 'true' : 'false', // Sending as string "true" or "false"
+      };
+
+      axios.post('http://my.xroomapp.com:8000/add_teamMember', userData, {
+        headers: {
+          Authorization: `Token ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((response) => {
+        console.log('کاربر جدید:', response.data);
+        alert('کاربر با موفقیت اضافه شد');
+        this.close();
+      })
+      .catch((error) => {
+        console.error('Error adding user:', error);
+        alert('خطا در افزودن کاربر');
+      });
     },
   },
 };
@@ -151,7 +175,7 @@ export default {
 <style scoped>
 .modal-overlay {
   position: fixed;
-  inset: 0; /* جایگزین top: 0; left: 0; right: 0; bottom: 0 */
+  inset: 0;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
@@ -193,7 +217,7 @@ export default {
 }
 
 .popUp-header button {
-  background-color: inherit; /* استفاده از inherit برای حذف تکرار #101010 */
+  background-color: inherit;
   border: none;
   cursor: pointer;
 }
@@ -201,7 +225,7 @@ export default {
 .popUp-title {
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* اصلاح start به flex-start برای استاندارد بودن */
+  align-items: flex-start;
   padding: 20px 50px 20px 20px;
 }
 
@@ -219,7 +243,7 @@ export default {
 }
 
 .popUp-objects {
-  margin: 1rem auto 0; /* ترکیب margin-top و margin: auto */
+  margin: 1rem auto 0;
   padding: 20px;
   background-color: #FFFFFF;
   border-radius: 16px;
@@ -241,28 +265,15 @@ export default {
   font-size: 16px;
 }
 
-.form-group input,
-.form-group textarea {
+.form-group input {
   width: 100%;
   padding: 8px;
   border: 1px solid #718096;
   border-radius: 8px;
   font-size: 1rem;
-  resize: none; /* برای textarea */
 }
 
-.form-group input {
-  height: 45px;
-  max-width: 22rem;
-}
-
-.form-group textarea {
-  height: 140px;
-  max-width: 25rem;
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
+.form-group input:focus {
   outline: none;
 }
 
@@ -299,37 +310,37 @@ export default {
 
 /* checkbox toggler */
 
-.switch { 
-    position : relative ;
-    display : inline-block;
-    width: 60px !important;
-    height: 25px;
-    background-color: #CCCCCC;
-    border-radius: 20px;
-    margin-right: 12.5rem;
- }
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px !important;
+  height: 25px;
+  background-color: #CCCCCC;
+  border-radius: 20px;
+  margin-right: 12.5rem;
+}
 
- .switch::after {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background-color: white;
-    top: 2px;
-    right: 3px;
-    transition: all 0.3s;
+.switch::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: white;
+  top: 2px;
+  right: 3px;
+  transition: all 0.3s;
 }
 
 .checkbox:checked + .switch::after {
-    right: 37px; 
+  right: 37px;
 }
+
 .checkbox:checked + .switch {
-    background-color: #3a57e8;
+  background-color: #3a57e8;
 }
 
-.checkbox { 
-    display : none;
+.checkbox {
+  display: none;
 }
-
 </style>
