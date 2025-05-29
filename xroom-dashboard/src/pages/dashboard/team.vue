@@ -60,7 +60,7 @@
         />
       </div>
       <div v-if="activeTab === 'details'">
-        <TeamDetails />
+        <TeamDetails @update:teamData="handleTeamData" />
       </div>
       <div v-if="activeTab === 'buy-subscription'">
         <BuySubscription
@@ -235,6 +235,9 @@ export default {
       if (event.target === this.$refs.filePreviewDialog) {
         this.closePreviewDialog();
       }
+    },
+    handleTeamData(data) {
+      console.log('اطلاعات دریافتی : ', data);
     },
     openPreviewDialog(type, index, url) {
       if (type === 'video') {
