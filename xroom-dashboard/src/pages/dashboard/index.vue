@@ -11,7 +11,12 @@
         <div class="right-section">
           <h2 class="section-title">راهنمای شروع</h2>
           <div class="tutorial-grid">
-            <img class="tutorial-item" src="https://c.animaapp.com/m9nvumalUMfQbN/img/tutorials.svg" />
+            <img
+              class="tutorial-item"
+              @click="tutorialShowModal = true;"
+              src="https://c.animaapp.com/m9nvumalUMfQbN/img/tutorials.svg"
+              style="cursor: pointer;"
+            />
             <img class="tutorial-item" src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame-20.svg" />
             <img class="tutorial-item" src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame-19.svg" />
             <img class="tutorial-item" src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame-21.svg" />
@@ -25,7 +30,7 @@
             فقط یک ایده با جلسه شگفت‌انگیز بعدی‌تان در واقعیت مجازی فاصله دارید. همین امروز آن را برگزار کنید!
           </p>
           
-          <button class="create-meeting-btn">
+          <button class="create-meeting-btn" @click="showModal = true">
             <img src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame-2.svg" />
             <span>ایجاد جلسه جدید</span>
           </button>
@@ -96,18 +101,60 @@
     
     
   </div>
+
+  <!-- Create Meeting Modal -->
+  <CreateMeetingModal
+    :is-open="showModal"
+    @create-meeting="createNewMeeting"
+    @close="showModal = false"
+  />  
+
+  <!-- Tutorial Modal -->
+  <TutorialShowModal
+    :is-open="tutorialShowModal"
+    @close="tutorialShowModal = false"
+  />
 </template>
 
 <script>
 import SidebarMenu from '@/components/SidebarMenu.vue'
 import AppHeader from '@/components/Header.vue';
+import CreateMeetingModal from '@/components/CreateMeetingModal.vue';
+import TutorialShowModal from '@/components/TutorialShowModal.vue';
+
 
 export default {
   name: 'DashboardPage',
   components: {
     SidebarMenu,
     AppHeader,
+    CreateMeetingModal,
+    TutorialShowModal,
+  },
+  data() {
+    return {
+      showModal: false,
+      tutorialShowModal: false,
+    }
+  },
+ methods: {
+    createNewMeeting(meetingData) {
+      const newMeeting = {
+        id: this.meetings.length + 1,
+        title: meetingData.title,
+        date: meetingData.date,
+        image: 'https://via.placeholder.com/150',
+        type: meetingData.type,
+        maxCapacity: meetingData.maxCapacity,
+      };
+      this.meetings.push(newMeeting);
+      this.showModal = false;
+    },
+    filterMeetings() {
+      console.log('Filtering meetings');
+    },
   }
+  
 }
 </script>
 
