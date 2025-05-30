@@ -484,12 +484,27 @@ export default {
 <style scoped>
 
 .section-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #2d3748;
-  margin-top: 20px;
-  margin-bottom: 10px;
-  grid-column: 1 / -1;
+    font-size: 20px;
+    font-weight: 600;
+    color: #2d3748;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.section-description {
+    margin-bottom: 3rem;
+    margin-top: 1rem;
+    font-size: 20px;
+    font-weight: 600;
+    color: #2d3748;
+    margin: 1rem 0 3rem;
+}
+
+.section-description p {
+    line-height: 190%;
+    color: #4F5A69;
+    font-size: 16px;
+    margin-top: 1rem;
 }
 
 .dashboard-page {
@@ -531,18 +546,6 @@ export default {
   color: #3a57e8;
   border-bottom: 2px solid #3a57e8;
   font-size: 20px;
-}
-
-.section-description {
-  margin-bottom: 3rem;
-  margin-top: 1rem;
-}
-
-.section-description p {
-  line-height: 190%;
-  color: #4F5A69;
-  font-size: 16px;
-  margin-top: 2rem;
 }
 
 

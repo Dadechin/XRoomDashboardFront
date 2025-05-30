@@ -122,7 +122,22 @@ export default {
       },
     };
   },
+  watch: {
+    isVisible(newVal) {
+      if (newVal) {
+        // غیرفعال کردن اسکرول هنگام باز شدن پاپ‌آپ
+        document.body.style.overflow = 'hidden';
+      } else {
+        // فعال کردن اسکرول هنگام بسته شدن پاپ‌آپ
+        document.body.style.overflow = '';
+      }
+    },
+  },
   methods: {
+      beforeDestroy() {
+    // اطمینان از فعال شدن اسکرول هنگام حذف کامپوننت
+    document.body.style.overflow = '';
+  },
     close() {
       this.newUser = {
         first_name: '',

@@ -238,19 +238,29 @@ export default {
     }
 
 
-    .section-title {
-        font-size: 17px;
-        font-weight: 600;
-    }
+.section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #2d3748;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
 
-    .title-description {
-        font-size: 15px;
-        font-weight: 500;
-        margin-top: 1.5rem;
-        color: #4F5A69;
-        line-height: 190%;
-        max-width: 80%;
-    }
+.section-description {
+    margin-bottom: 3rem;
+    margin-top: 1rem;
+    font-size: 20px;
+    font-weight: 600;
+    color: #2d3748;
+  margin: 1rem 0 3rem;
+}
+
+.section-description p {
+    line-height: 190%;
+    color: #4F5A69;
+    font-size: 16px;
+    margin-top: 1rem;
+}
 
     .meeting-section {
         margin-top: 1rem;

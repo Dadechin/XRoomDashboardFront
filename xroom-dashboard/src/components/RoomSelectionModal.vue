@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isOpen" class="modal-overlay">
+  <div v-if="isOpen" class="modal-overlay" @click="cancel">
     <div class="modal-content" @click.stop>
       <div class="popUp-header">
         <h2>اتاق‌های این جلسه را انتخاب کنید</h2>

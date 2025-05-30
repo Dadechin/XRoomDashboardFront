@@ -132,7 +132,22 @@ export default {
       },
     };
   },
+  watch: {
+    isVisible(newVal) {
+      if (newVal) {
+        // غیرفعال کردن اسکرول هنگام باز شدن پاپ‌آپ
+        document.body.style.overflow = 'hidden';
+      } else {
+        // فعال کردن اسکرول هنگام بسته شدن پاپ‌آپ
+        document.body.style.overflow = '';
+      }
+    },
+  },
   methods: {
+    beforeDestroy() {
+    // اطمینان از فعال شدن اسکرول هنگام حذف کامپوننت
+    document.body.style.overflow = '';
+    },
     handleSubmit() {
       console.log('اطلاعات صورت حساب:', JSON.stringify(this.form, null, 2));
     /*  console.log('اطلاعات صورت حساب:', this.form);  */

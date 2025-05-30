@@ -109,6 +109,10 @@ export default {
     };
   },
   methods: {
+      beforeDestroy() {
+    // اطمینان از فعال شدن اسکرول هنگام حذف کامپوننت
+    document.body.style.overflow = '';
+  },
     closeModal() {
       this.$emit('close');
       this.resetForm()
@@ -196,7 +200,12 @@ export default {
   watch: {
     isVisible(newVal) {
       if (newVal) {
+        // غیرفعال کردن اسکرول هنگام باز شدن پاپ‌آپ
+        document.body.style.overflow = 'hidden';
         this.fetchSpaces();
+      } else {
+        // فعال کردن اسکرول هنگام بسته شدن پاپ‌آپ
+        document.body.style.overflow = '';
       }
     },
   },

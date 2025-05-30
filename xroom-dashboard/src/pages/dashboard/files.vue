@@ -1,479 +1,315 @@
 <template>
   <SidebarMenu />
-  
   <div class="dashboard-page">
     <div class="content">
       <!-- Top Header -->
-      <AppHeader pageTitle="فایل ها" />
+      <AppHeader pageTitle="فایل‌ها" />
 
-
-       
       <!-- Description -->
       <div class="section-description">
-        <div class="section-title">مدیریت فایل ها</div>
+        <div class="section-title">مدیریت فایل‌ها</div>
         <p>
-          فایل های خود مانند مدل های سه بعدی، تصاویر و اسناد PDF را برای استفاده در VR آماده کنید. یا یادداشت ها و تصاویر ایجاد شده در برنامه XRoom را دانلود کنید.
+          فایل‌های خود مانند مدل‌های سه‌بعدی، تصاویر و اسناد PDF را برای استفاده در VR آماده کنید. یا یادداشت‌ها و تصاویر ایجاد شده در برنامه XRoom را دانلود کنید.
         </p>
       </div>
 
       <!-- File Manager Layout -->
       <div class="file-manager-layout">
-
-          <!-- Sidebar -->
-        <!-- <div class="file-sidebar">
-          <button class="primary-button" @click="openDialog('image')">
-            افزودن تصویر
-            <img src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame-2.svg" class="btn-icon" />
-          </button>
-          
-          <button class="primary-button" @click="openDialog('pdf')">
-            افزودن PDF
-            <img src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame-2.svg" class="btn-icon" />
-          </button>
-          
-          <button class="primary-button" @click="openDialog('video')">
-            افزودن ویدیو
-            <img src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame-2.svg" class="btn-icon" />
-          </button>
-          
-          <button class="primary-button" @click="openDialog('glb')">
-            افزودن مدل 3D
-            <img src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame-2.svg" class="btn-icon" />
-          </button>
-
+        <div class="file-sidebar">
           <div class="filter-buttons">
-            <button class="filter-btn">فایل های اخیر</button>
-            <button class="filter-btn">دانلودهای اخیر</button>
-            <button class="filter-btn">فایل های شخصی</button>
-            <button class="filter-btn">نشانه دار شده</button>
+            <button class="new-file" @click="openDialog('image')">
+              فایل جدید
+              <span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 16 16" fill="none">
+                  <g clip-path="url(#clip0_312_7133)">
+                    <path d="M2.66602 11.3333V12.6666C2.66602 13.0202 2.80649 13.3593 3.05654 13.6094C3.30659 13.8594 3.64573 13.9999 3.99935 13.9999H11.9993C12.353 13.9999 12.6921 13.8594 12.9422 13.6094C13.1922 13.3593 13.3327 13.0202 13.3327 12.6666V11.3333" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M4.66602 6.00008L7.99935 2.66675L11.3327 6.00008" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M8 2.66675V10.6667" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                  </g>
+                  <defs>
+                    <clipPath id="clip0_312_7133">
+                      <rect width="16" height="16" fill="white"></rect>
+                    </clipPath>
+                  </defs>
+                </svg>
+              </span>
+            </button>
+
+            <button
+              v-for="(filter, index) in filters"
+              :key="'filter-' + index"
+              :class="[
+                'filter-btn',
+                { 'active-btn': activeFilter === filter.id },
+                { 'disable-btn': activeFilter !== filter.id },
+                { 'recent-filter-border': filter.id === 'recent-files' }
+              ]"
+              @click="setActiveFilter(filter.id)"
+            >
+              <span v-html="filter.icon" :class="['filter-icon', { 'active-icon': activeFilter === filter.id, 'disable-icon': activeFilter !== filter.id }]">
+              </span>
+              {{ filter.label }}
+            </button>
           </div>
-        </div> -->
+        </div>
 
-        
         <!-- Cards Grid -->
-         <!-- Cards Grid -->
-  <div class="file-grid">
-    <!-- Images Section -->
-    <div class="section-title">تصاویر</div>
-    <div class="file-card" @click="openDialog('image')">
-      <div class="file-card-info">
-        <img src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame-2.svg" class="file-image" style="background: #3a57e8; border-radius: 20px;" />
-        <div class="file-title">تصویر جدید</div>
-        <div class="file-meta">
-          <span class="file-date">برای افزودن کلیک کنید</span>
-        </div>
-      </div>
-    </div>
-    <div class="file-card" v-for="(image, index) in userData.images" :key="'image-' + index" 
-    
-    @click="openPreviewDialog('image', index, getFullImageUrl(image.image))"
-    >
-      <img :src="getFullImageUrl(image.image)" class="file-image" />
-      <div class="file-card-info">
-        <div class="file-title">{{ image.name }}</div>
-        <div class="file-meta">
-          <img src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame-1.svg" class="meta-icon" />
-          <span class="file-date">{{ formatDate(image.created_at) }}</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- PDFs Section -->
-    <div class="section-title">فایل های PDF</div>
-    <div class="file-card" @click="openDialog('pdf')">
-      <div class="file-card-info">
-        <img src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame-2.svg" class="file-image" style="background: #3a57e8; border-radius: 20px;" />
-        <div class="file-title">PDF جدید</div>
-        <div class="file-meta">
-          <span class="file-date">برای افزودن کلیک کنید</span>
-        </div>
-      </div>
-    </div>
-    <div class="file-card" v-for="(pdf, index) in userData.pdfs" :key="'pdf-' + index"     
-     @click="openPreviewDialog('pdf', index, getFullImageUrl(pdf.pdf))"
-      >
-      <img src="https://cdn-icons-png.flaticon.com/512/337/337946.png" class="file-image" />
-      <div class="file-card-info">
-        <div class="file-title">{{ pdf.name }}</div>
-        <div class="file-meta">
-          <img src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame-1.svg" class="meta-icon" />
-          <span class="file-date">{{ formatDate(pdf.created_at) }}</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Videos Section -->
-    <div class="section-title">ویدیوها</div>
-    <div class="file-card" @click="openDialog('video')">
-      <div class="file-card-info">
-        <img src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame-2.svg" class="file-image" style="background: #3a57e8; border-radius: 20px;" />
-        <div class="file-title">ویدیو جدید</div>
-        <div class="file-meta">
-          <span class="file-date">برای افزودن کلیک کنید</span>
-        </div>
-      </div>
-    </div>
-    <div class="file-card" v-for="(video, index) in userData.videos" :key="'video-' + index"
-    @click="openPreviewDialog('video', index, getFullImageUrl(video.video))"
-
-    >
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfQ1L9b8tFaGXBQxOdCCaq-AcYkmawPtRVZA&s"    />
-      <div class="file-card-info">
-        <div class="file-title">{{ video.name }}</div>
-        <div class="file-meta">
-          <img src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame-1.svg" class="meta-icon" />
-          <span class="file-date">{{ formatDate(video.created_at) }}</span>
+        <div class="file-grid">
+          <div v-for="section in filteredFileSections" :key="section.type" class="file-section">
+            <div class="section-title">{{ section.title }}</div>
+            <div v-if="filteredFiles(section.type).length > 0" style="display: flex; align-items: center;gap: 1.5rem 0.9rem; flex-wrap: wrap;">
+              <div
+                class="file-card"
+                v-for="(file, index) in filteredFiles(section.type)"
+                :key="`${section.type}-${index}`"
+                @click="openPreviewDialog(section.type, index, getFullFileUrl(file[section.type]), file.id)"
+              >
+                <img :src="getFilePreviewImage(section.type, file)" class="file-image" />
+                <div class="file-card-info">
+                  <div class="file-title">{{ file.name }}</div>
+                  <div class="file-meta">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 20 20" fill="none">
+                          <path d="M2.5 10C2.5 11.4834 2.93987 12.9334 3.76398 14.1668C4.58809 15.4001 5.75943 16.3614 7.12987 16.9291C8.50032 17.4968 10.0083 17.6453 11.4632 17.3559C12.918 17.0665 14.2544 16.3522 15.3033 15.3033C16.3522 14.2544 17.0665 12.918 17.3559 11.4632C17.6453 10.0083 17.4968 8.50032 16.9291 7.12987C16.3614 5.75943 15.4001 4.58809 14.1668 3.76398C12.9334 2.93987 11.4834 2.5 10 2.5C7.90329 2.50789 5.89081 3.32602 4.38333 4.78333L2.5 6.66667" stroke="#101010" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path d="M2.5 2.5V6.66667H6.66667" stroke="#101010" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path d="M10 5.83325V9.99992L13.3333 11.6666" stroke="#101010" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    <span class="file-date">{{ formatDate(file.created_at) }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div v-else class="no-files-message">
+              <button class="new-file" @click="openDialog(section.type)">
+                فایلی وجود ندارد , برای آپلود فایل جدید کلیک کنید
+                <span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 16 16" fill="none">
+                    <g clip-path="url(#clip0_312_7133)">
+                      <path d="M2.66602 11.3333V12.6666C2.66602 13.0202 2.80649 13.3593 3.05654 13.6094C3.30659 13.8594 3.64573 13.9999 3.99935 13.9999H11.9993C12.353 13.9999 12.6921 13.8594 12.9422 13.6094C13.1922 13.3593 13.3327 13.0202 13.3327 12.6666V11.3333" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path d="M4.66602 6.00008L7.99935 2.66675L11.3327 6.00008" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path d="M8 2.66675V10.6667" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </g>
+                    <defs>
+                      <clipPath id="clip0_312_7133">
+                        <rect width="16" height="16" fill="white"></rect>
+                      </clipPath>
+                    </defs>
+                  </svg>
+                </span>
+              </button>
+            </div>
+          </div>
+          <div v-if="filteredFileSections.length === 0 || (activeFilter === 'recent-files' && !hasRecentFiles)" class="no-files-message">
+            فایلی وجود ندارد
+            <button v-if="activeFilter !== 'recent-files'" class="upload-btn" @click="openDialog(getFilterType(activeFilter))">
+              آپلود فایل
+            </button>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- GLBs Section -->
-    <div class="section-title">مدل های 3D</div>
-    <div class="file-card" @click="openDialog('glb')">
-      <div class="file-card-info">
-        <img src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame-2.svg" class="file-image" style="background: #3a57e8; border-radius: 20px;" />
-        <div class="file-title">مدل 3D جدید</div>
-        <div class="file-meta">
-          <span class="file-date">برای افزودن کلیک کنید</span>
-        </div>
-      </div>
-    </div>
-    <div class="file-card" v-for="(glb, index) in userData.glbs" :key="'glb-' + index"
-    @click="openPreviewDialog('glb', index, getFullImageUrl(glb.glb))"
-    >
-      <img :src="require('@/assets/img/3d icon.jpg')" />
-       
-      <div class="file-card-info">
-        <div class="file-title">{{ glb.name }}</div>
-        <div class="file-meta">
-          <img src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame-1.svg" class="meta-icon" />
-          <span class="file-date">{{ formatDate(glb.created_at) }}</span>
-        </div>
-      </div>
-    </div>
-  </div>
-      </div>
-    </div>
+    <!-- New File Dialog Component -->
+    <NewFileDialog
+      :is-open="isNewFileDialogOpen"
+      :initial-upload-type="currentUploadType"
+      :base-url="baseUrl"
+      @close="closeDialog"
+      @upload-success="fetchUserData"
+    />
 
-    <!-- New File Dialog -->
-    <dialog ref="newFileDialog" class="new-file-dialog">
-      <div class="dialog-content">
-        <h3>{{ dialogTitle }}</h3>
-        
-        <div class="form-group">
-          <label for="fileName">نام فایل</label>
-          <input 
-            type="text" 
-            id="fileName" 
-            v-model="newFileName" 
-            placeholder="نام فایل را وارد کنید"
-          />
-        </div>
-        
-        <div class="form-group">
-          <label for="fileUpload">انتخاب فایل</label>
-          <input 
-            type="file" 
-            id="fileUpload" 
-            ref="fileInput"
-            @change="handleFileChange"
-            :accept="fileAccept"
-          />
-        </div>
-        
-        <div class="dialog-actions">
-          <button class="cancel-btn" @click="closeDialog">انصراف</button>
-          <button class="submit-btn" @click="uploadFile" :disabled="!selectedFile || uploading">
-            {{ uploading ? 'در حال آپلود...' : 'آپلود فایل' }}
-          </button>
-        </div>
-      </div>
-    </dialog>
-
-
-   
-    
-
-    <!-- Preview Dialog -->
-<!-- Preview Dialog -->
-
- 
-<dialog ref="filePreviewDialog" class="file-preview-dialog" :data-type="currentPreviewType"
- @click="handleBackdropClick"
->
-  <div class="preview-content" @click.stop>
-    <button class="close-preview" @click="closePreviewDialog">×</button>
-    
-    <!-- Image Preview -->
-    <img :src="previewUrl" class="preview-file" v-if="currentPreviewType === 'image'" />
-    
-    <!-- PDF Preview -->
-    <div class="pdf-preview-container" v-if="currentPreviewType === 'pdf'">
-      <vue-pdf-embed 
-        :source="previewUrl" 
-        class="pdf-preview"
-        v-if="previewUrl" />
-    </div>
-    
-     <!-- Video Player -->
-     <div v-if="currentPreviewType === 'video'" class="video-preview-container">
-      <VideoPlayer 
-    v-if="currentPreviewType === 'video'"
-    :options="videoOptions"
-    class="video-player"
-  />
-    </div>
-    
-    <!-- 3D Model Preview -->
-    <div class="model-preview-container" v-if="currentPreviewType === 'glb'">
-      <model-viewer
-        :src="previewUrl"
-        alt="3D Model"
-        ar
-        ar-modes="webxr scene-viewer quick-look"
-        environment-image="neutral"
-        auto-rotate
-        camera-controls
-        class="model-preview"
-      ></model-viewer>
-    </div>
-    
-    <div class="preview-actions">
-      <button class="download-btn" @click="downloadFile">دانلود</button>
-      <button class="delete-btn" @click="deleteFile" v-if="currentPreviewIndex !== null">حذف</button>
-    </div>
-  </div>
-</dialog>
-
-     
+    <!-- File Preview Dialog Component -->
+    <FilePreviewDialog
+      :is-open="isPreviewDialogOpen"
+      :preview-url="previewUrl"
+      :preview-type="currentPreviewType"
+      :preview-index="currentPreviewIndex"
+      :base-url="baseUrl"
+      :video-options="videoOptions"
+      @close="closePreviewDialog"
+      @delete-success="fetchUserData"
+    />
   </div>
 </template>
 
 <script>
-import VuePdfEmbed from 'vue-pdf-embed'
-import 'video.js/dist/video-js.css';
-import '@videojs/themes/dist/sea/index.css';
-import '@google/model-viewer'
-import SidebarMenu from '@/components/SidebarMenu.vue'
+import '@google/model-viewer';
+import SidebarMenu from '@/components/SidebarMenu.vue';
 import axios from 'axios';
-
- 
-import { VideoPlayer } from '@videojs-player/vue';
-import 'video.js/dist/video-js.css';
 import AppHeader from '@/components/Header.vue';
+import NewFileDialog from '@/components/NewFileDialog.vue';
+import FilePreviewDialog from '@/components/FilePreviewDialog.vue';
 
 export default {
   name: 'DashboardPage',
   components: {
     SidebarMenu,
-    VuePdfEmbed,  
-    VideoPlayer,
     AppHeader,
-
+    NewFileDialog,
+    FilePreviewDialog,
   },
   data() {
     return {
-      // ... existing data ...
-      previewUrl: '',
-    currentPreviewIndex: null,
-    currentPreviewType: null,
-    videoOptions: {
-        autoplay: false,
-        controls: true,
-        sources: [{
-          type: 'video/mp4',
-          src: '' // Will be set dynamically
-        }]
-      },
-    
       userData: {
         customer: {},
         user: {
           first_name: '',
-          last_name: ''
+          last_name: '',
         },
         images: [],
         pdfs: [],
         videos: [],
-        glbs: []
+        glbs: [],
       },
-      newFileName: '',
-      selectedFile: null,
-      uploading: false,
       baseUrl: 'http://194.62.43.230:8000',
+      isNewFileDialogOpen: false,
       currentUploadType: 'image',
-      dialogTitle: 'آپلود فایل جدید',
-      fileAccept: '*/*'
-    }
+      isPreviewDialogOpen: false,
+      previewUrl: '',
+      currentPreviewType: null,
+      currentPreviewIndex: null,
+      videoOptions: {
+        autoplay: false,
+        controls: true,
+        sources: [{ type: 'video/mp4', src: '' }],
+      },
+      activeFilter: 'all-files',
+      filters: [
+        {
+          id: 'recent-files',
+          label: 'فایل‌های اخیر',
+          icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none">
+            <path d="M2.5 10C2.5 11.4834 2.93987 12.9334 3.76398 14.1668C4.58809 15.4001 5.75943 16.3614 7.12987 16.9291C8.50032 17.4968 10.0083 17.6453 11.4632 17.3559C12.918 17.0665 14.2544 16.3522 15.3033 15.3033C16.3522 14.2544 17.0665 12.918 17.3559 11.4632C17.6453 10.0083 17.4968 8.50032 16.9291 7.12987C16.3614 5.75943 15.4001 4.58809 14.1668 3.76398C12.9334 2.93987 11.4834 2.5 10 2.5C7.90329 2.50789 5.89081 3.32602 4.38333 4.78333L2.5 6.66667" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2.5 2.5V6.66667H6.66667" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M10 5.83325V9.99992L13.3333 11.6666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>`,
+        },
+        {
+          id: 'all-files',
+          label: 'همه فایل‌ها',
+          icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none">
+            <path d="M2.5 3.33333V16.6667C2.5 17.1087 2.67559 17.5326 2.98816 17.8452C3.30072 18.1577 3.72464 18.3333 4.16667 18.3333H15.8333C16.2754 18.3333 16.6993 18.1577 17.0118 17.8452C17.3244 17.5326 17.5 16.6667V3.33333C17.5 2.8913 17.3244 2.46738 17.0118 2.15482C16.6993 1.84226 16.2754 1.66667 15.8333 1.66667H4.16667C3.72464 1.66667 3.30072 1.84226 2.98816 2.15482C2.67559 2.46738 2.5 2.8913 2.5 3.33333Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12.5 2.5V6.66667C12.5 7.1087 12.6756 7.53262 12.9882 7.84518C13.3007 8.15774 13.7246 8.33333 14.1667 8.33333H17.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>`,
+        },
+        {
+          id: 'images',
+          label: 'تصاویر',
+          icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none">
+            <path d="M2.5 3.33333V16.6667C2.5 17.1087 2.67559 17.5326 2.98816 17.8452C3.30072 18.1577 3.72464 18.3333 4.16667 18.3333H15.8333C16.2754 18.3333 16.6993 18.1577 17.0118 17.8452C17.3244 17.5326 17.5 16.6667V3.33333C17.5 2.8913 17.3244 2.46738 17.0118 2.15482C16.6993 1.84226 16.2754 1.66667 15.8333 1.66667H4.16667C3.72464 1.66667 3.30072 1.84226 2.98816 2.15482C2.67559 2.46738 2.5 2.8913 2.5 3.33333Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M6.66667 8.33333C7.58714 8.33333 8.33333 7.58714 8.33333 6.66667C8.33333 5.74619 7.58714 5 6.66667 5C5.74619 5 5 5.74619 5 6.66667C5 7.58714 5.74619 8.33333 6.66667 8.33333Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M17.5 12.5L13.3333 8.33333L5 16.6667" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>`,
+        },
+        {
+          id: 'pdfs',
+          label: 'PDF‌ها',
+          icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none">
+            <path d="M12.5 2.5H4.16667C3.72464 2.5 3.30072 2.67559 2.98816 2.98816C2.67559 3.30072 2.5 3.72464 2.5 4.16667V16.6667C2.5 17.1087 2.67559 17.5326 2.98816 17.8452C3.30072 18.1577 3.72464 18.3333 4.16667 18.3333H15.8333C16.2754 18.3333 16.6993 18.1577 17.0118 17.8452C17.3244 17.5326 17.5 17.1087 17.5 16.6667V6.66667L12.5 2.5Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12.5 2.5V6.66667C12.5 7.1087 12.6756 7.53262 12.9882 7.84518C13.3007 8.15774 13.7246 8.33333 14.1667 8.33333H17.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>`,
+        },
+        {
+          id: 'videos',
+          label: 'ویدیوها',
+          icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none">
+            <path d="M2.5 3.33333V16.6667C2.5 17.1087 2.67559 17.5326 2.98816 17.8452C3.30072 18.1577 3.72464 18.3333 4.16667 18.3333H15.8333C16.2754 18.3333 16.6993 18.1577 17.0118 17.8452C17.3244 17.5326 17.5 17.1087 17.5 16.6667V3.33333C17.5 2.8913 17.3244 2.46738 17.0118 2.15482C16.6993 1.84226 16.2754 1.66667 15.8333 1.66667H4.16667C3.72464 1.66667 3.30072 1.84226 2.98816 2.15482C2.67559 2.46738 2.5 2.8913 2.5 3.33333Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M7.5 5.83333L13.3333 10L7.5 14.1667V5.83333Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>`,
+        },
+        {
+          id: 'glbs',
+          label: 'مدل‌های 3D',
+          icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none">
+            <path d="M10 2.5C7.23858 2.5 4.58333 3.31667 2.5 4.78333V16.6667C4.58333 15.3167 7.23858 14.5 10 14.5C12.7614 14.5 15.4167 15.3167 17.5 16.6667V4.78333C15.4167 3.31667 12.7614 2.5 10 2.5Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M10 2.5V14.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>`,
+        },
+      ],
+      fileSections: [
+        { type: 'image', title: 'مدیریت تصاویر' },
+        { type: 'pdf', title: 'مدیریت PDF‌ها' },
+        { type: 'video', title: 'مدیریت ویدیوها' },
+        { type: 'glb', title: 'مدیریت مدل‌های 3D' },
+      ],
+    };
+  },
+  computed: {
+    filteredFileSections() {
+      if (this.activeFilter === 'all-files' || this.activeFilter === 'recent-files') {
+        return this.fileSections;
+      }
+      const filterTypeMap = {
+        images: 'image',
+        pdfs: 'pdf',
+        videos: 'video',
+        glbs: 'glb',
+      };
+      const filterType = filterTypeMap[this.activeFilter];
+      return filterType ? this.fileSections.filter(section => section.type === filterType) : [];
+    },
+    hasRecentFiles() {
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      return ['images', 'pdfs', 'videos', 'glbs'].some(type => 
+        this.userData[type].some(file => new Date(file.created_at) >= sevenDaysAgo)
+      );
+    },
   },
   created() {
     this.fetchUserData();
   },
   methods: {
-    handleBackdropClick(event) {
-    // Check if click was directly on the dialog element (backdrop)
-    if (event.target === this.$refs.filePreviewDialog) {
-      this.closePreviewDialog();
-    }
-  },
-    openPreviewDialog(type, index, url) {
-      if (type === 'video') {
-        this.videoOptions.sources[0].src = url;
-        this.$nextTick(() => {
-          this.$refs.filePreviewDialog?.showModal();
-        });
-      }
-      if (!this.$refs.filePreviewDialog) {
-      console.error('Dialog element not found');
-      return;
-    }
-    
-    this.currentPreviewType = type;
-    this.currentPreviewIndex = index;
-    this.previewUrl = url;
-    // Special handling for video
-     
-    this.currentPreviewType = type;
-    this.currentPreviewIndex = index;
-    
-    if (type === 'video') {
-      this.videoOptions.sources[0].src = url;
-      this.videoOptions.poster = this.getVideoThumbnail();
-      this.previewUrl = url;
-    } else {
-      this.previewUrl = url;
-    }
-    
-    this.$nextTick(() => {
-      this.$refs.filePreviewDialog?.showModal();
-    });
+    setActiveFilter(filterId) {
+      this.activeFilter = filterId;
+    },
+    getFilterType(filterId) {
+      const filterTypeMap = {
+        images: 'image',
+        pdfs: 'pdf',
+        videos: 'video',
+        glbs: 'glb',
+      };
+      return filterTypeMap[filterId] || 'image';
+    },
+    filteredFiles(type) {
+      const files = this.userData[`${type}s`];
+      if (!files) return [];
 
-    if (type === 'image') {
-      this.previewImageUrl = url;
-      this.previewPdfUrl = '';
-    } else if (type === 'pdf') {
-      this.previewPdfUrl = url;
-      this.previewImageUrl = '';
-    }
-    
-    // this.$refs.imagePreviewDialog.showModal();
-    this.$refs.filePreviewDialog.showModal();
-
-  },
-  getVideoThumbnail(videoUrl) {
-    // You can implement a proper thumbnail generation here
-    // For now, we'll just return a placeholder
-    videoUrl = 'https://cdn-icons-png.flaticon.com/512/2839/2839038.png'
-    return videoUrl;
-  },
-  closePreviewDialog() {
-    // Safely access the dialog reference
-    const dialog = this.$refs.filePreviewDialog;
-    
-    if (dialog && typeof dialog.close === 'function') {
-      dialog.close();
-    } else {
-      console.warn('Dialog reference not found or close method unavailable');
-    }
-    
-    // Reset preview state
-    this.previewUrl = '';
-    this.currentPreviewIndex = null;
-    this.currentPreviewType = null;
-  },
-  async downloadFile() {
-    const url = this.currentPreviewType === 'image' 
-      ? this.previewImageUrl 
-      : this.previewPdfUrl;
-    
-    if (!url) return;
-    
-    try {
-      const response = await fetch(url);
-      const blob = await response.blob();
-      const downloadUrl = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = downloadUrl;
-      
-      // Set appropriate filename
-      if (this.currentPreviewType === 'image') {
-        a.download = `image-${new Date().getTime()}.${url.split('.').pop()}`;
-      } else if (this.currentPreviewType === 'pdf') {
-        a.download = `document-${new Date().getTime()}.pdf`;
+      if (this.activeFilter === 'recent-files') {
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        return files.filter(file => new Date(file.created_at) >= sevenDaysAgo);
       }
-      
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(downloadUrl);
-      document.body.removeChild(a);
-    } catch (error) {
-      console.error('Error downloading file:', error);
-      alert('خطا در دانلود فایل');
-    }
-  },
-  
-  async deleteFile() {
-    if (this.currentPreviewIndex === null || !this.currentPreviewType) return;
-    
-    try {
-      const token = localStorage.getItem('token');
-      let deleteUrl = '';
-      let itemId = '';
-      let fileArray = [];
-      
-      switch(this.currentPreviewType) {
+
+      const filterTypeMap = {
+        images: 'image',
+        pdfs: 'pdf',
+        videos: 'video',
+        glbs: 'glb',
+      };
+      if (this.activeFilter !== 'all-files' && filterTypeMap[this.activeFilter] !== type) {
+        return [];
+      }
+
+      return files;
+    },
+    getFilePreviewImage(type, file) {
+      switch (type) {
         case 'image':
-          fileArray = this.userData.images;
-          itemId = fileArray[this.currentPreviewIndex].id;
-          deleteUrl = `${this.baseUrl}/deleteImage/${itemId}/`;
-          break;
+          return this.getFullFileUrl(file.image);
         case 'pdf':
-          fileArray = this.userData.pdfs;
-          itemId = fileArray[this.currentPreviewIndex].id;
-          deleteUrl = `${this.baseUrl}/deletePdf/${itemId}/`;
-          break;
+          return 'https://cdn-icons-png.flaticon.com/512/337/337946.png';
         case 'video':
-          fileArray = this.userData.videos;
-          itemId = fileArray[this.currentPreviewIndex].id;
-          deleteUrl = `${this.baseUrl}/deleteVideo/${itemId}/`;
-          break;
+          return 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfQ1L9b8tFaGXBQxOdCCaq-AcYkmawPtRVZA&s';
         case 'glb':
-          fileArray = this.userData.glbs;
-          itemId = fileArray[this.currentPreviewIndex].id;
-          deleteUrl = `${this.baseUrl}/deleteGlb/${itemId}/`;
-          break;
-      }
-      
-      await axios.delete(deleteUrl, {
-        headers: {
-          'Authorization': `Token ${token}`
-        }
-      });
-      
-      this.closePreviewDialog();
-      await this.fetchUserData();
-      alert('فایل با موفقیت حذف شد');
-    } catch (error) {
-      console.error('Error deleting file:', error);
-      alert('خطا در حذف فایل');
-    }
-  },
-    async fetchUserData() {
-      try {
-        const token = localStorage.getItem('token');
-        
-        let response = await axios.get(`${this.baseUrl}/getInfo`, {
-          headers: {
-            'Authorization': `Token ${token}`
-          }
-        });
-        response = response.data;
-        this.userData = response.data;
-      } catch (error) {
-        console.error('Error fetching user data:', error);
+          return require('@/assets/img/3d icon.jpg');
+        default:
+          return '';
       }
     },
-    getFullImageUrl(relativePath) {
+    getFullFileUrl(relativePath) {
       if (!relativePath) return '';
       return `${this.baseUrl}${relativePath}`;
     },
@@ -482,649 +318,250 @@ export default {
       const date = new Date(dateString);
       return date.toLocaleDateString('fa-IR');
     },
-    openDialog(type) {
+    openDialog(type = 'image') {
       this.currentUploadType = type;
-      
-      switch(type) {
-        case 'image':
-          this.dialogTitle = 'آپلود تصویر جدید';
-          this.fileAccept = 'image/*';
-          break;
-        case 'pdf':
-          this.dialogTitle = 'آپلود فایل PDF';
-          this.fileAccept = '.pdf';
-          break;
-        case 'video':
-          this.dialogTitle = 'آپلود ویدیو';
-          this.fileAccept = 'video/*';
-          break;
-        case 'glb':
-          this.dialogTitle = 'آپلود مدل 3D';
-          this.fileAccept = '.glb';
-          break;
-      }
-      
-      this.$refs.newFileDialog.showModal();
+      this.isNewFileDialogOpen = true;
     },
     closeDialog() {
-      this.newFileName = '';
-      this.selectedFile = null;
-      this.$refs.newFileDialog.close();
+      this.isNewFileDialogOpen = false;
     },
-    handleFileChange(event) {
-      this.selectedFile = event.target.files[0];
+    openPreviewDialog(type, index, url, id) {
+      this.currentPreviewType = type;
+      this.currentPreviewIndex = id; // Use file.id instead of index
+      this.previewUrl = url;
+
+      if (type === 'video') {
+        this.videoOptions.sources[0].src = url;
+      }
+
+      this.isPreviewDialogOpen = true;
     },
-    async uploadFile() {
-      if (!this.selectedFile) return;
-      
-      this.uploading = true;
-      
-      const formData = new FormData();
-      // formData.append('file', this.selectedFile);
-      formData.append('name', this.newFileName || this.selectedFile.name);
-      
-
-
-         
-        switch(this.currentUploadType) {
-          case 'image':
-            formData.append('image', this.selectedFile);
-            break;
-          case 'pdf':
-            formData.append('pdf', this.selectedFile);
-            break;
-          case 'video':
-            formData.append('video', this.selectedFile);
-
-            break;
-          case 'glb':
-            formData.append('glb', this.selectedFile);
-
-            break;
-        }
-
-
+    closePreviewDialog() {
+      this.isPreviewDialogOpen = false;
+      this.previewUrl = '';
+      this.currentPreviewIndex = null;
+      this.currentPreviewType = null;
+    },
+    async fetchUserData() {
       try {
         const token = localStorage.getItem('token');
-        let uploadUrl = '';
-        
-        switch(this.currentUploadType) {
-          case 'image':
-            uploadUrl = `${this.baseUrl}/uploadImage/`;
-            break;
-          case 'pdf':
-            uploadUrl = `${this.baseUrl}/uploadPdf/`;
-            break;
-          case 'video':
-            uploadUrl = `${this.baseUrl}/uploadVideo/`;
-            break;
-          case 'glb':
-            uploadUrl = `${this.baseUrl}/uploadGlb/`;
-            break;
-        }
-        
-        await axios.post(uploadUrl, formData, {
+        const response = await axios.get(`${this.baseUrl}/getInfo`, {
           headers: {
             'Authorization': `Token ${token}`,
-            'Content-Type': 'multipart/form-data'
-          }
+          },
         });
-        
-        this.closeDialog();
-        // Refresh the data after successful upload
-        await this.fetchUserData();
-        
-        // Show success message
-        alert('فایل با موفقیت آپلود شد');
+        this.userData = response.data.data;
       } catch (error) {
-        console.error('Error uploading file:', error);
-        alert('خطا در آپلود فایل');
-      } finally {
-        this.uploading = false;
+        console.error('Error fetching user data:', error);
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
- 
-<!-- Your existing styles remain the same -->
-  
-  <style scoped>
 
-.section-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #2d3748;
-  margin-top: 20px;
-  margin-bottom: 10px;
-  grid-column: 1 / -1;
-}
-
-/* Update the file-sidebar to accommodate more buttons */
-.file-sidebar {
-  width: 180px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-  .dashboard-page {
-    margin-right: 360px;
-    padding: 20px;
-    direction: rtl;
-    font-family: IRANSansXFaNum, sans-serif;
-  }
-  
-  .content {
-    background-color: #f8f9fa;
-    border-radius: 20px;
-    padding: 35px 80px;
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
-  }
-  
-  .header-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .right-actions {
-    display: flex;
-    gap: 10px;
-  }
-  
-  .subscription-button {
-    background-color: #48bb78;
-    color: white;
-    font-size: 14px;
-    padding: 8px 16px;
-    border-radius: 8px;
-    border: none;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-  }
-  
-  .button-icon {
-    width: 20px;
-    height: 20px;
-  }
-  
-  .user-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  
-  .user-name {
-    font-size: 14px;
-    font-weight: 500;
-    color: #2d3748;
-  }
-  
-  .avatar-box {
-    width: 40px;
-    height: 40px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: white;
-  }
-  
-  .avatar-icon {
-    width: 20px;
-    height: 20px;
-  }
-  
-  .page-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #2d3748;
-  }
-  
-  .section-description {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  
-  .section-title {
-    font-size: 17px;
-    font-weight: 700;
-    color: #1a202c;
-  }
-  
-  .section-description p {
-    font-size: 14px;
-    color: #4a5568;
-    line-height: 1.8;
-  }
-  
-  .file-manager-layout {
-    display: flex;
-    gap: 32px;
-    justify-content: space-between;
-    align-items: flex-start;
-    flex-wrap: wrap;
-  }
-  
-  .file-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 24px;
-    flex: 1;
-    min-width: 0;
-  }
-  
-  .file-card {
-    background-color: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 16px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-    transition: 0.2s ease;
-  }
-  
-  .file-card:hover {
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
-  }
-  
-  .file-image {
-    width: 100%;
-    height: 140px;
-    object-fit: cover;
-  }
-  
-  .file-card-info {
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .file-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: #1a202c;
-    text-align: center;
-  }
-  
-  .file-meta {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    color: #718096;
-  }
-  
-  .meta-icon {
-    width: 16px;
-    height: 16px;
-  }
-  
-  .file-sidebar {
-    width: 180px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-  
-  .primary-button {
-    background-color: #3a57e8;
-    color: white;
-    font-size: 14px;
-    padding: 12px;
-    border-radius: 10px;
-    border: none;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-    transition: 0.2s;
-  }
-  
-  .primary-button:hover {
-    background-color: #2e45c8;
-  }
-  
-  .btn-icon {
-    width: 16px;
-    height: 16px;
-  }
-  
-  .filter-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .filter-btn {
-    background-color: white;
-    color: #1a202c;
-    font-size: 13px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 10px;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-  
-  .filter-btn:hover {
-    background-color: #edf2f7;
-  }
-  
-  .footer {
-    margin-top: 40px;
-    text-align: center;
-  }
-  
-  .text-wrapper-13 {
-    font-size: 13px;
-    color: white;
-    font-weight: 500;
-  }
-  
-  .logo {
-    margin-top: 15px;
-  }
-  
-  .clip-path-group {
-    height: 40px;
-    width: 150px;
-  }
-
-
-
-
-
-
-
-
-  .new-file-dialog {
-  border: none;
-  border-radius: 16px;
-  padding: 0;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-}
-
-.new-file-dialog::backdrop {
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
-.dialog-content {
-  padding: 24px;
-}
-
-.dialog-content h3 {
-  margin: 0 0 20px;
-  font-size: 18px;
-  color: #1a202c;
+<style scoped>
+.no-files-message {
   text-align: center;
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 14px;
-  color: #4a5568;
-}
-
-.form-group input[type="text"],
-.form-group input[type="file"] {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  font-family: inherit;
-}
-
-.dialog-actions {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 30px;
-}
-
-.cancel-btn {
-  background-color: #e2e8f0;
-  color: #4a5568;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.submit-btn {
-  background-color: #3a57e8;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.submit-btn:disabled {
-  background-color: #a0aec0;
-  cursor: not-allowed;
-}
-
-.image-preview-dialog {
-  border: none;
-  border-radius: 12px;
-  padding: 0;
-  max-width: 70%;
-  max-height: 80%;
-  width: auto;
-  height: auto;
-}
-
-.preview-content {
-  position: relative;
-  padding: 20px;
+  color: #888;
+  font-size: 1.2rem;
+  margin-top: 1rem;
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 1rem;
 }
 
-.close-preview {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #333;
-}
-
-.preview-image {
-  max-width: 100%;
-  max-height: 70vh;
-  margin-bottom: 20px;
-}
-
-.preview-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.download-btn, .delete-btn {
-  padding: 8px 16px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-.download-btn {
-  background-color: #3a57e8;
+.upload-btn {
+  background-color: #007bff;
   color: white;
-}
-
-.delete-btn {
-  background-color: #ff4d4f;
-  color: white;
-}
-
-
-
-
-/* pdf preview */
-.pdf-preview-container {
-  width: 100%;
-  max-width: 800px;
-  height: 70vh;
-  overflow: auto;
-  margin-bottom: 20px;
-  border: 1px solid #ddd;
-}
-
-.pdf-preview {
-  width: 100%;
-  height: 100%;
-}
-
-/* Adjust dialog size for PDFs */
-.image-preview-dialog[data-type="pdf"] {
-  width: 80%;
-  height: 80%;
-}
-/* pdf preview */
-
-
-
-/* Base dialog styles */
-.file-preview-dialog {
   border: none;
-  border-radius: 12px;
-  padding: 0;
-  max-width: 90%;
-  max-height: 90%;
-  width: auto;
-  height: auto;
-}
-
-.preview-content {
-  position: relative;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.close-preview {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  font-size: 24px;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
   cursor: pointer;
-  color: #333;
+  font-size: 1rem;
 }
 
-/* Image preview */
-.preview-file[data-type="image"] {
-  max-width: 100%;
-  max-height: 70vh;
-  margin-bottom: 20px;
+.upload-btn:hover {
+  background-color: #0056b3;
 }
 
-/* PDF preview */
-.pdf-preview-container {
-  width: 100%;
-  max-width: 800px;
-  height: 70vh;
-  overflow: auto;
-  margin-bottom: 20px;
-  border: 1px solid #ddd;
+.recent-filter-border {
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #E2DEE9 !important;
 }
+</style>
 
-.pdf-preview {
-  width: 100%;
-  height: 100%;
-}
-
-/* Video preview */
-.video-preview-container {
-  width: 100%;
-  max-width: 800px;
-  margin-bottom: 20px;
-}
-
-.video-preview {
-  width: 100%;
-  max-height: 70vh;
-}
-
-/* 3D Model preview */
-.model-preview-container {
-  width: 100%;
-  height: 70vh;
-  max-width: 800px;
-  margin-bottom: 20px;
-}
-
-.model-preview {
-  width: 100%;
-  height: 100%;
-}
-
-/* Action buttons */
-.preview-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.download-btn, .delete-btn {
-  padding: 8px 16px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-.download-btn {
-  background-color: #3a57e8;
-  color: white;
-}
-
-.delete-btn {
-  background-color: #ff4d4f;
-  color: white;
-}
-
-
-
-
-
-
-
-
-.dialog-content {
-  /* Prevent margin collapse that could interfere with click detection */
-  display: inline-block;
-  /* Rest of your existing dialog content styles */
-}
-
-.file-preview-dialog::backdrop {
-  /* Makes the backdrop clickable */
-  background: rgba(0, 0, 0, 0.5);
-  cursor: pointer;
-}
-  </style>
   
+<style scoped>
+  
+/* General Typography */
+.section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 1.5rem;
+}
+
+.file-section {
+  margin-bottom: 3rem;
+}
+
+.section-description {
+    margin-bottom: 3rem;
+    margin-top: 1rem;
+    font-size: 20px;
+    font-weight: 600;
+    color: #2d3748;
+  margin: 1rem 0 3rem;
+}
+
+.section-description p {
+    line-height: 190%;
+    color: #4F5A69;
+    font-size: 16px;
+    margin-top: 1rem;
+}
+
+/* Layout and Containers */
+.dashboard-page {
+  margin-right: 360px;
+  padding: 20px;
+  direction: rtl;
+  font-family: IRANSansXFaNum, sans-serif;
+}
+
+.content {
+  background-color: #f8f9fa;
+  border-radius: 20px;
+  padding: 35px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.file-manager-layout {
+  display: flex;
+  max-width: 100%;
+  gap: 5rem;
+}
+
+.file-sidebar {
+    background-color: #FFFFFF;
+    border-radius: 12px;
+    padding: 2.5rem 2rem;
+    width: 25%;
+    height: max-content;
+}
+
+.filter-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+}
+
+.new-file {
+    background: #3A57E8;
+    padding: 8px 24px;
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.active-btn {
+  background: none;
+  border: none;
+  color: #3A57E8;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  justify-content: flex-start;
+  cursor: pointer;
+}
+
+.active-icon {
+  height: 22px !important;
+  width: 22px !important;
+  stroke: #3A57E8 !important;
+}
+
+.disable-btn {
+  background: none;
+  border: none;
+  color: #5A6678;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  justify-content: flex-start;
+  cursor: pointer;
+}
+
+.disable-icon {
+  height: 22px !important;
+  width: 22px !important;
+  stroke: #5A6678 !important;
+}
+
+.file-grid {
+  width: 71%;
+}
+
+.file-card {
+  display: flex;
+  flex-direction: column;
+  max-width: 32%;
+  width: 100%;
+  padding : 7px 7px 16px 7px;
+  border-radius: 16px;
+  border: 1px solid #B8C0CB;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.file-card img {
+  height: 190px;
+  width: 100%;
+  border-radius: 15px;
+  object-fit: cover;
+}
+
+.file-card-info {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.file-title {
+  color: #444D5A;
+  font-size: 21px;
+  font-weight: 600;
+}
+
+.file-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+
+.file-meta svg {
+  height: 22px;
+  width: 22px;
+  stroke: #101010;
+}
+
+.file-date {
+  color: #7F8DA1;
+  font-size: 17px;
+
+}
+</style>

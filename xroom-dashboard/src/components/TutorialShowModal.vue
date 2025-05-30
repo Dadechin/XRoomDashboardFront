@@ -144,11 +144,27 @@ export default {
       ],
     };
   },
+  watch: {
+    isOpen(newVal) {
+      if (newVal) {
+        // غیرفعال کردن اسکرول هنگام باز شدن پاپ‌آپ
+        document.body.style.overflow = 'hidden';
+      } else {
+        // فعال کردن اسکرول هنگام بسته شدن پاپ‌آپ
+        document.body.style.overflow = '';
+      }
+    },
+  },
   methods: {
     closeModal() {
       this.$emit('close');
     },
+    beforeDestroy() {
+    // اطمینان از فعال شدن اسکرول هنگام حذف کامپوننت
+    document.body.style.overflow = '';
   },
+  },
+  
 };
 </script>
 

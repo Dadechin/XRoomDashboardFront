@@ -419,7 +419,29 @@ export default {
       return customer.profile_img || this.defaultProfileIcon;
     },
   },
+    watch: {
+    // نظارت بر باز و بسته شدن پاپ‌آپ اصلی
+    isOpen(newVal) {
+      if (newVal) {
+        document.body.style.overflow = 'hidden';
+      } else if (!this.isRoomSelectionOpen) {
+        document.body.style.overflow = '';
+      }
+    },
+    // نظارت بر باز و بسته شدن پاپ‌آپ انتخاب اتاق
+    isRoomSelectionOpen(newVal) {
+      if (newVal) {
+        document.body.style.overflow = 'hidden';
+      } else if (!this.isOpen) {
+        document.body.style.overflow = '';
+      }
+    },
+  },
   methods: {
+      beforeDestroy() {
+    // اطمینان از فعال شدن اسکرول هنگام حذف کامپوننت
+    document.body.style.overflow = '';
+  },
     openRoomSelection() {
       this.isRoomSelectionOpen = true;
     },
