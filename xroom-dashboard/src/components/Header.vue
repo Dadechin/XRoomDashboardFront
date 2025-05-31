@@ -1,5 +1,5 @@
 <template>
-  <header class="header-container">
+  <div class="header-container">
     <div class="welcome-container">
       <p class="welcome-message">{{ pageTitle }} </p>
     </div>
@@ -35,12 +35,18 @@
 </div>
       </div>
     </div>
-
+    <button class="menu" @click="toggleSidebar">
+      <span>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        </svg>
+      </span>
+    </button>
     <button class="green-button">
       <img :src="require('@/assets/img/shopIcon.png')" alt="Icon" class="button-icon" />
       <span>خرید اشتراک </span>
     </button>
-  </header>
+  </div>
 </template>
 
 
@@ -61,24 +67,20 @@ export default {
   computed: {
     fullName() {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
-      if (user.first_name && user.last_name) {
-        return `${user.first_name} ${user.last_name}`;
-      }
-      return 'کاربر مهمان';
+      return user.first_name && user.last_name
+        ? `${user.first_name} ${user.last_name}`
+        : 'کاربر مهمان';
     },
-    
     profileIcon() {
       const customer = JSON.parse(localStorage.getItem('customer') || '{}');
-      if (customer.profile_img  ) {
-        return `${customer.profile_img}`;
-      }
-      
-      return 'https://c.animaapp.com/m9nvumalUMfQbN/img/frame.svg';
+      return customer.profile_img
+        ? `${customer.profile_img}`
+        : 'https://c.animaapp.com/m9nvumalUMfQbN/img/frame.svg';
     }
   },
   methods: {
     toggleDropdown() {
-      console.log("Dropdown toggled"); // This should now appear in console
+      console.log("Dropdown toggled");
       this.showDropdown = !this.showDropdown;
     },
     logout() {
@@ -90,10 +92,13 @@ export default {
       if (!this.$el.contains(event.target)) {
         this.showDropdown = false;
       }
+    },
+    toggleSidebar() {
+      this.$emit('toggle-sidebar');
     }
   },
   mounted() {
-    console.log("Component mounted"); // Check if this appears
+    console.log("Component mounted");
     document.addEventListener('click', this.closeDropdown);
   },
   beforeUnmount() {
@@ -103,25 +108,23 @@ export default {
 </script>
 
 <style scoped>
+/* Base styles for all screen sizes */
 .header-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px;
-    border-bottom: 1px solid #eaeaea;
-    position: relative;
-    z-index: 100;
-    padding-right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  border-bottom: 1px solid #eaeaea;
+  position: relative;
+  z-index: 100;
 }
 
-
-/* New green button styles */
 .green-button {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background-color: #48BB78; /* Green color */
+  background-color: #48BB78;
   color: white;
   border: none;
   padding: 8px 16px;
@@ -132,39 +135,50 @@ export default {
 }
 
 .green-button:hover {
-  background-color: #3e8e41; /* Darker green on hover */
+  background-color: #3e8e41;
 }
 
 .button-icon {
   width: 16px;
   height: 16px;
-  filter: brightness(0) invert(1); /* Make icon white */
+  filter: brightness(0) invert(1);
+}
+
+.menu {
+  background-color: transparent;
+  border: none;
+}
+
+.menu svg {
+  height: 25px;
+  width: 25px;
 }
 
 .welcome-container {
   flex: 1;
-  text-align: right;
-  /* padding-right: 20px; */
 }
 
 .welcome-message {
   color: #111;
   margin: 0;
-  font-size: 19px;
   font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .user-info-container {
   display: flex;
   align-items: center;
   gap: 15px;
-  margin-left: 25px;
+  position: relative;
 }
 
 .user-name-container {
   display: flex;
   align-items: center;
   gap: 8px;
+  position: relative;
 }
 
 .user-icon {
@@ -174,9 +188,9 @@ export default {
 }
 
 .user-name {
-    font-size: 16px;
-    font-weight: 500;
-    color: #101010;
+  font-size: 16px;
+  font-weight: 500;
+  color: #101010;
 }
 
 .avatar-wrapper {
@@ -188,13 +202,11 @@ export default {
   align-items: center;
   justify-content: center;
   background-color: #f5f5f5;
-  position: relative;
   cursor: pointer;
 }
 
 .user-avatar {
   width: 100%;
-  
   height: 55px;
   object-fit: cover;
 }
@@ -204,87 +216,6 @@ export default {
   width: 1px;
   background-color: #eaeaea;
 }
-
-.dropdown-menu {
-  /* position: absolute; */
-  top: 50px;
-  right: 0;
-  background-color: white;
-  border: 1px solid #eaeaea;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  z-index: 100;
-  min-width: 150px;
-  overflow: hidden;
-}
-
-.dropdown-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 15px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.dropdown-item:hover {
-  background-color: #f5f5f5;
-}
-
-.logout-icon {
-  width: 16px;
-  height: 16px;
-}
-
-
-.user-info-container {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-left: 25px;
-  position: relative; /* Add this for dropdown positioning */
-}
-
-.user-name-container {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  position: relative; /* Important for dropdown positioning */
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 100%; /* Position below the user info */
-  right: 0;
-  background-color: white;
-  border: 1px solid #eaeaea;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  z-index: 1000; /* Higher z-index to ensure it's above other elements */
-  min-width: 150px;
-  margin-top: 5px; /* Small gap from the user info */
-}
-
-.dropdown-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 15px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.dropdown-item:hover {
-  background-color: #f5f5f5;
-}
-
-.logout-icon {
-  width: 16px;
-  height: 16px;
-}
-
-/* Ensure header has proper z-index */
-
 
 .dropdown-menu {
   position: absolute;
@@ -297,6 +228,7 @@ export default {
   z-index: 1000;
   min-width: 200px;
   padding: 10px 0;
+  margin-top: 5px;
 }
 
 .dropdown-item {
@@ -319,7 +251,7 @@ export default {
 
 .team-name {
   font-size: 14px;
-  color: #3b82f6; /* Tailwind blue-500 */
+  color: #3b82f6;
   text-decoration: none;
   margin-left: 8px;
 }
@@ -331,11 +263,178 @@ export default {
 }
 
 .logout {
-  color: #f56565; /* Tailwind red-500 */
+  color: #f56565;
 }
 
 .logout .dropdown-label {
   color: #f56565;
+}
+
+.logout-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Mobile (max-width: 520px) */
+@media (max-width: 520px) {
+  .header-container {
+    padding: 20px 0;
+  }
+
+  .green-button {
+    display: none;
+  }
+
+  .menu {
+    text-align: right;
+    width: 30%;
+  }
+
+  .welcome-container {
+    text-align: left;
+    order: 3;
+    width: 30%;
+  }
+
+  .welcome-message {
+    font-size: 15px;
+    width: 90px;
+  }
+
+  .user-info-container {
+    justify-content: center;
+    order: 2;
+    width: 40%;
+  }
+
+  .avatar-wrapper {
+    display: none;
+  }
+}
+
+/* Small tablet (min-width: 520px and max-width: 780px) */
+@media (min-width: 520px) and (max-width: 780px) {
+  .header-container {
+    padding: 20px 0;
+  }
+
+  .green-button {
+    display: none;
+  }
+
+  .menu {
+    text-align: center;
+    width: 30%;
+  }
+
+  .menu svg {
+    height: 29px;
+    width: 29px;
+  }
+
+  .welcome-container {
+    text-align: center;
+    order: 3;
+    width: 30%;
+  }
+
+  .welcome-message {
+    font-size: 18px;
+    width: 90px;
+    margin: auto;
+    display: block;
+  }
+
+  .user-info-container {
+    justify-content: center;
+    order: 2;
+    width: 40%;
+  }
+
+  .user-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .user-name {
+    font-size: 18px;
+  }
+
+  .avatar-wrapper {
+    display: none;
+  }
+}
+
+/* Tablet (min-width: 780px and max-width: 1024px) */
+@media (min-width: 780px) and (max-width: 1024px) {
+  .menu {
+    display: none;
+  }
+
+  .header-container {
+    padding-right: 0;
+  }
+
+  .welcome-container {
+    text-align: right;
+    width: 30%;
+  }
+
+  .welcome-message {
+    font-size: 15px;
+    width: 200px;
+  }
+
+  .user-info-container {
+    margin-left: 25px;
+    width: 40%;
+  }
+}
+
+/* Desktop (min-width: 1025px and max-width: 1280px) */
+@media (min-width: 1025px) and (max-width: 1280px) {
+  .menu {
+    display: none;
+  }
+
+  .header-container {
+    padding-right: 0;
+  }
+
+  .welcome-container {
+    text-align: right;
+  }
+
+  .welcome-message {
+    font-size: 19px;
+  }
+
+  .user-info-container {
+    margin-left: 25px;
+  }
+}
+
+/* Large Desktop (min-width: 1280px) */
+@media (min-width: 1280px) {
+  .menu {
+    display: none;
+  }
+
+  .header-container {
+    padding-right: 0;
+  }
+
+  .welcome-container {
+    text-align: right;
+  }
+
+  .welcome-message {
+    font-size: 19px;
+  }
+
+  .user-info-container {
+    margin-left: 25px;
+  }
 }
 
 </style>

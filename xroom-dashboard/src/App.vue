@@ -1,17 +1,17 @@
 <template>
   <div id="app">
-    <!-- Dashboard LayOut -->
+    <!-- Dashboard Layout -->
     <template v-if="isDashboardLayout">
-      <SidebarMenu />
+      <SidebarMenu :isOpen="isSidebarOpen" @close="isSidebarOpen = false" />
       <div class="dashboard-page">
         <div class="content">
-          <AppHeader :pageTitle="$route.meta.title" />
+          <AppHeader @toggle-sidebar="toggleSidebar" :pageTitle="$route.meta.title" />
           <router-view></router-view>
         </div>
       </div>
     </template>
 
-    <!-- Sample LayOut for SignUp .... -->
+    <!-- Sample Layout for SignUp, etc. -->
     <template v-else>
       <router-view></router-view>
     </template>
@@ -32,82 +32,127 @@ export default {
     SidebarMenu,
     AppHeader,
   },
+  data() {
+    return {
+      isSidebarOpen: false
+    };
+  },
   computed: {
     isDashboardLayout() {
       return this.$route.meta.requiresAuth === true;
-    },
+    }
   },
+  methods: {
+    toggleSidebar() {
+      this.isSidebarOpen = !this.isSidebarOpen;
+    }
+  }
 };
 </script>
 
 <style scoped>
-/* Global Styles */
-
+/* Reset default margins and set base font */
 body {
-  /* font-family: 'Arial', sans-serif; */
-  background-color: #f4f7fa;
   margin: 0;
   padding: 0;
-  font-family: 'Yekan', sans-serif;
-
+  font-family: 'Yekan', 'Arial', sans-serif;
+  background-color: #f4f7fa;
 }
 
-
+/* App title styling */
 .app-title {
-  color: white;
-  font-size: 32px;
-  font-weight: bold;
+  color: #fff;
+  font-size: 2rem; /* 32px, using rem for scalability */
+  font-weight: 700;
   margin: 0;
 }
 
-/* Additional styling for the whole app */
+/* Main app container */
 #app {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
+/* Router view content */
 router-view {
   flex-grow: 1;
-  padding: 20px;
+  padding: 1.25rem; /* 20px, using rem for consistency */
 }
-
-
-
-
-
 
 </style>
 
 
 <style>
+/* Font Face Declaration */
 @font-face {
   font-family: 'IRANSans';
   src: url('@/assets/fonts/IRANSansXFaNum-Medium.ttf') format('truetype');
-  font-weight: normal;
+  font-weight: 500;
   font-style: normal;
+  font-display: swap; /* Improves font loading performance */
 }
 
-/* Apply the font globally */
+/* Global Font Application */
 * {
   font-family: 'IRANSans', sans-serif !important;
 }
 
-.dashboard-page {
-  margin-right: 20rem;
-  padding: 20px;
-  direction: rtl;
-  font-family: IRANSansXFaNum, sans-serif;
-}
-
+/* Base Content Styles */
 .content {
   background-color: #f8f9fa;
   border-radius: 20px;
-  padding: 35px 80px !important;
   display: flex;
   flex-direction: column;
   gap: 32px;
+  padding: 35px 80px;
 }
 
+/* Responsive Styles */
+@media (max-width: 520px) {
+  .dashboard-page {
+    padding: 15px 5px;
+    direction: rtl;
+  }
+
+  .content {
+    padding: 5px 15px !important;
+  }
+}
+
+@media (min-width: 521px) and (max-width: 780px) {
+  .dashboard-page {
+    padding:  15px;
+    direction: rtl;
+  }
+
+  .content {
+    padding: 35px 15px !important;
+  }
+}
+
+@media (min-width: 781px) and (max-width: 1024px) {
+  .dashboard-page {
+    margin-right: 20rem;
+    padding: 20px;
+    direction: rtl;
+  }
+
+  .content {
+    padding: 15px 45px 45px 0 !important;
+  }
+}
+
+@media (min-width: 1025px) {
+  .dashboard-page {
+    margin-right: 20rem;
+    padding: 20px;
+    direction: rtl;
+  }
+
+  .content {
+    padding: 35px 80px !important;
+  }
+}
 
 </style>
