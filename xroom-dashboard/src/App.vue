@@ -1,26 +1,43 @@
 <template>
   <div id="app">
-    <!-- Main App Layout -->
-     
-     
+    <!-- Dashboard LayOut -->
+    <template v-if="isDashboardLayout">
+      <SidebarMenu />
+      <div class="dashboard-page">
+        <div class="content">
+          <AppHeader :pageTitle="$route.meta.title" />
+          <router-view></router-view>
+        </div>
+      </div>
+    </template>
 
-    <!-- The router-view here will display the active route's component -->
-    <router-view></router-view>
+    <!-- Sample LayOut for SignUp .... -->
+    <template v-else>
+      <router-view></router-view>
+    </template>
+
+    <Footer />
   </div>
-  <Footer />
-
-  
 </template>
 
 <script>
-import Footer from '@/components/Footer.vue'
+import AppHeader from '@/components/Header.vue';
+import SidebarMenu from '@/components/SidebarMenu.vue';
+import Footer from '@/components/Footer.vue';
 
 export default {
   name: 'App',
   components: {
-    Footer
-  }
-}
+    Footer,
+    SidebarMenu,
+    AppHeader,
+  },
+  computed: {
+    isDashboardLayout() {
+      return this.$route.meta.requiresAuth === true;
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -35,12 +52,6 @@ body {
 
 }
 
-/* Styling for the header */
-header {
-  background-color: #4A90E2; /* Blue color */
-  padding: 20px;
-  text-align: center;
-}
 
 .app-title {
   color: white;
@@ -60,6 +71,12 @@ router-view {
   flex-grow: 1;
   padding: 20px;
 }
+
+
+
+
+
+
 </style>
 
 
@@ -75,4 +92,22 @@ router-view {
 * {
   font-family: 'IRANSans', sans-serif !important;
 }
+
+.dashboard-page {
+  margin-right: 20rem;
+  padding: 20px;
+  direction: rtl;
+  font-family: IRANSansXFaNum, sans-serif;
+}
+
+.content {
+  background-color: #f8f9fa;
+  border-radius: 20px;
+  padding: 35px 80px !important;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+
 </style>

@@ -1,8 +1,5 @@
 <template>
-
-    <SidebarMenu />
-    <div class="dashboard-page">
-        <div class="content">
+        <div>
             <!-- Top Header -->
             <AppHeader pageTitle="دانلود  ها" />
 
@@ -43,19 +40,13 @@
                 برای دستورالعمل‌های نصب ، حتماً از <router-link to="/dashboard/download" style="color: #3A57E8;">پایگاه دانش ما</router-link> دیدن کنید.
               </span>
         </div>
-    </div>
-
 </template>
 
 <script>
-import SidebarMenu from '@/components/SidebarMenu.vue'
-import AppHeader from '@/components/Header.vue';
 
 export default {
   name: 'DashboardPage',
   components: {
-    SidebarMenu,
-    AppHeader,
 
   },
   data () {
@@ -83,7 +74,7 @@ export default {
 
 <style scoped>
 
-  .dashboard-page {
+/*   .dashboard-page {
     margin-right: 360px;
     padding: 20px;
     direction: rtl;
@@ -97,7 +88,7 @@ export default {
     flex-direction: column;
     gap: 32px;
   }
-
+ */
 .section-title {
     font-size: 20px;
     font-weight: 600;
@@ -124,6 +115,7 @@ export default {
 
   .chose-device {
     margin-top: 2rem;
+    margin-bottom: 2rem;
   }
 
   .cards {
@@ -237,7 +229,6 @@ export default {
 }
 
 .instructions-text {
-    margin-top: 1.5rem;
     font-size: 15px;
     font-weight: 600;
     color: #4F5A69;

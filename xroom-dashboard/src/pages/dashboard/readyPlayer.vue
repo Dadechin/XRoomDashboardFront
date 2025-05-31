@@ -1,11 +1,5 @@
-<template>
-    <SidebarMenu />
-  
-    <div class="dashboard-page">
-      <div class="content">
-        <!-- Header -->
-        <AppHeader pageTitle="انتخاب آواتار" />
-
+<template>  
+      <div>
   
         <div class="page-title">ساخت آواتار جدید</div>
   
@@ -19,19 +13,14 @@
            
         ></iframe>
       </div>
-    </div>
   </template>
   
-  <script>
-  import SidebarMenu from '@/components/SidebarMenu.vue'
+<script>
   import axios from '@/axios';
-import AppHeader from '@/components/Header.vue';
   
   export default {
     name: 'ChangeAvatar',
     components: {
-      SidebarMenu,
-      AppHeader,
     },
     data() {
       return {
@@ -234,7 +223,7 @@ import AppHeader from '@/components/Header.vue';
   }
   
   /* Rest of your existing styles... */
-  .dashboard-page {
+/*   .dashboard-page {
     margin-right: 360px;
     padding: 20px;
     direction: rtl;
@@ -248,7 +237,7 @@ import AppHeader from '@/components/Header.vue';
     display: flex;
     flex-direction: column;
     gap: 32px;
-  }
+  } */
   
   .page-title {
     font-size: 22px;

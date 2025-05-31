@@ -209,6 +209,11 @@ export default {
         this.$emit('upload-success');
         this.$emit('close');
         alert('فایل با موفقیت آپلود شد');
+
+        // بررسی مسیر فعلی و هدایت به /dashboard/files در صورت نیاز
+        if (this.$route.path !== '/dashboard/files') {
+          this.$router.push('/dashboard/files');
+        }
       } catch (error) {
         console.error('Error uploading file:', error);
         alert('خطا در آپلود فایل');

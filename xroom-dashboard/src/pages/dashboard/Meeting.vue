@@ -1,11 +1,5 @@
 <template>
-  <SidebarMenu />
-
-  <div class="dashboard-page">
-    <div class="content">
-      <!-- Top Header -->
-      <AppHeader pageTitle="جلسات" />
-
+    <div>
       <!-- Description -->
       <div class="section-description">
         <div class="section-title">مدیریت جلسات</div>
@@ -133,19 +127,14 @@
         @close="showModal = false"
       />
     </div>
-  </div>
 </template>
 
 <script>
-import SidebarMenu from '@/components/SidebarMenu.vue';
-import AppHeader from '@/components/Header.vue';
 import CreateMeetingModal from '@/components/CreateMeetingModal.vue';
 
 export default {
   name: 'DashboardPage',
   components: {
-    SidebarMenu,
-    AppHeader,
     CreateMeetingModal,
   },
   data() {
@@ -222,7 +211,7 @@ export default {
 };
 </script>
 <style scoped>
-    .dashboard-page {
+/*     .dashboard-page {
         margin-right: 360px;
         padding: 20px;
         direction: rtl;
@@ -236,7 +225,7 @@ export default {
         flex-direction: column;
         gap: 32px;
     }
-
+ */
 
 .section-title {
     font-size: 20px;

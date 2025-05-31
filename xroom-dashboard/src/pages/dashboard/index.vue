@@ -1,10 +1,6 @@
 <template>
-  <SidebarMenu />
-  <div class="dashboard-page">
-    <div class="content">
+    <div>
       <!-- <AppHeader /> -->
-      <AppHeader pageTitle="از این داشبورد، کار با XRoom را آغاز کنید." />
-
       <div class="dashboard-grid">
         
         <!-- Right Section -->
@@ -43,8 +39,8 @@
           <div class="files-header">
             <h1 style="    font-size: 24px;">آخرین فایل ها</h1>
             <div class="file-buttons">
-              <button class="white-button">بارگذاری فایل</button>
-              <button class="white-button">مدیریت فایل‌ها</button>
+              <button class="white-button" @click="openDialog('image')">بارگذاری فایل</button>
+              <router-link class="white-button" to="/dashboard/files">مدیریت فایل‌ها</router-link>
             </div>
           </div>
           
@@ -100,8 +96,6 @@
     </div>
     
     
-  </div>
-
   <!-- Create Meeting Modal -->
   <CreateMeetingModal
     :is-open="showModal"
@@ -114,30 +108,40 @@
     :is-open="tutorialShowModal"
     @close="tutorialShowModal = false"
   />
+
+  <!-- New File Dialog Component -->
+  <NewFileDialog
+    :is-open="isNewFileDialogOpen"
+    :initial-upload-type="currentUploadType"
+    :base-url="baseUrl"
+    @close="closeDialog"
+    @upload-success="fetchUserData"
+  />
 </template>
 
 <script>
-import SidebarMenu from '@/components/SidebarMenu.vue'
-import AppHeader from '@/components/Header.vue';
 import CreateMeetingModal from '@/components/CreateMeetingModal.vue';
 import TutorialShowModal from '@/components/TutorialShowModal.vue';
+import NewFileDialog from '@/components/NewFileDialog.vue';
 
 
 export default {
   name: 'DashboardPage',
   components: {
-    SidebarMenu,
-    AppHeader,
     CreateMeetingModal,
     TutorialShowModal,
+    NewFileDialog
   },
   data() {
     return {
       showModal: false,
       tutorialShowModal: false,
+      isNewFileDialogOpen: false,
+      currentUploadType: 'image',
+      baseUrl: 'http://194.62.43.230:8000'
     }
   },
- methods: {
+  methods: {
     createNewMeeting(meetingData) {
       const newMeeting = {
         id: this.meetings.length + 1,
@@ -153,13 +157,22 @@ export default {
     filterMeetings() {
       console.log('Filtering meetings');
     },
+    openDialog(type = 'image') {
+      this.currentUploadType = type;
+      this.isNewFileDialogOpen = true;
+    },
+    closeDialog() {
+      this.isNewFileDialogOpen = false;
+    },
+    fetchUserData() {
+      console.log('Fetching user data');
+    }
   }
-  
 }
 </script>
 
 <style scoped>
-.dashboard-page {
+/* .dashboard-page {
   margin-right: 360px;
   padding: 20px;
   direction: rtl;
@@ -175,13 +188,13 @@ export default {
   padding: 35px 80px;
   display: flex;
   flex-direction: column;
-}
+} */
 
 .dashboard-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 40px;
-  margin-top: 80px;
+  margin-top: 1rem;
 }
 
 .left-section {
@@ -374,6 +387,8 @@ export default {
   font-family: "IRANSansXFaNum-Medium", Helvetica;
   cursor: pointer;
   transition: background-color 0.2s;
+  color: #101010;
+  line-height: normal;
 }
 
 .white-button:hover {

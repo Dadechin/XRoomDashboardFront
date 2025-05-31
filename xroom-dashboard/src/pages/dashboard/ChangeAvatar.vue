@@ -1,25 +1,21 @@
 <template>
-  <SidebarMenu />
 
-  <div class="dashboard-page">
-    <div class="content">
-      <!-- Header -->
-      <AppHeader pageTitle="انتخاب آواتار" />
+    <div style="gap: 1.5rem;display: flex;flex-direction: column;">
+      <div style="gap: 1.5rem;display: flex;flex-direction: column;">
 
+        <div class="page-title"> آواتار خود را انتخاب کنید</div>
 
-      <div class="page-title"> آواتار خود را انتخاب کنید</div>
+        <h5>
+          نحوه ظاهر شدن خود را در طول جلسات در XRoom را سفارشی سازی کنید.
+          نگران نباشید، شما می توانید ان را در هر زمان دیگری تغییر دهید.
+        </h5>
 
-      <h5>
-        نحوه ظاهر شدن خود را در طول جلسات در XRoom را سفارشی سازی کنید.
-        نگران نباشید، شما می توانید ان را در هر زمان دیگری تغییر دهید.
-      </h5>
-
-      <router-link to="/dashboard/readyplayer">ساخت آواتار به دلخواه   </router-link>
-
+        <router-link to="/dashboard/readyplayer">ساخت آواتار به دلخواه   </router-link>
+      </div>
       <div class="avatar-selection-container">
     <!-- Left Column - Women Models -->
     <div class="gender-column">
-      <h3 class="text-center mb-4">آواتارهای زنانه</h3>
+      <h3 class="mb-4 text-center">آواتارهای زنانه</h3>
       <div class="avatar-grid">
         <div v-for="(avatar, index) in femaleAvatars" :key="'female-' + index" class="avatar-card">
           <div class="model-preview-container">
@@ -47,7 +43,7 @@
 
     <!-- Right Column - Men Models -->
     <div class="gender-column">
-      <h3 class="text-center mb-4">آواتارهای مردانه</h3>
+      <h3 class="mb-4 text-center">آواتارهای مردانه</h3>
       <div class="avatar-grid">
         <div v-for="(avatar, index) in maleAvatars" :key="'male-' + index" class="avatar-card">
           <div class="model-preview-container">
@@ -74,20 +70,15 @@
   </div>
       
     </div>
-  </div>
 </template>
 
 <script>
-import SidebarMenu from '@/components/SidebarMenu.vue'
 import axios from '@/axios';
 import { ref } from 'vue';
-import AppHeader from '@/components/Header.vue';
 
 export default {
   name: 'ChangeAvatar',
   components: {
-    SidebarMenu,
-    AppHeader,
   },
   data() {
     return {
@@ -271,21 +262,6 @@ export default {
 
 <style scoped>
  
-.dashboard-page {
-    margin-right: 360px;
-    padding: 20px;
-    direction: rtl;
-    font-family: IRANSansXFaNum, sans-serif;
-  }
-    
-  .content {
-    background-color: #f8f9fa;
-    border-radius: 20px;
-    padding: 35px 80px;
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
-  }
 .page-title {
   font-size: 22px;
   font-weight: bold;
@@ -431,8 +407,11 @@ body, html {
 
 /* Each gender column */
 .gender-column {
-  flex: 1; /* Each column takes equal width */
-  min-width: 0; /* Prevent flex items from overflowing */
+  flex: 1;
+  min-width: 0;
+  gap: 1rem;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Grid layout inside each column */

@@ -1,9 +1,7 @@
 <template>
-  <SidebarMenu />
-  <div class="dashboard-page">
-    <div class="content">
+    <div class="ef">
       <!-- Top Header -->
-      <AppHeader pageTitle="فایل‌ها" />
+
 
       <!-- Description -->
       <div class="section-description">
@@ -64,7 +62,17 @@
                 :key="`${section.type}-${index}`"
                 @click="openPreviewDialog(section.type, index, getFullFileUrl(file[section.type]), file.id)"
               >
-                <img :src="getFilePreviewImage(section.type, file)" class="file-image" />
+              <img 
+                  :src="getFilePreviewImage(section.type, file)" 
+                  :class="[
+                    {
+                      'file-image': section.type === 'image',
+                      'file-pdf': section.type === 'pdf',
+                      'file-video': section.type === 'video',
+                      'file-glb': section.type === 'glb'
+                    }
+                  ]" 
+                />                
                 <div class="file-card-info">
                   <div class="file-title">{{ file.name }}</div>
                   <div class="file-meta">
@@ -130,22 +138,17 @@
       @close="closePreviewDialog"
       @delete-success="fetchUserData"
     />
-  </div>
 </template>
 
 <script>
 import '@google/model-viewer';
-import SidebarMenu from '@/components/SidebarMenu.vue';
 import axios from 'axios';
-import AppHeader from '@/components/Header.vue';
 import NewFileDialog from '@/components/NewFileDialog.vue';
 import FilePreviewDialog from '@/components/FilePreviewDialog.vue';
 
 export default {
   name: 'DashboardPage',
   components: {
-    SidebarMenu,
-    AppHeader,
     NewFileDialog,
     FilePreviewDialog,
   },
@@ -423,20 +426,7 @@ export default {
     margin-top: 1rem;
 }
 
-/* Layout and Containers */
-.dashboard-page {
-  margin-right: 360px;
-  padding: 20px;
-  direction: rtl;
-  font-family: IRANSansXFaNum, sans-serif;
-}
-
 .content {
-  background-color: #f8f9fa;
-  border-radius: 20px;
-  padding: 35px 80px;
-  display: flex;
-  flex-direction: column;
   gap: 32px;
 }
 
@@ -530,7 +520,14 @@ export default {
   height: 190px;
   width: 100%;
   border-radius: 15px;
-  object-fit: cover;
+}
+
+.file-image{
+object-fit: cover;
+}
+
+.file-pdf , .file-video , .file-glb{
+  object-fit: contain;
 }
 
 .file-card-info {

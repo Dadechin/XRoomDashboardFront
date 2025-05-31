@@ -1,8 +1,5 @@
 <template>
-  <SidebarMenu />
-
-  <div class="dashboard-page">
-    <div class="content">
+    <div>
       <!-- Top Header -->
       <AppHeader pageTitle="فضاها" />
 
@@ -48,7 +45,6 @@
         <p>هیچ فضایی با فیلترهای انتخاب‌شده یافت نشد.</p>
       </div>
     </div>
-  </div>
 
 
 
@@ -65,8 +61,6 @@
 </template>
 
 <script>
-import SidebarMenu from '@/components/SidebarMenu.vue';
-import AppHeader from '@/components/Header.vue';
 import CreateSpaceModal from '@/components/CreateSpaceModal.vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/css';
@@ -76,8 +70,6 @@ import axios from 'axios';
 export default {
   name: 'DashboardPage',
   components: {
-    SidebarMenu,
-    AppHeader,
     CreateSpaceModal,
     Swiper,
     SwiperSlide,
@@ -175,7 +167,7 @@ export default {
 </style>
 
 <style scoped>
-.dashboard-page {
+/* .dashboard-page {
   margin-right: 360px;
   padding: 20px;
   direction: rtl;
@@ -188,7 +180,7 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 32px;
-}
+} */
 .section-title {
     font-size: 20px;
     font-weight: 600;

@@ -1,12 +1,5 @@
 <template>
-  <SidebarMenu />
-
-  <div class="dashboard-page">
-    <div class="content">
-
-      <!-- Header -->
-      <AppHeader pageTitle="ویرایش پروفایل" />
-
+    <div>
  
       <!-- Two-Column Form Layout -->
       <div class="profile-edit-container">
@@ -96,19 +89,14 @@
 
       
     </div>
-  </div>
 </template>
 
 <script>
-import SidebarMenu from '@/components/SidebarMenu.vue'
 import axios from '@/axios';
-import AppHeader from '@/components/Header.vue';
 
 export default {
   name: 'EditProfile',
   components: {
-    SidebarMenu,
-    AppHeader,
 
   },
   data() {
@@ -209,7 +197,7 @@ export default {
 
 <style scoped>
  
-.dashboard-page {
+/* .dashboard-page {
     margin-right: 360px;
     padding: 20px;
     direction: rtl;
@@ -223,7 +211,7 @@ export default {
     display: flex;
     flex-direction: column;
     gap: 32px;
-  }
+  } */
 .page-title {
   font-size: 22px;
   font-weight: bold;

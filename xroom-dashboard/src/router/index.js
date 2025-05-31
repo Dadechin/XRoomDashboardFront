@@ -36,55 +36,55 @@ const routes = [
     path: '/dashboard',
     name: 'DashboardPage',
     component: DashboardPage,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true , title : 'از این داشبورد، کار با XRoom را آغاز کنید.'}
   },
   {
     path: '/dashboard/files',
     name: 'files',
     component: FilesPage,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true , title : 'فایل ها'}
   },
   {
     path: '/dashboard/download',
     name: 'download',
     component: DownloadPage,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true , title : 'دانلود ها'}
   },
   {
     path: '/dashboard/spaces',
     name: 'spaces',
     component: spacesPage,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true , title : 'فضاها'}
   },
   {
     path: '/dashboard/meetings',
     name: 'meetings',
     component: MeetingPage,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true , title : 'جلسات'}
   },
   {
     path: '/dashboard/teams',
     name: 'teams',
     component: TeamsPage,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true , title : 'تیم ها'}
   },
   {
     path: '/dashboard/edit-profile',
     name: 'EditProfile',
     component: () => import('@/pages/dashboard/EditProfile.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true , title : 'ویرایش پروفایل'}
   },
   {
     path: '/dashboard/readyPlayer',
     name: 'ReadyPlayer',
     component: () => import('@/pages/dashboard/readyPlayer.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true , title : 'انتخاب آواتار'}
   },
   {
     path: '/dashboard/ChangeAvatar',
     name: 'ChangeAvatar',
     component: () => import('@/pages/dashboard/ChangeAvatar.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true , title : 'انتخاب آواتار'}
   }
 ]
 

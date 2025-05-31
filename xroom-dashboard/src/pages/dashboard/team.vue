@@ -1,11 +1,6 @@
 <!-- DashboardPage.vue -->
 <template>
-  <SidebarMenu />
-
-  <div class="dashboard-page">
-    <div class="content">
-      <!-- Top Header -->
-      <AppHeader pageTitle="تیم ها" />
+    <div>
       <!-- Description -->
       <div class="section-description">
         <div class="section-title">مدیریت اعضا</div>
@@ -73,12 +68,9 @@
         />
       </div>
     </div>
-  </div>
 </template>
 
 <script>
-import SidebarMenu from '@/components/SidebarMenu.vue';
-import AppHeader from '@/components/Header.vue';
 import TeamUser from '@/components/TeamUser.vue';
 import BuySubscription from '@/components/BuySubscription.vue';
 import Membership from '@/components/Membership.vue';
@@ -88,8 +80,6 @@ import axios from 'axios';
 export default {
   name: 'DashboardPage',
   components: {
-    SidebarMenu,
-    AppHeader,
     TeamUser,
     BuySubscription,
     Membership,
@@ -507,7 +497,7 @@ export default {
     margin-top: 1rem;
 }
 
-.dashboard-page {
+/* .dashboard-page {
   margin-right: 360px;
   padding: 20px;
   direction: rtl;
@@ -522,7 +512,7 @@ export default {
   flex-direction: column;
   gap: 10px;
 }
-
+ */
 .tab-buttons {
   display: flex;
   gap: 25px;
