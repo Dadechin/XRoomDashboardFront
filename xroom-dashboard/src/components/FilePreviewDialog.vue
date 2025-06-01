@@ -75,6 +75,9 @@
 <script>
 import VuePdfEmbed from 'vue-pdf-embed';
 import { VideoPlayer } from '@videojs-player/vue';
+import 'video.js/dist/video-js.css';
+import '@videojs/themes/dist/sea/index.css';
+import '@google/model-viewer';
 import axios from 'axios';
 
 export default {
@@ -116,19 +119,13 @@ export default {
   watch: {
     isOpen(newVal) {
       if (newVal) {
-        // غیرفعال کردن اسکرول صفحه پس‌زمینه
         document.body.style.overflow = 'hidden';
       } else {
-        // فعال کردن مجدد اسکرول
         document.body.style.overflow = '';
       }
     },
   },
   methods: {
-      beforeDestroy() {
-    // اطمینان از فعال شدن اسکرول هنگام حذف کامپوننت
-    document.body.style.overflow = '';
-  },
     handleBackdropClick(event) {
       if (event.target.classList.contains('modal-overlay')) {
         this.closePreviewDialog();

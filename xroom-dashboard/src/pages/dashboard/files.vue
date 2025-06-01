@@ -1,119 +1,207 @@
 <template>
-    <div class="ef">
-      <!-- Top Header -->
+  <div class="file-manager">
+    <!-- Description -->
+    <div class="section-description">
+      <h2 class="section-title">مدیریت فایل‌ها</h2>
+      <p>
+        فایل‌های خود مانند مدل‌های سه‌بعدی، تصاویر و اسناد PDF را برای استفاده در VR آماده کنید. یا یادداشت‌ها و تصاویر ایجاد شده در برنامه XRoom را دانلود کنید.
+      </p>
+    </div>
 
-
-      <!-- Description -->
-      <div class="section-description">
-        <div class="section-title">مدیریت فایل‌ها</div>
-        <p>
-          فایل‌های خود مانند مدل‌های سه‌بعدی، تصاویر و اسناد PDF را برای استفاده در VR آماده کنید. یا یادداشت‌ها و تصاویر ایجاد شده در برنامه XRoom را دانلود کنید.
-        </p>
-      </div>
-
-      <!-- File Manager Layout -->
-      <div class="file-manager-layout">
-        <div class="file-sidebar">
-          <div class="filter-buttons">
-            <button class="new-file" @click="openDialog('image')">
-              فایل جدید
-              <span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 16 16" fill="none">
-                  <g clip-path="url(#clip0_312_7133)">
-                    <path d="M2.66602 11.3333V12.6666C2.66602 13.0202 2.80649 13.3593 3.05654 13.6094C3.30659 13.8594 3.64573 13.9999 3.99935 13.9999H11.9993C12.353 13.9999 12.6921 13.8594 12.9422 13.6094C13.1922 13.3593 13.3327 13.0202 13.3327 12.6666V11.3333" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M4.66602 6.00008L7.99935 2.66675L11.3327 6.00008" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M8 2.66675V10.6667" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                  </g>
-                  <defs>
-                    <clipPath id="clip0_312_7133">
-                      <rect width="16" height="16" fill="white"></rect>
-                    </clipPath>
-                  </defs>
-                </svg>
-              </span>
-            </button>
-
-            <button
-              v-for="(filter, index) in filters"
-              :key="'filter-' + index"
-              :class="[
-                'filter-btn',
-                { 'active-btn': activeFilter === filter.id },
-                { 'disable-btn': activeFilter !== filter.id },
-                { 'recent-filter-border': filter.id === 'recent-files' }
-              ]"
-              @click="setActiveFilter(filter.id)"
+    <!-- File Manager Layout -->
+    <div class="file-manager-layout">
+      <aside class="file-sidebar">
+        <div class="filter-buttons">
+          <button
+            class="new-file"
+            @click="openDialog('image')"
+            role="button"
+            aria-label="آپلود فایل جدید"
+          >
+            فایل جدید
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="22"
+              height="22"
+              viewBox="0 0 16 16"
+              fill="none"
             >
-              <span v-html="filter.icon" :class="['filter-icon', { 'active-icon': activeFilter === filter.id, 'disable-icon': activeFilter !== filter.id }]">
-              </span>
-              {{ filter.label }}
-            </button>
-          </div>
-        </div>
+              <g clip-path="url(#clip0_312_7133)">
+                <path
+                  d="M2.66602 11.3333V12.6666C2.66602 13.0202 2.80649 13.3593 3.05654 13.6094C3.30659 13.8594 3.64573 13.9999 3.99935 13.9999H11.9993C12.353 13.9999 12.6921 13.8594 12.9422 13.6094C13.1922 13.3593 13.3327 13.0202 13.3327 12.6666V11.3333"
+                  stroke="white"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M4.66602 6.00008L7.99935 2.66675L11.3327 6.00008"
+                  stroke="white"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M8 2.66675V10.6667"
+                  stroke="white"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </g>
+              <defs>
+                <clipPath id="clip0_312_7133">
+                  <rect width="16" height="16" fill="white" />
+                </clipPath>
+              </defs>
+            </svg>
+          </button>
 
-        <!-- Cards Grid -->
-        <div class="file-grid">
-          <div v-for="section in filteredFileSections" :key="section.type" class="file-section">
-            <div class="section-title">{{ section.title }}</div>
-            <div v-if="filteredFiles(section.type).length > 0" style="display: flex; align-items: center;gap: 1.5rem 0.9rem; flex-wrap: wrap;">
-              <div
-                class="file-card"
-                v-for="(file, index) in filteredFiles(section.type)"
-                :key="`${section.type}-${index}`"
-                @click="openPreviewDialog(section.type, index, getFullFileUrl(file[section.type]), file.id)"
-              >
-              <img 
-                  :src="getFilePreviewImage(section.type, file)" 
-                  :class="[
-                    {
-                      'file-image': section.type === 'image',
-                      'file-pdf': section.type === 'pdf',
-                      'file-video': section.type === 'video',
-                      'file-glb': section.type === 'glb'
-                    }
-                  ]" 
-                />                
-                <div class="file-card-info">
-                  <div class="file-title">{{ file.name }}</div>
-                  <div class="file-meta">
-                    <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 20 20" fill="none">
-                          <path d="M2.5 10C2.5 11.4834 2.93987 12.9334 3.76398 14.1668C4.58809 15.4001 5.75943 16.3614 7.12987 16.9291C8.50032 17.4968 10.0083 17.6453 11.4632 17.3559C12.918 17.0665 14.2544 16.3522 15.3033 15.3033C16.3522 14.2544 17.0665 12.918 17.3559 11.4632C17.6453 10.0083 17.4968 8.50032 16.9291 7.12987C16.3614 5.75943 15.4001 4.58809 14.1668 3.76398C12.9334 2.93987 11.4834 2.5 10 2.5C7.90329 2.50789 5.89081 3.32602 4.38333 4.78333L2.5 6.66667" stroke="#101010" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-                          <path d="M2.5 2.5V6.66667H6.66667" stroke="#101010" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-                          <path d="M10 5.83325V9.99992L13.3333 11.6666" stroke="#101010" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </span>
-                    <span class="file-date">{{ formatDate(file.created_at) }}</span>
-                  </div>
+          <!-- Filters -->
+          <button
+            v-for="filter in filters"
+            :key="filter.id"
+            :class="[
+              'filter-btn',
+              { 'active-btn': activeFilter === filter.id },
+              { 'disable-btn': activeFilter !== filter.id },
+              { 'recent-filter-border': filter.id === 'recent-files' },
+            ]"
+            @click="setActiveFilter(filter.id)"
+            role="button"
+            :aria-label="`فیلتر ${filter.label}`"
+          >
+            <span :class="['filter-icon', { 'active-icon': activeFilter === filter.id, 'disable-icon': activeFilter !== filter.id }]">
+              <component :is="filter.iconComponent" />
+            </span>
+            {{ filter.label }}
+          </button>
+        </div>
+      </aside>
+
+      <!-- File Grid -->
+      <div class="file-grid">
+        <section v-for="section in filteredFileSections" :key="section.type" class="file-section">
+          <h3 class="section-title">{{ section.title }}</h3>
+          <div
+            v-if="filteredFiles(section.type).length > 0"
+            class="file-grid-content"
+          >
+            <div
+              class="file-card"
+              v-for="file in filteredFiles(section.type)"
+              :key="file.id"
+              @click="openPreviewDialog(section.type, file.id, getFullFileUrl(file.file_path))"
+              role="button"
+              :aria-label="`نمایش پیش‌نمایش فایل ${file.name}`"
+            >
+              <img
+                :src="getFilePreviewImage(section.type, file)"
+                :class="['file-image', { 'file-pdf': section.type === 'pdf', 'file-video': section.type === 'video', 'file-glb': section.type === 'glb' ,'file-other': section.type === 'other' }]"
+                :alt="file.name"
+              />
+              <div class="file-card-info">
+                <h4 class="file-title">{{ file.name }}</h4>
+                <div class="file-meta">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="22"
+                    height="22"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                  >
+                    <path
+                      d="M2.5 10C2.5 11.4834 2.93987 12.9334 3.76398 14.1668C4.58809 15.4001 5.75943 16.3614 7.12987 16.9291C8.50032 17.4968 10.0083 17.6453 11.4632 17.3559C12.918 17.0665 14.2544 16.3522 15.3033 15.3033C16.3522 14.2544 17.0665 12.918 17.3559 11.4632C17.6453 10.0083 17.4968 8.50032 16.9291 7.12987C16.3614 5.75943 15.4001 4.58809 14.1668 3.76398C12.9334 2.93987 11.4834 2.5 10 2.5C7.90329 2.50789 5.89081 3.32602 4.38333 4.78333L2.5 6.66667"
+                      stroke="#101010"
+                      stroke-width="1.25"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M2.5 2.5V6.66667H6.66667"
+                      stroke="#101010"
+                      stroke-width="1.25"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M10 5.83325V9.99992L13.3333 11.6666"
+                      stroke="#101010"
+                      stroke-width="1.25"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  <span class="file-date">{{ formatDate(file.created_at) }}</span>
                 </div>
               </div>
             </div>
-            <div v-else class="no-files-message">
-              <button class="new-file" @click="openDialog(section.type)">
-                فایلی وجود ندارد , برای آپلود فایل جدید کلیک کنید
-                <span>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 16 16" fill="none">
-                    <g clip-path="url(#clip0_312_7133)">
-                      <path d="M2.66602 11.3333V12.6666C2.66602 13.0202 2.80649 13.3593 3.05654 13.6094C3.30659 13.8594 3.64573 13.9999 3.99935 13.9999H11.9993C12.353 13.9999 12.6921 13.8594 12.9422 13.6094C13.1922 13.3593 13.3327 13.0202 13.3327 12.6666V11.3333" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                      <path d="M4.66602 6.00008L7.99935 2.66675L11.3327 6.00008" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                      <path d="M8 2.66675V10.6667" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                    </g>
-                    <defs>
-                      <clipPath id="clip0_312_7133">
-                        <rect width="16" height="16" fill="white"></rect>
-                      </clipPath>
-                    </defs>
-                  </svg>
-                </span>
-              </button>
-            </div>
           </div>
-          <div v-if="filteredFileSections.length === 0 || (activeFilter === 'recent-files' && !hasRecentFiles)" class="no-files-message">
+          <div v-else class="no-files-message">
             فایلی وجود ندارد
-            <button v-if="activeFilter !== 'recent-files'" class="upload-btn" @click="openDialog(getFilterType(activeFilter))">
+            <button
+              class="upload-btn"
+              v-if="activeFilter !== 'recent-files' && activeFilter !== 'others'"
+              @click="openDialog(section.type)"
+              role="button"
+              :aria-label="`آپلود فایل`"
+            >
               آپلود فایل
+
+              <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="22"
+              height="22"
+              viewBox="0 0 16 16"
+              fill="none"
+            >
+              <g clip-path="url(#clip0_312_7133)">
+                <path
+                  d="M2.66602 11.3333V12.6666C2.66602 13.0202 2.80649 13.3593 3.05654 13.6094C3.30659 13.8594 3.64573 13.9999 3.99935 13.9999H11.9993C12.353 13.9999 12.6921 13.8594 12.9422 13.6094C13.1922 13.3593 13.3327 13.0202 13.3327 12.6666V11.3333"
+                  stroke="white"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M4.66602 6.00008L7.99935 2.66675L11.3327 6.00008"
+                  stroke="white"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M8 2.66675V10.6667"
+                  stroke="white"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </g>
+              <defs>
+                <clipPath id="clip0_312_7133">
+                  <rect width="16" height="16" fill="white" />
+                </clipPath>
+              </defs>
+            </svg>
+
             </button>
           </div>
+        </section>
+        <div
+          v-if="filteredFileSections.length === 0 || (activeFilter === 'recent-files' && !hasRecentFiles)"
+          class="no-files-message"
+        >
+          فایلی وجود ندارد
+          <button
+            v-if="activeFilter !== 'recent-files' && getFilterType(activeFilter) !== 'other'"
+            class="upload-btn"
+            @click="openDialog(getFilterType(activeFilter))"
+            role="button"
+            aria-label="آپلود فایل"
+          >
+            آپلود فایل
+          </button>
         </div>
       </div>
     </div>
@@ -138,6 +226,7 @@
       @close="closePreviewDialog"
       @delete-success="fetchUserData"
     />
+  </div>
 </template>
 
 <script>
@@ -146,24 +235,91 @@ import axios from 'axios';
 import NewFileDialog from '@/components/NewFileDialog.vue';
 import FilePreviewDialog from '@/components/FilePreviewDialog.vue';
 
+// تعریف آیکون‌ها به‌صورت کامپوننت‌های SVG
+const RecentFilesIcon = {
+  template: `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none">
+      <path d="M2.5 10C2.5 11.4834 2.93987 12.9334 3.76398 14.1668C4.58809 15.4001 5.75943 16.3614 7.12987 16.9291C8.50032 17.4968 10.0083 17.6453 11.4632 17.3559C12.918 17.0665 14.2544 16.3522 15.3033 15.3033C16.3522 14.2544 17.0665 12.918 17.3559 11.4632C17.6453 10.0083 17.4968 8.50032 16.9291 7.12987C16.3614 5.75943 15.4001 4.58809 14.1668 3.76398C12.9334 2.93987 11.4834 2.5 10 2.5C7.90329 2.50789 5.89081 3.32602 4.38333 4.78333L2.5 6.66667" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M2.5 2.5V6.66667H6.66667" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M10 5.83325V9.99992L13.3333 11.6666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  `,
+};
+
+const AllFilesIcon = {
+  template: `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none">
+      <path d="M2.5 3.33333V16.6667C2.5 17.1087 2.67559 17.5326 2.98816 17.8452C3.30072 18.1577 3.72464 18.3333 4.16667 18.3333H15.8333C16.2754 18.3333 16.6993 18.1577 17.0118 17.8452C17.3244 17.5326 17.5 16.6667V3.33333C17.5 2.8913 17.3244 2.46738 17.0118 2.15482C16.6993 1.84226 16.2754 1.66667 15.8333 1.66667H4.16667C3.72464 1.66667 3.30072 1.84226 2.98816 2.15482C2.67559 2.46738 2.5 2.8913 2.5 3.33333Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M12.5 2.5V6.66667C12.5 7.1087 12.6756 7.53262 12.9882 7.84518C13.3007 8.15774 13.7246 8.33333 14.1667 8.33333H17.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  `,
+};
+
+const ImagesIcon = {
+  template: `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none">
+      <path d="M2.5 3.33333V16.6667C2.5 17.1087 2.67559 17.5326 2.98816 17.8452C3.30072 18.1577 3.72464 18.3333 4.16667 18.3333H15.8333C16.2754 18.3333 16.6993 18.1577 17.0118 17.8452C17.3244 17.5326 17.5 16.6667V3.33333C17.5 2.8913 17.3244 2.46738 17.0118 2.15482C16.6993 1.84226 16.2754 1.66667 15.8333 1.66667H4.16667C3.72464 1.66667 3.30072 1.84226 2.98816 2.15482C2.67559 2.46738 2.5 2.8913 2.5 3.33333Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M6.66667 8.33333C7.58714 8.33333 8.33333 7.58714 8.33333 6.66667C8.33333 5.74619 7.58714 5 6.66667 5C5.74619 5 5 5.74619 5 6.66667C5 7.58714 5.74619 8.33333 6.66667 8.33333Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M17.5 12.5L13.3333 8.33333L5 16.6667" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  `,
+};
+
+const PDFsIcon = {
+  template: `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none">
+      <path d="M12.5 2.5H4.16667C3.72464 2.5 3.30072 2.67559 2.98816 2.98816C2.67559 3.30072 2.5 3.72464 2.5 4.16667V16.6667C2.5 17.1087 2.67559 17.5326 2.98816 17.8452C3.30072 18.1577 3.72464 18.3333 4.16667 18.3333H15.8333C16.2754 18.3333 16.6993 18.1577 17.0118 17.8452C17.3244 17.5326 17.5 17.1087 17.5 16.6667V6.66667L12.5 2.5Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M12.5 2.5V6.66667C12.5 7.1087 12.6756 7.53262 12.9882 7.84518C13.3007 8.15774 13.7246 8.33333 14.1667 8.33333H17.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  `,
+};
+
+const VideosIcon = {
+  template: `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none">
+      <path d="M2.5 3.33333V16.6667C2.5 17.1087 2.67559 17.5326 2.98816 17.8452C3.30072 18.1577 3.72464 18.3333 4.16667 18.3333H15.8333C16.2754 18.3333 16.6993 18.1577 17.0118 17.8452C17.3244 17.5326 17.5 17.1087 17.5 16.6667V3.33333C17.5 2.8913 17.3244 2.46738 17.0118 2.15482C16.6993 1.84226 16.2754 1.66667 15.8333 1.66667H4.16667C3.72464 1.66667 3.30072 1.84226 2.98816 2.15482C2.67559 2.46738 2.5 2.8913 2.5 3.33333Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M7.5 5.83333L13.3333 10L7.5 14.1667V5.83333Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  `,
+};
+
+const Models3DIcon = {
+  template: `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none">
+      <path d="M10 2.5C7.23858 2.5 4.58333 3.31667 2.5 4.78333V16.6667C4.58333 15.3167 7.23858 14.5 10 14.5C12.7614 14.5 15.4167 15.3167 17.5 16.6667V4.78333C15.4167 3.31667 12.7614 2.5 10 2.5Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M10 2.5V14.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  `,
+};
+
+const OthersIcon = {
+  template: `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none">
+      <path d="M2.5 3.33333V16.6667C2.5 17.1087 2.67559 17.5326 2.98816 17.8452C3.30072 18.1577 3.72464 18.3333 4.16667 18.3333H15.8333C16.2754 18.3333 16.6993 18.1577 17.0118 17.8452C17.3244 17.5326 17.5 17.1087 17.5 16.6667V3.33333C17.5 2.8913 17.3244 2.46738 17.0118 2.15482C16.6993 1.84226 16.2754 1.66667 15.8333 1.66667H4.16667C3.72464 1.66667 3.30072 1.84226 2.98816 2.15482C2.67559 2.46738 2.5 2.8913 2.5 3.33333Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M7.5 5.83333H12.5" stroke-width="2" stroke-linecap="round"/>
+      <path d="M7.5 8.33333H12.5" stroke-width="2" stroke-linecap="round"/>
+      <path d="M7.5 10.8333H10" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  `,
+};
+
 export default {
   name: 'DashboardPage',
   components: {
     NewFileDialog,
     FilePreviewDialog,
+    RecentFilesIcon,
+    AllFilesIcon,
+    ImagesIcon,
+    PDFsIcon,
+    VideosIcon,
+    Models3DIcon,
+    OthersIcon,
   },
   data() {
     return {
       userData: {
-        customer: {},
-        user: {
-          first_name: '',
-          last_name: '',
-        },
-        images: [],
-        pdfs: [],
-        videos: [],
-        glbs: [],
+        files: [],
       },
       baseUrl: 'http://194.62.43.230:8000',
       isNewFileDialogOpen: false,
@@ -179,91 +335,67 @@ export default {
       },
       activeFilter: 'all-files',
       filters: [
-        {
-          id: 'recent-files',
-          label: 'فایل‌های اخیر',
-          icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none">
-            <path d="M2.5 10C2.5 11.4834 2.93987 12.9334 3.76398 14.1668C4.58809 15.4001 5.75943 16.3614 7.12987 16.9291C8.50032 17.4968 10.0083 17.6453 11.4632 17.3559C12.918 17.0665 14.2544 16.3522 15.3033 15.3033C16.3522 14.2544 17.0665 12.918 17.3559 11.4632C17.6453 10.0083 17.4968 8.50032 16.9291 7.12987C16.3614 5.75943 15.4001 4.58809 14.1668 3.76398C12.9334 2.93987 11.4834 2.5 10 2.5C7.90329 2.50789 5.89081 3.32602 4.38333 4.78333L2.5 6.66667" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M2.5 2.5V6.66667H6.66667" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M10 5.83325V9.99992L13.3333 11.6666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>`,
-        },
-        {
-          id: 'all-files',
-          label: 'همه فایل‌ها',
-          icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none">
-            <path d="M2.5 3.33333V16.6667C2.5 17.1087 2.67559 17.5326 2.98816 17.8452C3.30072 18.1577 3.72464 18.3333 4.16667 18.3333H15.8333C16.2754 18.3333 16.6993 18.1577 17.0118 17.8452C17.3244 17.5326 17.5 16.6667V3.33333C17.5 2.8913 17.3244 2.46738 17.0118 2.15482C16.6993 1.84226 16.2754 1.66667 15.8333 1.66667H4.16667C3.72464 1.66667 3.30072 1.84226 2.98816 2.15482C2.67559 2.46738 2.5 2.8913 2.5 3.33333Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M12.5 2.5V6.66667C12.5 7.1087 12.6756 7.53262 12.9882 7.84518C13.3007 8.15774 13.7246 8.33333 14.1667 8.33333H17.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>`,
-        },
-        {
-          id: 'images',
-          label: 'تصاویر',
-          icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none">
-            <path d="M2.5 3.33333V16.6667C2.5 17.1087 2.67559 17.5326 2.98816 17.8452C3.30072 18.1577 3.72464 18.3333 4.16667 18.3333H15.8333C16.2754 18.3333 16.6993 18.1577 17.0118 17.8452C17.3244 17.5326 17.5 16.6667V3.33333C17.5 2.8913 17.3244 2.46738 17.0118 2.15482C16.6993 1.84226 16.2754 1.66667 15.8333 1.66667H4.16667C3.72464 1.66667 3.30072 1.84226 2.98816 2.15482C2.67559 2.46738 2.5 2.8913 2.5 3.33333Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M6.66667 8.33333C7.58714 8.33333 8.33333 7.58714 8.33333 6.66667C8.33333 5.74619 7.58714 5 6.66667 5C5.74619 5 5 5.74619 5 6.66667C5 7.58714 5.74619 8.33333 6.66667 8.33333Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M17.5 12.5L13.3333 8.33333L5 16.6667" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>`,
-        },
-        {
-          id: 'pdfs',
-          label: 'PDF‌ها',
-          icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none">
-            <path d="M12.5 2.5H4.16667C3.72464 2.5 3.30072 2.67559 2.98816 2.98816C2.67559 3.30072 2.5 3.72464 2.5 4.16667V16.6667C2.5 17.1087 2.67559 17.5326 2.98816 17.8452C3.30072 18.1577 3.72464 18.3333 4.16667 18.3333H15.8333C16.2754 18.3333 16.6993 18.1577 17.0118 17.8452C17.3244 17.5326 17.5 17.1087 17.5 16.6667V6.66667L12.5 2.5Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M12.5 2.5V6.66667C12.5 7.1087 12.6756 7.53262 12.9882 7.84518C13.3007 8.15774 13.7246 8.33333 14.1667 8.33333H17.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>`,
-        },
-        {
-          id: 'videos',
-          label: 'ویدیوها',
-          icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none">
-            <path d="M2.5 3.33333V16.6667C2.5 17.1087 2.67559 17.5326 2.98816 17.8452C3.30072 18.1577 3.72464 18.3333 4.16667 18.3333H15.8333C16.2754 18.3333 16.6993 18.1577 17.0118 17.8452C17.3244 17.5326 17.5 17.1087 17.5 16.6667V3.33333C17.5 2.8913 17.3244 2.46738 17.0118 2.15482C16.6993 1.84226 16.2754 1.66667 15.8333 1.66667H4.16667C3.72464 1.66667 3.30072 1.84226 2.98816 2.15482C2.67559 2.46738 2.5 2.8913 2.5 3.33333Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M7.5 5.83333L13.3333 10L7.5 14.1667V5.83333Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>`,
-        },
-        {
-          id: 'glbs',
-          label: 'مدل‌های 3D',
-          icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none">
-            <path d="M10 2.5C7.23858 2.5 4.58333 3.31667 2.5 4.78333V16.6667C4.58333 15.3167 7.23858 14.5 10 14.5C12.7614 14.5 15.4167 15.3167 17.5 16.6667V4.78333C15.4167 3.31667 12.7614 2.5 10 2.5Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M10 2.5V14.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>`,
-        },
+        { id: 'recent-files', label: 'فایل‌های اخیر', iconComponent: 'RecentFilesIcon' },
+        { id: 'all-files', label: 'همه فایل‌ها', iconComponent: 'AllFilesIcon' },
+        { id: 'images', label: 'تصاویر', iconComponent: 'ImagesIcon' },
+        { id: 'pdfs', label: 'PDF‌ها', iconComponent: 'PDFsIcon' },
+        { id: 'videos', label: 'ویدیوها', iconComponent: 'VideosIcon' },
+        { id: 'glbs', label: 'مدل‌های 3D', iconComponent: 'Models3DIcon' },
+        { id: 'others', label: 'سایر', iconComponent: 'OthersIcon' },
       ],
       fileSections: [
-        { type: 'image', title: 'مدیریت تصاویر' },
-        { type: 'pdf', title: 'مدیریت PDF‌ها' },
-        { type: 'video', title: 'مدیریت ویدیوها' },
-        { type: 'glb', title: 'مدیریت مدل‌های 3D' },
+        { type: 'image', title: 'مدیریت تصاویر', extensions: ['.jpg', '.jpeg', '.png', '.gif'] },
+        { type: 'pdf', title: 'مدیریت PDF‌ها', extensions: ['.pdf'] },
+        { type: 'video', title: 'مدیریت ویدیوها', extensions: ['.mp4', '.mov', '.avi'] },
+        { type: 'glb', title: 'مدیریت مدل‌های 3D', extensions: ['.glb'] },
+        { type: 'other', title: 'سایر فایل‌ها', extensions: [] },
       ],
     };
   },
   computed: {
     filteredFileSections() {
-      if (this.activeFilter === 'all-files' || this.activeFilter === 'recent-files') {
-        return this.fileSections;
-      }
       const filterTypeMap = {
         images: 'image',
         pdfs: 'pdf',
         videos: 'video',
         glbs: 'glb',
+        others: 'other',
       };
       const filterType = filterTypeMap[this.activeFilter];
-      return filterType ? this.fileSections.filter(section => section.type === filterType) : [];
+      return this.fileSections.filter(section => {
+        if (this.activeFilter === 'all-files' || this.activeFilter === 'recent-files') {
+          return this.filteredFiles(section.type).length > 0;
+        }
+        return filterType === section.type;
+      });
     },
     hasRecentFiles() {
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-      return ['images', 'pdfs', 'videos', 'glbs'].some(type => 
-        this.userData[type].some(file => new Date(file.created_at) >= sevenDaysAgo)
-      );
+      const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      return this.userData.files.some(file => {
+        const fileDate = this.parseDate(file.created_at);
+        return fileDate && fileDate >= twentyFourHoursAgo;
+      });
     },
   },
   created() {
     this.fetchUserData();
   },
   methods: {
+    parseDate(dateString) {
+      if (!dateString) return null;
+      const date = new Date(dateString);
+      if (!isNaN(date.getTime())) return date;
+      const formats = [
+        dateString.replace(/(\d{4})\/(\d{2})\/(\d{2}) (\d{2}:\d{2}:\d{2})/, '$1-$2-$3T$4Z'),
+        dateString.replace(/(\d{4})-(\d{2})-(\d{2}) (\d{2}:\d{2}:\d{2})/, '$1-$2-$3T$4Z'),
+        dateString.replace(/(\d{4})\/(\d{2})\/(\d{2})/, '$1-$2-$3'),
+      ];
+      for (const formatted of formats) {
+        const parsed = new Date(formatted);
+        if (!isNaN(parsed.getTime())) return parsed;
+      }
+      return null;
+    },
     setActiveFilter(filterId) {
       this.activeFilter = filterId;
     },
@@ -273,17 +405,36 @@ export default {
         pdfs: 'pdf',
         videos: 'video',
         glbs: 'glb',
+        others: 'other',
       };
       return filterTypeMap[filterId] || 'image';
     },
+    getFileExtension(file) {
+      const filePath = file.file_path || '';
+      const extension = filePath.match(/\.([0-9a-z]+)$/i);
+      return extension ? extension[0].toLowerCase() : '.unknown';
+    },
+    getFileType(file) {
+      const extension = this.getFileExtension(file);
+      for (const section of this.fileSections) {
+        if (section.extensions.includes(extension)) {
+          return section.type;
+        }
+      }
+      return 'other';
+    },
     filteredFiles(type) {
-      const files = this.userData[`${type}s`];
-      if (!files) return [];
+      let files = this.userData.files.filter(file => {
+        const fileType = this.getFileType(file);
+        return file.file_path && file.file_path.trim() !== '' && fileType === type;
+      });
 
       if (this.activeFilter === 'recent-files') {
-        const sevenDaysAgo = new Date();
-        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-        return files.filter(file => new Date(file.created_at) >= sevenDaysAgo);
+        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        files = files.filter(file => {
+          const fileDate = this.parseDate(file.created_at);
+          return fileDate && fileDate >= twentyFourHoursAgo;
+        });
       }
 
       const filterTypeMap = {
@@ -291,9 +442,11 @@ export default {
         pdfs: 'pdf',
         videos: 'video',
         glbs: 'glb',
+        others: 'other',
       };
-      if (this.activeFilter !== 'all-files' && filterTypeMap[this.activeFilter] !== type) {
-        return [];
+
+      if (this.activeFilter !== 'all-files' && this.activeFilter !== 'recent-files' && filterTypeMap[this.activeFilter] !== type) {
+        files = [];
       }
 
       return files;
@@ -301,25 +454,26 @@ export default {
     getFilePreviewImage(type, file) {
       switch (type) {
         case 'image':
-          return this.getFullFileUrl(file.image);
+          return this.getFullFileUrl(file.file_path);
         case 'pdf':
           return 'https://cdn-icons-png.flaticon.com/512/337/337946.png';
         case 'video':
           return 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfQ1L9b8tFaGXBQxOdCCaq-AcYkmawPtRVZA&s';
         case 'glb':
           return require('@/assets/img/3d icon.jpg');
+        case 'other':
+          return 'https://cdn-icons-png.flaticon.com/512/148/148839.png';
         default:
           return '';
       }
     },
     getFullFileUrl(relativePath) {
-      if (!relativePath) return '';
-      return `${this.baseUrl}${relativePath}`;
+      return relativePath ? `${this.baseUrl}${relativePath}` : '';
     },
     formatDate(dateString) {
-      if (!dateString) return '';
-      const date = new Date(dateString);
-      return date.toLocaleDateString('fa-IR');
+      if (!dateString) return 'نامعتبر';
+      const date = this.parseDate(dateString);
+      return date ? date.toLocaleDateString('fa-IR', { year: 'numeric', month: 'long', day: 'numeric' }) : 'نامعتبر';
     },
     openDialog(type = 'image') {
       this.currentUploadType = type;
@@ -328,15 +482,13 @@ export default {
     closeDialog() {
       this.isNewFileDialogOpen = false;
     },
-    openPreviewDialog(type, index, url, id) {
+    openPreviewDialog(type, id, url) {
       this.currentPreviewType = type;
-      this.currentPreviewIndex = id; // Use file.id instead of index
+      this.currentPreviewIndex = id;
       this.previewUrl = url;
-
       if (type === 'video') {
         this.videoOptions.sources[0].src = url;
       }
-
       this.isPreviewDialogOpen = true;
     },
     closePreviewDialog() {
@@ -348,25 +500,232 @@ export default {
     async fetchUserData() {
       try {
         const token = localStorage.getItem('token');
+        if (!token) {
+          this.$router.push('/login');
+          return;
+        }
+
         const response = await axios.get(`${this.baseUrl}/getInfo`, {
           headers: {
-            'Authorization': `Token ${token}`,
+            Authorization: `Token ${token}`,
           },
         });
-        this.userData = response.data.data;
+
+        const data = response.data.data || {};
+        this.userData.files = [
+          ...(data.images || []).map(file => ({
+            id: file.id,
+            name: file.name,
+            file_path: file.image,
+            created_at: file.created_at,
+          })),
+          ...(data.pdfs || []).map(file => ({
+            id: file.id,
+            name: file.name,
+            file_path: file.pdf,
+            created_at: file.created_at,
+          })),
+          ...(data.videos || []).map(file => ({
+            id: file.id,
+            name: file.name,
+            file_path: file.video,
+            created_at: file.created_at,
+          })),
+          ...(data.glbs || []).map(file => ({
+            id: file.id,
+            name: file.name,
+            file_path: file.glb,
+            created_at: file.created_at,
+          })),
+        ];
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        if (error.response?.status === 401) {
+          this.$router.push('/login');
+        } else {
+          alert('خطا در بارگذاری فایل‌ها: ' + (error.response?.data?.message || error.message));
+        }
       }
     },
   },
 };
 </script>
 
-
 <style scoped>
+/* General Styles */
+.file-manager {
+  direction: rtl;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Section Description */
+.section-description {
+  margin-bottom: 3rem;
+}
+
+.section-description .section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 1rem;
+}
+
+.section-description p {
+  font-size: 1rem;
+  line-height: 1.9;
+  color: #4f5a69;
+}
+
+/* File Manager Layout */
+.file-manager-layout {
+  display: flex;
+  gap: 3rem;
+}
+
+.file-sidebar {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 25%;
+  height: fit-content;
+}
+
+.filter-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.new-file {
+  background-color: #3a57e8;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.5rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 1.125rem;
+  cursor: pointer;
+}
+
+.new-file svg {
+  width: 22px;
+  height: 22px;
+}
+
+.filter-btn {
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.125rem;
+  cursor: pointer;
+  padding: 0.5rem 0;
+}
+
+.active-btn {
+  color: #3a57e8;
+}
+
+.disable-btn {
+  color: #5a6678;
+}
+
+.active-icon svg {
+  stroke: #3a57e8;
+  width: 22px;
+  height: 22px;
+}
+
+.disable-icon svg {
+  stroke: #5a6678;
+  width: 22px;
+  height: 22px;
+}
+
+.recent-filter-border {
+  border-bottom: 1px solid #e2dee9;
+  padding-bottom: 1.5rem;
+}
+
+.file-grid {
+  width: 75%;
+}
+
+.file-section {
+  margin-bottom: 3rem;
+}
+
+.file-section .section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 1.5rem;
+}
+
+.file-grid-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.file-card {
+  width: calc(33.333% - 0.67rem);
+  border: 1px solid #b8c0cb;
+  border-radius: 16px;
+  background-color: #ffffff;
+  padding: 0.5rem 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.file-image {
+  width: 100%;
+  height: 190px;
+  border-radius: 15px;
+  object-fit: cover;
+}
+
+.file-pdf,
+.file-video,
+.file-glb,
+.file-other {
+  object-fit: contain;
+}
+
+.file-card-info {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.file-title {
+  color: #444d5a;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.file-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.file-meta svg {
+  width: 22px;
+  height: 22px;
+}
+
+.file-date {
+  color: #7f8da1;
+  font-size: 1rem;
+}
+
 .no-files-message {
   text-align: center;
-  color: #888;
+  color: #888888;
   font-size: 1.2rem;
   margin-top: 1rem;
   display: flex;
@@ -376,189 +735,21 @@ export default {
 }
 
 .upload-btn {
-  background-color: #007bff;
-  color: white;
+  background-color: #3a57e8;
+  color: #ffffff;
   border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-.upload-btn:hover {
-  background-color: #0056b3;
-}
-
-.recent-filter-border {
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid #E2DEE9 !important;
-}
-</style>
-
-  
-<style scoped>
-  
-/* General Typography */
-.section-title {
-    font-size: 20px;
-    font-weight: 600;
-    color: #2d3748;
-    margin-bottom: 1.5rem;
-}
-
-.file-section {
-  margin-bottom: 3rem;
-}
-
-.section-description {
-    margin-bottom: 3rem;
-    margin-top: 1rem;
-    font-size: 20px;
-    font-weight: 600;
-    color: #2d3748;
-  margin: 1rem 0 3rem;
-}
-
-.section-description p {
-    line-height: 190%;
-    color: #4F5A69;
-    font-size: 16px;
-    margin-top: 1rem;
-}
-
-.content {
-  gap: 32px;
-}
-
-.file-manager-layout {
-  display: flex;
-  max-width: 100%;
-  gap: 5rem;
-}
-
-.file-sidebar {
-    background-color: #FFFFFF;
-    border-radius: 12px;
-    padding: 2.5rem 2rem;
-    width: 25%;
-    height: max-content;
-}
-
-.filter-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 1.8rem;
-}
-
-.new-file {
-    background: #3A57E8;
-    padding: 8px 24px;
-    border: none;
-    border-radius: 10px;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 18px;
-    justify-content: center;
-    cursor: pointer;
-}
-
-.active-btn {
-  background: none;
-  border: none;
-  color: #3A57E8;
+  border-radius: 10px;
+  padding: 0.5rem 1.5rem;
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 18px;
-  justify-content: flex-start;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 1.125rem;
   cursor: pointer;
 }
 
-.active-icon {
-  height: 22px !important;
-  width: 22px !important;
-  stroke: #3A57E8 !important;
-}
-
-.disable-btn {
-  background: none;
-  border: none;
-  color: #5A6678;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 18px;
-  justify-content: flex-start;
-  cursor: pointer;
-}
-
-.disable-icon {
-  height: 22px !important;
-  width: 22px !important;
-  stroke: #5A6678 !important;
-}
-
-.file-grid {
-  width: 71%;
-}
-
-.file-card {
-  display: flex;
-  flex-direction: column;
-  max-width: 32%;
-  width: 100%;
-  padding : 7px 7px 16px 7px;
-  border-radius: 16px;
-  border: 1px solid #B8C0CB;
-  background-color: #fff;
-  cursor: pointer;
-}
-
-.file-card img {
-  height: 190px;
-  width: 100%;
-  border-radius: 15px;
-}
-
-.file-image{
-object-fit: cover;
-}
-
-.file-pdf , .file-video , .file-glb{
-  object-fit: contain;
-}
-
-.file-card-info {
-  margin-top: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.file-title {
-  color: #444D5A;
-  font-size: 21px;
-  font-weight: 600;
-}
-
-.file-meta {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-
-.file-meta svg {
-  height: 22px;
+.upload-btn svg {
   width: 22px;
-  stroke: #101010;
-}
-
-.file-date {
-  color: #7F8DA1;
-  font-size: 17px;
-
+  height: 22px;
 }
 </style>
