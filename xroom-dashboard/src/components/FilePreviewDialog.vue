@@ -45,7 +45,11 @@
 
         <!-- Video Player -->
         <div v-if="previewType === 'video'" class="video-preview-container">
-          <VideoPlayer :options="videoOptions" class="video-player" />
+          <vue-plyr :options="plyrOptions">
+            <video controls>
+              <source :src="previewUrl" type="video/mp4" />
+            </video>
+          </vue-plyr>
         </div>
 
         <!-- 3D Model Preview -->
@@ -66,17 +70,15 @@
         <button class="close-btn" @click="closePreviewDialog">بستن</button>
         <button class="delete-btn" @click="deleteFile" v-if="previewIndex !== null">حذف</button>
         <button class="download-btn" @click="downloadFile">دانلود</button>
-  
-    </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import VuePdfEmbed from 'vue-pdf-embed';
-import { VideoPlayer } from '@videojs-player/vue';
-import 'video.js/dist/video-js.css';
-import '@videojs/themes/dist/sea/index.css';
+import VuePlyr from 'vue-plyr';
+import 'vue-plyr/dist/vue-plyr.css';
 import '@google/model-viewer';
 import axios from 'axios';
 
@@ -84,7 +86,7 @@ export default {
   name: 'FilePreviewDialog',
   components: {
     VuePdfEmbed,
-    VideoPlayer,
+    VuePlyr,
   },
   props: {
     isOpen: {
@@ -107,12 +109,12 @@ export default {
       type: String,
       required: true,
     },
-    videoOptions: {
+    plyrOptions: {
       type: Object,
       default: () => ({
+        controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'settings', 'fullscreen'],
+        settings: ['quality', 'speed', 'loop'],
         autoplay: false,
-        controls: true,
-        sources: [{ type: 'video/mp4', src: '' }],
       }),
     },
   },
@@ -176,7 +178,20 @@ export default {
 };
 </script>
 
+
 <style scoped>
+
+:deep(.plyr) {
+  width: 100%;
+  height: 100%;
+  --plyr-color-main: #3a57e8; /* رنگ اصلی کنترل‌ها */
+  --plyr-video-background: #000; /* پس‌زمینه ویدیو */
+}
+
+.video-preview-container {
+  border-radius: 12px;
+}
+
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -278,10 +293,13 @@ export default {
 }
 
 .pdf-preview,
-.video-player,
 .model-preview {
+  width: 580px;
+  height: 300px;
+}
+
+.video-player {
   width: 100%;
-  height: 100%;
 }
 
 .modal-actions {

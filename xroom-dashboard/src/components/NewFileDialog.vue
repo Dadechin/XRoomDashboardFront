@@ -36,19 +36,6 @@
       </div>
       <div class="form-content">
         <form @submit.prevent="uploadFile" autocomplete="off">
-          <div class="file-type-selector" style="text-align: start; margin: 1rem 0 3rem 0; display: flex; align-items: center; justify-content: space-between;">
-            <label for="fileType" style="margin-left: 10px;">نوع فایل :</label>
-            <select
-              id="fileType"
-              :value="currentUploadType"
-              @change="updateFileAccept($event)"
-              required
-            >
-              <option v-for="type in fileTypes" :key="type.value" :value="type.value">
-                {{ type.label }}
-              </option>
-            </select>
-          </div>
           <div class="input-group">
             <label for="fileName">نام فایل</label>
             <input
@@ -58,24 +45,23 @@
               placeholder="نام فایل را وارد کنید"
             />
           </div>
-        <div class="input-group">
-        <p>انتخاب فایل</p>
-        <div style="width: 67%;">
-            <label for="fileUpload" class="file-input-label">
-            <span v-if="selectedFile" class="file-name">{{ selectedFile.name }}</span>
-            <span v-else>برای انتخاب فایل کلیک کنید</span>
-            </label>
-            <input
-            id="fileUpload"
-            ref="fileInput"
-            type="file"
-            @change="handleFileChange"
-            :accept="fileAccept"
-            required
-            class="file-input"
-            />
-        </div>
-        </div>
+          <div class="input-group">
+            <p>انتخاب فایل</p>
+            <div style="width: 67%;">
+              <label for="fileUpload" class="file-input-label">
+                <span v-if="selectedFile" class="file-name">{{ selectedFile.name }}</span>
+                <span v-else>برای انتخاب فایل کلیک کنید</span>
+              </label>
+              <input
+                id="fileUpload"
+                ref="fileInput"
+                type="file"
+                @change="handleFileChange"
+                required
+                class="file-input"
+              />
+            </div>
+          </div>
         </form>
       </div>
       <div class="modal-actions">
@@ -113,65 +99,32 @@ export default {
       selectedFile: null,
       uploading: false,
       currentUploadType: this.initialUploadType,
-      dialogTitle: 'آپلود تصویر جدید',
-      fileAccept: 'image/*',
-      fileTypes: [
-        { value: 'image', label: 'تصویر' },
-        { value: 'pdf', label: 'PDF' },
-        { value: 'video', label: 'ویدیو' },
-        { value: 'glb', label: 'مدل 3D' },
-      ],
+      dialogTitle: 'آپلود فایل جدید',
     };
   },
   watch: {
     isOpen(newVal) {
       if (newVal) {
         this.resetForm();
-        // غیرفعال کردن اسکرول صفحه پس‌زمینه
         document.body.style.overflow = 'hidden';
       } else {
-        // فعال کردن مجدد اسکرول هنگام بسته شدن
         document.body.style.overflow = '';
         this.resetForm();
       }
     },
     initialUploadType(newType) {
       this.currentUploadType = newType;
-      this.updateFileAccept();
       this.resetForm();
     },
   },
   methods: {
     beforeDestroy() {
-    // اطمینان از فعال شدن اسکرول هنگام حذف کامپوننت
       document.body.style.overflow = '';
-    },
-    updateFileAccept(event) {
-      this.currentUploadType = event ? event.target.value : this.currentUploadType;
-      switch (this.currentUploadType) {
-        case 'image':
-          this.fileAccept = 'image/*';
-          this.dialogTitle = 'آپلود تصویر جدید';
-          break;
-        case 'pdf':
-          this.fileAccept = '.pdf';
-          this.dialogTitle = 'آپلود فایل PDF';
-          break;
-        case 'video':
-          this.fileAccept = 'video/*';
-          this.dialogTitle = 'آپلود ویدیو';
-          break;
-        case 'glb':
-          this.fileAccept = '.glb';
-          this.dialogTitle = 'آپلود مدل 3D';
-          break;
-      }
     },
     resetForm() {
       this.newFileName = '';
       this.selectedFile = null;
       this.currentUploadType = this.initialUploadType;
-      this.updateFileAccept();
       if (this.$refs.fileInput) {
         this.$refs.fileInput.value = '';
       }
@@ -182,6 +135,25 @@ export default {
     },
     handleFileChange(event) {
       this.selectedFile = event.target.files[0];
+      if (this.selectedFile) {
+        const fileName = this.selectedFile.name.toLowerCase();
+        if (/\.(jpg|jpeg|png|gif|webp|psd|raw|heic|heif|ico)$/i.test(fileName)) {
+          this.currentUploadType = 'image';
+          this.dialogTitle = 'آپلود تصویر جدید';
+        } else if (/\.(pdf|fdf)$/i.test(fileName)) {
+          this.currentUploadType = 'pdf';
+          this.dialogTitle = 'آپلود فایل PDF';
+        } else if (/\.(mp4|mov|mkv|wmv|m4v|mpg|webm|ogg)$/i.test(fileName)) {
+          this.currentUploadType = 'video';
+          this.dialogTitle = 'آپلود ویدیو';
+        } else if (/\.(glb|obj|fbx|stl|ply|gltf)|$/i.test(fileName)) {
+          this.currentUploadType = 'glb';
+          this.dialogTitle = 'آپلود مدل 3D';
+        } else {
+          this.currentUploadType = 'other';
+          this.dialogTitle = 'آپلود فایل سایر';
+        }
+      }
     },
     async uploadFile() {
       if (!this.selectedFile) {
@@ -192,11 +164,21 @@ export default {
       this.uploading = true;
       const formData = new FormData();
       formData.append('name', this.newFileName || this.selectedFile.name);
-      formData.append(this.currentUploadType, this.selectedFile);
+      formData.append(this.currentUploadType === 'other' ? 'file' : this.currentUploadType, this.selectedFile);
 
       try {
         const token = localStorage.getItem('token');
-        const uploadUrl = `${this.baseUrl}/upload${this.currentUploadType.charAt(0).toUpperCase() + this.currentUploadType.slice(1)}/`;
+        let uploadUrl = `${this.baseUrl}/upload${this.currentUploadType.charAt(0).toUpperCase() + this.currentUploadType.slice(1)}/`;
+
+        if (this.currentUploadType === 'other') {
+
+          console.log('فایل به دسته "سایر" ارسال می‌شود:', this.selectedFile.name);
+          alert('فایل به دسته "سایر" ارسال شد (تستی).');
+          this.resetForm();
+          this.$emit('upload-success');
+          this.$emit('close');
+          return;
+        }
 
         await axios.post(uploadUrl, formData, {
           headers: {
@@ -210,7 +192,6 @@ export default {
         this.$emit('close');
         alert('فایل با موفقیت آپلود شد');
 
-        // بررسی مسیر فعلی و هدایت به /dashboard/files در صورت نیاز
         if (this.$route.path !== '/dashboard/files') {
           this.$router.push('/dashboard/files');
         }
