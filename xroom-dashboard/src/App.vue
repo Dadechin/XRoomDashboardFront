@@ -117,6 +117,7 @@ router-view {
 
   .content {
     padding: 5px 15px !important;
+    gap: 0;
   }
 }
 
@@ -127,7 +128,9 @@ router-view {
   }
 
   .content {
-    padding: 35px 15px !important;
+    padding: 0px 15px !important;
+    padding-bottom: 45px !important;
+    gap: 0;
   }
 }
 
@@ -140,10 +143,35 @@ router-view {
 
   .content {
     padding: 15px 45px 45px 0 !important;
+    gap: 0;
   }
 }
 
-@media (min-width: 1025px) {
+@media (min-width: 1024px) and (max-width: 1280px) {
+  .dashboard-page {
+    margin-right: 20rem;
+    padding: 20px;
+    direction: rtl;
+  }
+
+  .content {
+    padding: 35px 45px !important;
+  }
+}
+
+@media (min-width: 1280px) and (max-width : 1440px){
+  .dashboard-page {
+    margin-right: 20rem;
+    padding: 20px;
+    direction: rtl;
+  }
+
+  .content {
+    padding: 35px 45px !important;
+  }
+}
+
+@media (min-width: 1440px){
   .dashboard-page {
     margin-right: 20rem;
     padding: 20px;
@@ -154,5 +182,4 @@ router-view {
     padding: 35px 80px !important;
   }
 }
-
 </style>
