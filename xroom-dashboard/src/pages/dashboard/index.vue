@@ -56,13 +56,15 @@
           />
           <img
             src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame-19.svg"
-            alt="Tutorial"
+            alt="Downloads"
             class="tutorial-item"
+            @click="goToDownloads"
           />
           <img
             src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame-21.svg"
-            alt="Tutorial"
+            alt="Teams"
             class="tutorial-item"
+            @click="goToTeams"
           />
         </div>
       </div>
@@ -104,25 +106,35 @@
           :breakpoints="{
             768: { slidesPerView: 3.4, spaceBetween: 15 },
             1024: { slidesPerView: 2.8, spaceBetween: 25 },
-            1280: { slidesPerView: 3.8, spaceBetween: 30 },
+            1280: { slidesPerView: 4.4, spaceBetween: 30 },
           }"
           :modules="modules"
           class="last-files-swiper"
         >
-          <swiper-slide v-for="(meeting, index) in meetings" :key="index" class="meeting-card">
+          <swiper-slide v-for="(file, index) in recentFiles" :key="index" class="meeting-card">
             <div
               class="card-image"
-              :style="{ backgroundImage: `url(${meeting.image})` }"
+              :class="[
+                {
+                  'file-image': file.type === 'image',
+                  'file-pdf': file.type === 'pdf',
+                  'file-video': file.type === 'video',
+                  'file-glb': file.type === 'glb',
+                  'file-other': file.type === 'other',
+                }
+              ]"
+              :style="{ backgroundImage: `url(${getFilePreviewImage(file.type, file)})` }"
+              @click="openPreviewDialog(file.type, index, getFullFileUrl(file[file.type]), file.id)"
             ></div>
             <div class="card-content">
-              <h3>{{ meeting.title }}</h3>
+              <h3>{{ file.name }}</h3>
               <div class="meeting-date">
                 <img
                   src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame-1.svg"
                   alt="Calendar Icon"
                   class="date-icon"
                 />
-                <span>{{ meeting.date }}</span>
+                <span>{{ formatDate(file.created_at) }}</span>
               </div>
             </div>
           </swiper-slide>
@@ -147,6 +159,16 @@
       @close="closeDialog"
       @upload-success="fetchUserData"
     />
+    <FilePreviewDialog
+      :is-open="isPreviewDialogOpen"
+      :preview-url="previewUrl"
+      :preview-type="currentPreviewType"
+      :preview-index="currentPreviewIndex"
+      :base-url="baseUrl"
+      :video-options="videoOptions"
+      @close="closePreviewDialog"
+      @delete-success="fetchUserData"
+    />
   </div>
 </template>
 
@@ -154,9 +176,11 @@
 import CreateMeetingModal from '@/components/CreateMeetingModal.vue';
 import TutorialShowModal from '@/components/TutorialShowModal.vue';
 import NewFileDialog from '@/components/NewFileDialog.vue';
+import FilePreviewDialog from '@/components/FilePreviewDialog.vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/css';
 import { Pagination } from 'swiper/modules';
+import axios from 'axios';
 
 export default {
   name: 'DashboardPage',
@@ -164,6 +188,7 @@ export default {
     CreateMeetingModal,
     TutorialShowModal,
     NewFileDialog,
+    FilePreviewDialog,
     Swiper,
     SwiperSlide,
   },
@@ -173,48 +198,85 @@ export default {
       showModal: false,
       tutorialShowModal: false,
       isNewFileDialogOpen: false,
+      isPreviewDialogOpen: false,
       currentUploadType: 'image',
+      currentPreviewType: null,
+      currentPreviewIndex: null,
+      previewUrl: '',
       baseUrl: 'http://194.62.43.230:8000',
-      meetings: [
-        {
-          title: 'Pico Control',
-          date: '24 تیر 1403',
-          image: 'https://c.animaapp.com/m9nvumalUMfQbN/img/frame-23-1.png',
-        },
-        {
-          title: 'Flash Back',
-          date: '24 تیر 1403',
-          image: 'https://c.animaapp.com/m9nvumalUMfQbN/img/frame-23-4.png',
-        },
-        {
-          title: 'Fakor Sanat Tehran',
-          date: '24 تیر 1403',
-          image: 'https://c.animaapp.com/m9nvumalUMfQbN/img/frame-23-2.png',
-        },
-        {
-          title: 'Design Artist',
-          date: '24 تیر 1403',
-          image: 'https://c.animaapp.com/m9nvumalUMfQbN/img/frame-23-3.png',
-        },
-        {
-          title: 'Fakor Sanat Tehran',
-          date: '24 تیر 1403',
-          image: 'https://c.animaapp.com/m9nvumalUMfQbN/img/frame-23-2.png',
-        },
-        {
-          title: 'Design Artist',
-          date: '24 تیر 1403',
-          image: 'https://c.animaapp.com/m9nvumalUMfQbN/img/frame-23-3.png',
-        },
-        {
-          title: 'Flash Back',
-          date: '24 تیر 1403',
-          image: 'https://c.animaapp.com/m9nvumalUMfQbN/img/frame-23-4.png',
-        },
-      ],
+      videoOptions: {
+        autoplay: false,
+        controls: true,
+        sources: [{ type: 'video/mp4', src: '' }],
+      },
+      userData: {
+        images: [],
+        pdfs: [],
+        videos: [],
+        glbs: [],
+        others: [],
+      },
+      recentFiles: [],
     };
   },
+  created() {
+    this.fetchUserData();
+  },
   methods: {
+  async fetchUserData() {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${this.baseUrl}/getInfo`, {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      });
+
+      this.userData = {
+        ...response.data.data,
+        others: response.data.data.others || [],
+      };
+
+      // فیلتر فایل‌های اخیر (24 ساعت گذشته)
+      const oneDayAgo = new Date();
+      oneDayAgo.setHours(oneDayAgo.getHours() - 24);
+      this.recentFiles = [
+        ...this.userData.images.map(file => ({ ...file, type: 'image' })),
+        ...this.userData.pdfs.map(file => ({ ...file, type: 'pdf' })),
+        ...this.userData.videos.map(file => ({ ...file, type: 'video' })),
+        ...this.userData.glbs.map(file => ({ ...file, type: 'glb' })),
+        ...this.userData.others.map(file => ({ ...file, type: 'other' })),
+      ].filter(file => new Date(file.created_at) >= oneDayAgo);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      this.recentFiles = [];
+    }
+  },
+    getFilePreviewImage(type, file) {
+      switch (type) {
+        case 'image':
+          return this.getFullFileUrl(file.image);
+        case 'pdf':
+          return 'https://cdn-icons-png.flaticon.com/512/337/337946.png';
+        case 'video':
+          return 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfQ1L9b8tFaGXBQxOdCCaq-AcYkmawPtRVZA&s';
+        case 'glb':
+          return 'https://images.freeimages.com/clg/istock/previews/1024/102424081-icon-3d-modeling.jpg'; // URL ثابت برای مدل سه‌بعدی
+        case 'other':
+          return 'https://cdn-icons-png.flaticon.com/512/186/186159.png';
+        default:
+          return '';
+      }
+    },
+    getFullFileUrl(relativePath) {
+      if (!relativePath) return '';
+      return `${this.baseUrl}${relativePath}`;
+    },
+    formatDate(dateString) {
+      if (!dateString) return '';
+      const date = new Date(dateString);
+      return date.toLocaleDateString('fa-IR');
+    },
     createNewMeeting(meetingData) {
       this.meetings.push({
         title: meetingData.title,
@@ -232,8 +294,28 @@ export default {
     closeDialog() {
       this.isNewFileDialogOpen = false;
     },
-    fetchUserData() {
-      console.log('Fetching user data');
+    openPreviewDialog(type, index, url, id) {
+      this.currentPreviewType = type;
+      this.currentPreviewIndex = id;
+      this.previewUrl = url;
+
+      if (type === 'video') {
+        this.videoOptions.sources[0].src = url;
+      }
+
+      this.isPreviewDialogOpen = true;
+    },
+    closePreviewDialog() {
+      this.isPreviewDialogOpen = false;
+      this.previewUrl = '';
+      this.currentPreviewIndex = null;
+      this.currentPreviewType = null;
+    },
+    goToDownloads() {
+      this.$router.push('/dashboard/download');
+    },
+    goToTeams() {
+      this.$router.push('/dashboard/teams');
     },
   },
 };
@@ -348,11 +430,21 @@ export default {
 
 .card-image {
   width: 100%;
-  height: 120px;
+  height: 172px;
   background-size: cover;
   background-position: center;
   border-radius: 14px 14px 0 0;
 }
+
+  .file-pdf,.file-video,.file-glb {
+    background-size: contain !important;
+    background-repeat: no-repeat;
+    margin-top: 0.8rem;
+    height: 160px;
+    width: 8rem !important;
+    margin-right: auto;
+    margin-left: auto;
+  }
 
 .card-content {
   padding: 12px 10px 8px;
@@ -499,6 +591,16 @@ export default {
     height: 172px;
   }
 
+  .file-pdf,.file-video,.file-glb {
+    background-size: contain !important;
+    background-repeat: no-repeat;
+    margin-top: 0.8rem;
+    height: 160px;
+    width: 8rem !important;
+    margin-right: auto;
+    margin-left: auto;
+  }
+
   .card-content {
     padding: 8px 16px 16px;
   }
@@ -564,17 +666,32 @@ export default {
     height: 172px;
   }
 
+  .file-pdf,.file-video,.file-glb {
+    background-size: contain !important;
+    background-repeat: no-repeat;
+    margin-top: 0.8rem;
+    height: 160px;
+    width: 8rem !important;
+    margin-right: auto;
+    margin-left: auto;
+  }
+
   .card-content {
     padding: 8px 16px 16px;
   }
 
   .card-content h3 {
-    font-size: 15px;
+    font-size: 20px;
+    line-height: 190%;
   }
 
   .date-icon {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
+  }
+
+  .meeting-date span {
+    font-size: 16px;
   }
 
   .file-buttons {
@@ -630,17 +747,32 @@ export default {
     height: 172px;
   }
 
+  .file-pdf,.file-video,.file-glb {
+    background-size: contain !important;
+    background-repeat: no-repeat;
+    margin-top: 0.8rem;
+    height: 160px;
+    width: 8rem !important;
+    margin-right: auto;
+    margin-left: auto;
+  }
+
   .card-content {
     padding: 8px 16px 16px;
   }
 
   .card-content h3 {
-    font-size: 15px;
+    font-size: 20px;
+    line-height: 190%;
   }
 
   .date-icon {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
+  }
+
+  .meeting-date span {
+    font-size: 16px;
   }
 
   .file-buttons {

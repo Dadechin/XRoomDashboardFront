@@ -249,39 +249,39 @@ export default {
   },
   computed: {
     filteredFileSections() {
-      let sections = this.fileSections;
+    let sections = this.fileSections;
 
-      if (this.activeFilter === 'all-files' || this.activeFilter === 'recent-files') {
-        sections = this.fileSections.filter(section => {
-          const files = this.filteredFiles(section.type);
-          return files.length > 0;
-        });
-      } else {
-        const filterTypeMap = {
-          images: 'image',
-          pdfs: 'pdf',
-          videos: 'video',
-          glbs: 'glb',
-          others: 'other',
-        };
-        const filterType = filterTypeMap[this.activeFilter];
-        sections = filterType
-          ? this.fileSections.filter(section => {
-              const files = this.filteredFiles(section.type);
-              return section.type === filterType && files.length > 0;
-            })
-          : [];
-      }
+    if (this.activeFilter === 'all-files' || this.activeFilter === 'recent-files') {
+      sections = this.fileSections.filter(section => {
+        const files = this.filteredFiles(section.type);
+        return files.length > 0;
+      });
+    } else {
+      const filterTypeMap = {
+        images: 'image',
+        pdfs: 'pdf',
+        videos: 'video',
+        glbs: 'glb',
+        others: 'other',
+      };
+      const filterType = filterTypeMap[this.activeFilter];
+      sections = filterType
+        ? this.fileSections.filter(section => {
+            const files = this.filteredFiles(section.type);
+            return section.type === filterType && files.length > 0;
+          })
+        : [];
+    }
 
-      return sections;
-    },
-    hasRecentFiles() {
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-      return ['images', 'pdfs', 'videos', 'glbs', 'others'].some(type =>
-        this.userData[type].some(file => new Date(file.created_at) >= sevenDaysAgo)
-      );
-    },
+    return sections;
+  },
+  hasRecentFiles() {
+    const oneDayAgo = new Date();
+    oneDayAgo.setHours(oneDayAgo.getHours() - 24);
+    return ['images', 'pdfs', 'videos', 'glbs', 'others'].some(type =>
+      this.userData[type].some(file => new Date(file.created_at) >= oneDayAgo)
+    );
+  },
   },
   created() {
     this.fetchUserData();
@@ -305,13 +305,13 @@ export default {
       if (!files) return [];
 
       if (this.activeFilter === 'recent-files') {
-        const sevenDaysAgo = new Date();
-        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-        return files.filter(file => new Date(file.created_at) >= sevenDaysAgo);
+        const oneDayAgo = new Date();
+        oneDayAgo.setHours(oneDayAgo.getHours() - 24);
+        return files.filter(file => new Date(file.created_at) >= oneDayAgo);
       }
 
       const filterTypeMap = {
-                images: 'image',
+        images: 'image',
         pdfs: 'pdf',
         videos: 'video',
         glbs: 'glb',
@@ -332,7 +332,7 @@ export default {
         case 'video':
           return 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfQ1L9b8tFaGXBQxOdCCaq-AcYkmawPtRVZA&s';
         case 'glb':
-          return require('@/assets/img/3d icon.jpg');
+          return require('@/assets/img/3d-icon.jpg');
         case 'other':
           return 'https://cdn-icons-png.flaticon.com/512/186/186159.png';
         default:
@@ -394,6 +394,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 /* General Styles */

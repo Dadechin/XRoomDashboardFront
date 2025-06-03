@@ -1,4 +1,3 @@
-<!-- DashboardPage.vue -->
 <template>
     <div>
       <!-- Description -->
@@ -153,6 +152,10 @@ export default {
   created() {
     this.fetchUserData();
     this.fetchTeamMemberInfo();
+    const tab = this.$route.query.tab;
+    if (tab) {
+      this.activeTab = tab;
+    }
   },
   methods: {
     changeTab(tabName) {
@@ -468,6 +471,13 @@ export default {
       }
     },
   },
+  watch: {
+    '$route.query.tab'(newTab) {
+      if (newTab) {
+        this.activeTab = newTab;
+      }
+    }
+  }
 };
 </script>
 

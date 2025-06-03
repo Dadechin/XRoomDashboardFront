@@ -2,7 +2,7 @@
   <div class="signup-page">
     <div class="signup-form">
       <h2 class="title">
-        <img :src="require('@/assets/img/logo.png')" alt="Logo" style="max-width: 150px;" />
+        <img :src="require('@/assets/img/Logins-logo.png')" alt="Logo" style="max-width: 150px;" />
       </h2>
       <h3 class="subtitle">فراموشی رمز عبور</h3>
 

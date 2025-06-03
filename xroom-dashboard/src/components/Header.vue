@@ -42,9 +42,9 @@
         </svg>
       </span>
     </button>
-    <button class="green-button">
+    <button class="green-button" @click="goToBuySubscription">
       <img :src="require('@/assets/img/shopIcon.png')" alt="Icon" class="button-icon" />
-      <span>خرید اشتراک </span>
+      <span>خرید اشتراک</span>
     </button>
   </div>
 </template>
@@ -95,6 +95,9 @@ export default {
     },
     toggleSidebar() {
       this.$emit('toggle-sidebar');
+    },
+    goToBuySubscription() {
+    this.$router.push({ path: '/dashboard/teams', query: { tab: 'buy-subscription' } });
     }
   },
   mounted() {

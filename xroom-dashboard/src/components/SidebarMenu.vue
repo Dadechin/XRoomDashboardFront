@@ -350,6 +350,17 @@ export default {
   .group {
     width: 100%;
   }
+
+  .clip-path-group-wrapper {
+    width: 150px;
+    height: 40px;
+  }
+
+  .clip-path-group {
+    width: 150px;
+    height: 40px;
+    object-fit: contain;
+  }
 }
 
 @media (min-width: 520px) and (max-width: 780px) {
@@ -367,6 +378,17 @@ export default {
 
   .group {
     width: 100%;
+  }
+  
+  .clip-path-group-wrapper {
+    width: 150px;
+    height: 40px;
+  }
+
+  .clip-path-group {
+    width: 150px;
+    height: 40px;
+    object-fit: contain;
   }
 }
 

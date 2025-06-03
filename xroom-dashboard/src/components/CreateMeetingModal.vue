@@ -118,7 +118,7 @@
                         d="M15 12.5L10 7.5L5 12.5"
                         stroke="#3A57E8"
                         stroke-width="2"
-                        stroke-linecap prištede="round"
+                        stroke-linecap="round"
                         stroke-linejoin="round"
                       />
                     </svg>
@@ -292,7 +292,7 @@
           </div>
           <div class="participants-objects">
             <h2>شرکت کنندگان</h2>
-            <p><span style="color: #101010;font-weight: 600;">کاربران</span> یا <span style="color: #101010;font-weight: 600;">مهمانان تیم</span> را با پر کردن آدرس ایمیل آنها دعوت کنید.</p>
+            <p><span style="color: #101010;font-weight: 600;">کاربران</span> یا <span style="color: #101010;font-weight: 600;">مهمانان تیم</span> را با پر کردن شماره تلفن آنها دعوت کنید.</p>
             <span class="participants-guide">
               می‌توانید به مجری اجازه بدهید تا ابزارهایی برای مدیریت این جلسه و همچنین ابزارهایی برای مدیریت مجوزها در طول جلسه به او بدهد.
             </span>
@@ -304,23 +304,23 @@
               </div>
               <div class="user-info">
                 <p class="user-name">{{ fullName }}</p>
-                <span>{{ userEmail || 'ایمیل موجود نیست' }}</span>
+                <span>{{ userPhone || 'شماره تلفن موجود نیست' }}</span>
               </div>
             </div>
             <p class="presenter-role">{{ userRole }}</p>
           </div>
-          <div class="presenter" v-for="participant in participants" :key="participant.email">
+          <div class="presenter" v-for="participant in participants" :key="participant.phone">
             <div style="display: flex;align-items: center;height: 100%;">
               <div class="avatar-wrapper">
                 <img class="user-avatar" :src="participant.profile_img || defaultProfileIcon" />
               </div>
               <div class="user-info">
                 <p class="user-name">{{ participant.name || 'کاربر مهمان' }}</p>
-                <span>{{ participant.email }}</span>
+                <span>{{ participant.phone }}</span>
               </div>
             </div>
             <p class="presenter-role">{{ participant.role }}</p>
-            <button @click="removeParticipant(participant.email)">
+            <button @click="removeParticipant(participant.phone)">
               <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 32 32" fill="none">
                 <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" fill="white"/>
                 <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" stroke="#E2DEE9"/>
@@ -330,13 +330,13 @@
             </button>
           </div>
           <div class="form-group">
-            <label for="participantEmail">اضافه کردن شرکت کننده</label>
+            <label for="participantPhone">اضافه کردن شرکت کننده</label>
             <div class="participant-input">
               <input
-                type="email"
-                id="participantEmail"
-                v-model="newParticipantEmail"
-                placeholder="لطفا ایمیل شرکت کننده را وارد کنید ..."
+                type="tel"
+                id="participantPhone"
+                v-model="newParticipantPhone"
+                placeholder="لطفا شماره تلفن شرکت کننده را وارد کنید"
                 @keyup.enter="addParticipant"
               />
               <button type="button" @click="addParticipant">
@@ -349,7 +349,7 @@
           </div>
         </form>
         <span class="last-span">
-          شرکت کنندگان را اضافه کنید برای شرکت کنندگانی که به این جلسه اضافه شده اند ایمیلی حاوی کد جلسه، عنوان، توضیحات و زمان ارسال می شود.
+          شرکت کنندگان را اضافه کنید برای شرکت کنندگانی که به این جلسه اضافه شده اند پیامکی حاوی کد جلسه، عنوان، توضیحات و زمان ارسال می‌شود.
         </span>
       </div>
       <div class="form-actions">
@@ -358,11 +358,11 @@
       </div>
     </div>
   </div>
-    <RoomSelectionModal
-      :is-open="isRoomSelectionOpen"
-      @close="isRoomSelectionOpen = false"
-      @submit-rooms="handleRoomSelection"
-    />
+  <RoomSelectionModal
+    :is-open="isRoomSelectionOpen"
+    @close="isRoomSelectionOpen = false"
+    @submit-rooms="handleRoomSelection"
+  />
 </template>
 
 <script>
@@ -395,7 +395,7 @@ export default {
         selectedRooms: [],
       },
       participants: [],
-      newParticipantEmail: '',
+      newParticipantPhone: '',
       defaultProfileIcon: 'https://c.animaapp.com/m9nvumalUMfQbN/img/frame.svg',
       error: null,
       isRoomSelectionOpen: false,
@@ -408,8 +408,8 @@ export default {
         ? `${user.first_name} ${user.last_name}`
         : 'کاربر مهمان';
     },
-    userEmail() {
-      return 'diyar.akhgar@gmail.com';
+    userPhone() {
+      return '09123456789'; // شماره تلفن کاربر اصلی (می‌توانید از localStorage یا منبع دیگری بگیرید)
     },
     userRole() {
       return 'مجری';
@@ -419,8 +419,7 @@ export default {
       return customer.profile_img || this.defaultProfileIcon;
     },
   },
-    watch: {
-    // نظارت بر باز و بسته شدن پاپ‌آپ اصلی
+  watch: {
     isOpen(newVal) {
       if (newVal) {
         document.body.style.overflow = 'hidden';
@@ -428,7 +427,6 @@ export default {
         document.body.style.overflow = '';
       }
     },
-    // نظارت بر باز و بسته شدن پاپ‌آپ انتخاب اتاق
     isRoomSelectionOpen(newVal) {
       if (newVal) {
         document.body.style.overflow = 'hidden';
@@ -438,10 +436,9 @@ export default {
     },
   },
   methods: {
-      beforeDestroy() {
-    // اطمینان از فعال شدن اسکرول هنگام حذف کامپوننت
-    document.body.style.overflow = '';
-  },
+    beforeDestroy() {
+      document.body.style.overflow = '';
+    },
     openRoomSelection() {
       this.isRoomSelectionOpen = true;
     },
@@ -450,31 +447,32 @@ export default {
       this.isRoomSelectionOpen = false;
     },
     addParticipant() {
-      if (!this.newParticipantEmail || !this.validateEmail(this.newParticipantEmail)) {
-        this.error = 'لطفاً ایمیل معتبر وارد کنید';
+      if (!this.newParticipantPhone || !this.validatePhone(this.newParticipantPhone)) {
+        this.error = 'لطفاً شماره تلفن معتبر وارد کنید (مثال: 09123456789)';
         return;
       }
       if (
-        this.participants.some((p) => p.email === this.newParticipantEmail) ||
-        this.newParticipantEmail === this.userEmail
+        this.participants.some((p) => p.phone === this.newParticipantPhone) ||
+        this.newParticipantPhone === this.userPhone
       ) {
-        this.error = 'این ایمیل قبلاً اضافه شده است';
+        this.error = 'این شماره تلفن قبلاً اضافه شده است';
         return;
       }
       this.participants.push({
-        email: this.newParticipantEmail,
+        phone: this.newParticipantPhone,
         name: 'کاربر مهمان',
         role: 'شرکت‌کننده',
         profile_img: this.defaultProfileIcon,
       });
-      this.newParticipantEmail = '';
+      this.newParticipantPhone = '';
       this.error = null;
     },
-    removeParticipant(email) {
-      this.participants = this.participants.filter((p) => p.email !== email);
+    removeParticipant(phone) {
+      this.participants = this.participants.filter((p) => p.phone !== phone);
     },
-    validateEmail(email) {
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    validatePhone(phone) {
+      // اعتبارسنجی شماره تلفن (مثال: فرمت شماره تلفن ایرانی)
+      return /^09[0-9]{9}$/.test(phone); // فرمت: 09XXXXXXXXX (11 رقم، شروع با 09)
     },
     closeModal() {
       this.$emit('close');
@@ -492,7 +490,7 @@ export default {
         selectedRooms: [],
       };
       this.participants = [];
-      this.newParticipantEmail = '';
+      this.newParticipantPhone = '';
       this.error = null;
       this.isRoomSelectionOpen = false;
     },
@@ -557,9 +555,9 @@ export default {
         endDateTime,
         rooms: this.form.selectedRooms,
         participants: [
-          ...(this.userEmail ? [{ email: this.userEmail, role: this.userRole }] : []),
+          ...(this.userPhone ? [{ phone: this.userPhone, role: this.userRole }] : []),
           ...this.participants.map((p) => ({
-            email: p.email,
+            phone: p.phone,
             role: p.role,
           })),
         ],
@@ -904,10 +902,15 @@ export default {
 
 .participant-input button {
   position: absolute;
-  left: 0;
+  right: 0;
   top: 11px;
   background-color: transparent;
   border: none;
+}
+
+#participantPhone::placeholder {
+  text-align: right;
+  padding-right: 1.5rem;
 }
 
 </style>

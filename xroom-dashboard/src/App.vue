@@ -111,19 +111,20 @@ router-view {
 /* Responsive Styles */
 @media (max-width: 520px) {
   .dashboard-page {
-    padding: 15px 5px;
+    padding: 0;
     direction: rtl;
   }
 
   .content {
     padding: 5px 15px !important;
     gap: 0;
+    border-radius: 0;
   }
 }
 
 @media (min-width: 521px) and (max-width: 780px) {
   .dashboard-page {
-    padding:  15px;
+    padding:  0;
     direction: rtl;
   }
 
@@ -131,6 +132,7 @@ router-view {
     padding: 0px 15px !important;
     padding-bottom: 45px !important;
     gap: 0;
+    border-radius: 0;
   }
 }
 
