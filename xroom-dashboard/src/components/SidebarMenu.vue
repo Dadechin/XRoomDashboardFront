@@ -236,7 +236,6 @@ export default {
   width: 72px;
   height: 72px;
   border-radius: 12px;
-  object-fit: none;
 }
 
 .profile-container {

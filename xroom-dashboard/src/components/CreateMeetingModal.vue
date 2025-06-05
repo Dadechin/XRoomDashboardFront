@@ -171,7 +171,7 @@
                     type="number"
                     v-model.number="form.startHour"
                     min="0"
-                    max="24"
+                    max="23"
                     required
                   />
                   <button type="button" @click="decrementTime('startHour')">
@@ -259,7 +259,7 @@
                     type="number"
                     v-model.number="form.endHour"
                     min="0"
-                    max="24"
+                    max="23"
                     required
                   />
                   <button type="button" @click="decrementTime('endHour')">
@@ -284,9 +284,9 @@
             </div>
           </div>
           <div class="form-group">
-            <label style="font-size: 19px; font-weight: 600;">اتاق‌های جلسات</label>
+            <label style="font-size: 19px; font-weight: 600;">اتاق جلسه</label>
             <div class="rooms-selecter">
-              <span>{{ form.selectedRooms.length }} انتخاب شده</span>
+              <span>{{ form.selectedRoom ? '0 اتاق انتخاب شده' : '0 اتاق انتخاب شده' }}</span>
               <button type="button" @click="openRoomSelection" style="cursor: pointer;">انتخاب اتاق جلسه</button>
             </div>
           </div>
@@ -297,8 +297,8 @@
               می‌توانید به مجری اجازه بدهید تا ابزارهایی برای مدیریت این جلسه و همچنین ابزارهایی برای مدیریت مجوزها در طول جلسه به او بدهد.
             </span>
           </div>
-          <div class="presenter">
-            <div style="display: flex;align-items: center;height: 100%;">
+        <div class="presenter">
+            <div style="display: flex; align-items: center; height: 100%;">
               <div class="avatar-wrapper">
                 <img class="user-avatar" :src="profileIcon" />
               </div>
@@ -361,7 +361,7 @@
   <RoomSelectionModal
     :is-open="isRoomSelectionOpen"
     @close="isRoomSelectionOpen = false"
-    @submit-rooms="handleRoomSelection"
+    @submit-room="handleRoomSelection"
   />
 </template>
 
@@ -392,7 +392,7 @@ export default {
         startMinute: 0,
         endHour: 18,
         endMinute: 0,
-        selectedRooms: [],
+        selectedRoom: null,
       },
       participants: [],
       newParticipantPhone: '',
@@ -402,6 +402,10 @@ export default {
     };
   },
   computed: {
+    customer() {
+      // دریافت اطلاعات کاربر از localStorage با کلید customer
+      return JSON.parse(localStorage.getItem('customer') || '{}');
+    },
     fullName() {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       return user.first_name && user.last_name
@@ -409,15 +413,18 @@ export default {
         : 'کاربر مهمان';
     },
     userPhone() {
-      return '09123456789'; // شماره تلفن کاربر اصلی (می‌توانید از localStorage یا منبع دیگری بگیرید)
+      return 3;
     },
     userRole() {
-      return 'مجری';
+      return this.customer.semat || 'مجری';
     },
     profileIcon() {
-      const customer = JSON.parse(localStorage.getItem('customer') || '{}');
-      return customer.profile_img || this.defaultProfileIcon;
+      return this.customer.profile_img || this.defaultProfileIcon;
     },
+    userId() {
+    const customer = JSON.parse(localStorage.getItem('customer') || '{}');
+    return customer.id || null;
+    }
   },
   watch: {
     isOpen(newVal) {
@@ -442,8 +449,8 @@ export default {
     openRoomSelection() {
       this.isRoomSelectionOpen = true;
     },
-    handleRoomSelection(rooms) {
-      this.form.selectedRooms = rooms;
+    handleRoomSelection(room) {
+      this.form.selectedRoom = room;
       this.isRoomSelectionOpen = false;
     },
     addParticipant() {
@@ -471,8 +478,7 @@ export default {
       this.participants = this.participants.filter((p) => p.phone !== phone);
     },
     validatePhone(phone) {
-      // اعتبارسنجی شماره تلفن (مثال: فرمت شماره تلفن ایرانی)
-      return /^09[0-9]{9}$/.test(phone); // فرمت: 09XXXXXXXXX (11 رقم، شروع با 09)
+      return /^09[0-9]{9}$/.test(phone);
     },
     closeModal() {
       this.$emit('close');
@@ -487,7 +493,7 @@ export default {
         startMinute: 0,
         endHour: 18,
         endMinute: 0,
-        selectedRooms: [],
+        selectedRoom: null,
       };
       this.participants = [];
       this.newParticipantPhone = '';
@@ -516,7 +522,7 @@ export default {
         this.form.endMinute--;
       }
     },
-    handleSubmit() {
+    async handleSubmit() {
       if (!this.form.title || !this.form.date) {
         this.error = 'لطفاً نام جلسه و تاریخ را وارد کنید.';
         return;
@@ -540,38 +546,35 @@ export default {
           second: 0,
         })
         .toISOString();
-      const endDateTime = momentDate
-        .clone()
-        .set({
-          hour: this.form.endHour,
-          minute: this.form.endMinute,
-          second: 0,
-        })
-        .toISOString();
-      const meetingData = {
-        title: this.form.title,
-        description: this.form.description,
-        startDateTime,
-        endDateTime,
-        rooms: this.form.selectedRooms,
-        participants: [
-          ...(this.userPhone ? [{ phone: this.userPhone, role: this.userRole }] : []),
-          ...this.participants.map((p) => ({
-            phone: p.phone,
-            role: p.role,
-          })),
-        ],
-      };
-      console.log('داده‌های جلسه:', meetingData);
-      this.$emit('submit', meetingData);
-      this.closeModal();
+
+      try {
+        const userIds = [
+          ...(this.userPhone ? [this.userPhone] : []),
+          ...this.participants.map((p) => p.phone),
+        ];
+
+        const meetingData = {
+          name: this.form.title,
+          description: this.form.description,
+          date_time: startDateTime,
+          space: this.form.selectedRoom ? this.form.selectedRoom.id : null,
+          asset_bundle: 1,
+          use_space: !!this.form.selectedRoom,
+          user_ids: userIds,
+        };
+
+        console.log('داده‌های ارسالی به API:', JSON.stringify(meetingData, null, 2));
+
+        this.$emit('create-meeting', meetingData);
+        this.closeModal();
+      } catch (error) {
+        this.error = `خطا در آماده‌سازی داده‌ها: ${error.message}`;
+        console.error('خطا در handleSubmit:', error);
+      }
     },
   },
 };
 </script>
-
-
-
 
 <style scoped>
 .modal-overlay {

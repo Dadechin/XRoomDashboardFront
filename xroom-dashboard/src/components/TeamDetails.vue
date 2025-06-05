@@ -108,6 +108,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'TeamDetails',
   data() {
@@ -116,6 +118,7 @@ export default {
         teamName: '',
         companyName: '',
         activityType: '',
+        teamId: null,
       },
       teamLogo: null,
       uploadedLogoFile: null,
@@ -124,9 +127,37 @@ export default {
         { path: '/img/sample-logo.png', alt: 'نمونه لوگو' },
         { path: '/img/sample-logo.png', alt: 'نمونه لوگو' },
       ],
+      baseUrl: 'http://my.xroomapp.com:8000',
     };
   },
+  created() {
+    // دریافت اطلاعات تیم در زمان ایجاد کامپوننت
+    this.fetchTeamData();
+  },
   methods: {
+    /* دریافت اطلاعات تیم از API */
+    async fetchTeamData() {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`${this.baseUrl}/get_team`, {
+          headers: {
+            Authorization: `Token ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        const team = response.data.teams[0];
+        if (team) {
+          this.form.teamName = team.name || '';
+          this.form.activityType = team.description || '';
+          this.form.teamId = team.id;
+        } else {
+          alert('هیچ اطلاعاتی برای تیم یافت نشد.');
+        }
+      } catch (error) {
+        alert('خطا در بارگذاری اطلاعات تیم. لطفاً دوباره تلاش کنید.');
+      }
+    },
+
     handleLogoUpload(event) {
       const file = event.target.files[0];
       if (file) {
@@ -134,8 +165,9 @@ export default {
         this.uploadedLogoFile = file;
       }
     },
-    submitForm() {
-      // Check if there's any data to submit
+
+    /* ارسال فرم برای به‌روزرسانی اطلاعات تیم  */
+    async submitForm() {
       const hasFormData = this.form.teamName || this.form.companyName || this.form.activityType;
       const hasLogo = !!this.uploadedLogoFile;
 
@@ -144,27 +176,41 @@ export default {
         return;
       }
 
-      // Prepare data to emit, including only non-empty fields
-      const formData = {};
-      if (this.form.teamName) formData.teamName = this.form.teamName;
-      if (this.form.companyName) formData.companyName = this.form.companyName;
-      if (this.form.activityType) formData.activityType = this.form.activityType;
-      if (hasLogo) formData.teamLogo = this.uploadedLogoFile;
+      const formData = new FormData();
+      if (this.form.teamName) formData.append('name', this.form.teamName);
+      if (this.form.companyName) formData.append('company_name', this.form.companyName);
+      if (this.form.activityType) formData.append('description', this.form.activityType);
+      if (this.uploadedLogoFile) formData.append('logo', this.uploadedLogoFile);
 
-      this.$emit('update:teamData', formData);
+      try {
+        const token = localStorage.getItem('token');
+        await axios.patch(`${this.baseUrl}/update_team/${this.form.teamId}/`, formData, {
+          headers: {
+            Authorization: `Token ${token}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        this.$emit('update:teamData', {
+          teamName: this.form.teamName,
+          companyName: this.form.companyName,
+          activityType: this.form.activityType,
+          teamLogo: this.uploadedLogoFile,
+        });
+        alert('اطلاعات تیم با موفقیت به‌روزرسانی شد');
 
-      // Reset form and logo
-      this.form = {
-        teamName: '',
-        companyName: '',
-        activityType: '',
-      };
-      this.teamLogo = null;
-      this.uploadedLogoFile = null;
-      // Reset file input
-      const fileInput = this.$refs.fileUpload;
-      if (fileInput) {
-        fileInput.value = '';
+        // ریست فرم و لوگو
+        this.form.teamName = '';
+        this.form.companyName = '';
+        this.form.activityType = '';
+        this.teamLogo = null;
+        this.uploadedLogoFile = null;
+        const fileInput = this.$refs.fileUpload;
+        if (fileInput) {
+          fileInput.value = '';
+        }
+        await this.fetchTeamData();
+      } catch (error) {
+        alert('خطا در به‌روزرسانی اطلاعات تیم. لطفاً دوباره تلاش کنید.');
       }
     },
   },

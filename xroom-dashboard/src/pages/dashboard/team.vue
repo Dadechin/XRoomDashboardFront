@@ -90,29 +90,7 @@ export default {
       memberCount: 5,
       availableMemberOptions: [5, 10, 20, 100],
       selectedPlan: null,
-      userList: [
-        {
-          name: 'دانیال پژوهش کیا',
-          email: 'aminimperator@gmail.com',
-          role: 'نسخه آزمایشی',
-          version: '',
-          avatar: 'https://models.readyplayer.me/681f59760bc631a87ad25172.png',
-        },
-        {
-          name: 'امین رمضانی',
-          email: 'aminimperator@gmail.com',
-          role: 'مدیر',
-          version: 'نسخه آزمایشی',
-          avatar: 'https://models.readyplayer.me/681f59760bc631a87ad25172.png',
-        },
-        {
-          name: 'نوید رمضانی',
-          email: 'aminimperator@gmail.com',
-          role: 'مدیر',
-          version: 'نسخه آزمایشی',
-          avatar: 'https://models.readyplayer.me/681f59760bc631a87ad25172.png',
-        },
-      ],
+      userList: [],
       activeTab: 'users',
       previewUrl: '',
       currentPreviewIndex: null,
@@ -137,6 +115,7 @@ export default {
         pdfs: [],
         videos: [],
         glbs: [],
+        subscription: null,
       },
       newFileName: '',
       selectedFile: null,
@@ -147,11 +126,13 @@ export default {
       fileAccept: '*/*',
       teamMemberCapacity: 0,
       subscriptionCount: 0,
+      teamId: null,
     };
   },
   created() {
     this.fetchUserData();
     this.fetchTeamMemberInfo();
+    this.fetchTeamData();
     const tab = this.$route.query.tab;
     if (tab) {
       this.activeTab = tab;
@@ -161,44 +142,88 @@ export default {
     changeTab(tabName) {
       this.activeTab = tabName;
     },
-    async handlePaymentSuccess() {
-      await this.fetchTeamMemberInfo();
-      this.activeTab = 'membership';
-    },
-    async fetchTeamMemberInfo() {
+    async fetchTeamData() {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get(`${this.baseUrl}/get_team_member_info`, {
+        const response = await axios.get('http://my.xroomapp.com:8000/get_team', {
           headers: {
             Authorization: `Token ${token}`,
             'Content-Type': 'application/json',
           },
         });
-
-        this.teamMemberCapacity = response.data.data.team_member_capacity;
-        this.subscriptionCount = response.data.data.subscriptionCount;
-        console.log('تعداد اشتراک‌ها (subscriptionCount):', this.subscriptionCount);
+        const team = response.data.teams[0];
+        if (team) {
+          this.teamId = team.id;
+        } else {
+          this.teamId = null;
+        }
       } catch (error) {
-        console.error('خطا در دریافت اطلاعات اشتراک:', error);
-        alert('خطا در بارگذاری اطلاعات اشتراک. لطفاً دوباره تلاش کنید.');
+        alert('خطا در بارگذاری اطلاعات تیم. لطفاً دوباره تلاش کنید.');
+      }
+    },
+    async handlePaymentSuccess() {
+      await this.fetchTeamMemberInfo();
+      await this.fetchUserData();
+      this.activeTab = 'membership';
+    },
+    async fetchTeamMemberInfo() {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`${this.baseUrl}/get_all_team_members`, {
+          headers: {
+            Authorization: `Token ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        this.userList = response.data.members.map((member) => ({
+          name: `${member.first_name} ${member.last_name}`,
+          email: member.username,
+          role: 'کاربر',
+          version: 'نسخه آزمایشی',
+          avatar: 'https://models.readyplayer.me/681f59760bc631a87ad25172.png',
+        }));
+        this.teamMemberCapacity = response.data.members.length;
+      } catch (error) {
+        alert('خطا در بارگذاری اطلاعات اعضای تیم. لطفاً دوباره تلاش کنید.');
+      }
+    },
+    async fetchUserData() {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`${this.baseUrl}/getInfo`, {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        });
+        this.userData = response.data;
+        if (this.userData.data.subscription) {
+          this.subscriptionCount = this.userData.data.subscription || 0;
+        } else {
+          this.subscriptionCount = 0;
+        }
+      } catch (error) {
+        alert('خطا در بارگذاری اطلاعات کاربر. لطفاً دوباره تلاش کنید.');
       }
     },
     async submitNewUser(newUser) {
-      console.log('اطلاعات کاربر جدید:', newUser);
-
       const remainingCapacity = this.subscriptionCount - this.teamMemberCapacity;
       if (remainingCapacity <= 0) {
         alert('ظرفیت تیم پر شده است. لطفاً اشتراک جدیدی خریداری کنید.');
         this.activeTab = 'buy-subscription';
         return;
       }
-
+      if (!this.teamId) {
+        alert('خطا: اطلاعات تیم یافت نشد. لطفاً دوباره تلاش کنید.');
+        return;
+      }
       try {
         const token = localStorage.getItem('token');
-        
         await axios.post(
           'http://my.xroomapp.com:8000/add_teamMember/',
-          newUser,
+          {
+            ...newUser,
+            teamId: this.teamId,
+          },
           {
             headers: {
               Authorization: `Token ${token}`,
@@ -206,21 +231,16 @@ export default {
             },
           }
         );
-
         this.userList.push({
           ...newUser,
           avatar: 'https://models.readyplayer.me/681f59760bc631a87ad25172.png',
           role: newUser.role || 'کاربر',
           version: newUser.version || 'نسخه آزمایشی',
         });
-
         this.teamMemberCapacity++;
-
         await this.fetchTeamMemberInfo();
-
         alert('کاربر با موفقیت اضافه شد');
       } catch (error) {
-        console.error('خطا در اضافه کردن کاربر:', error);
         alert('خطا در اضافه کردن کاربر. لطفاً دوباره تلاش کنید.');
       }
     },
@@ -228,9 +248,6 @@ export default {
       if (event.target === this.$refs.filePreviewDialog) {
         this.closePreviewDialog();
       }
-    },
-    handleTeamData(data) {
-      console.log('اطلاعات دریافتی : ', data);
     },
     openPreviewDialog(type, index, url) {
       if (type === 'video') {
@@ -240,14 +257,11 @@ export default {
         });
       }
       if (!this.$refs.filePreviewDialog) {
-        console.error('Dialog element not found');
         return;
       }
-
       this.currentPreviewType = type;
       this.currentPreviewIndex = index;
       this.previewUrl = url;
-
       if (type === 'video') {
         this.videoOptions.sources[0].src = url;
         this.videoOptions.poster = this.getVideoThumbnail();
@@ -255,11 +269,9 @@ export default {
       } else {
         this.previewUrl = url;
       }
-
       this.$nextTick(() => {
         this.$refs.filePreviewDialog?.showModal();
       });
-
       if (type === 'image') {
         this.previewImageUrl = url;
         this.previewPdfUrl = '';
@@ -267,7 +279,6 @@ export default {
         this.previewPdfUrl = url;
         this.previewImageUrl = '';
       }
-
       this.$refs.filePreviewDialog.showModal();
     },
     getVideoThumbnail() {
@@ -277,8 +288,6 @@ export default {
       const dialog = this.$refs.filePreviewDialog;
       if (dialog && typeof dialog.close === 'function') {
         dialog.close();
-      } else {
-        console.warn('Dialog reference not found or close method unavailable');
       }
       this.previewUrl = '';
       this.currentPreviewIndex = null;
@@ -288,38 +297,32 @@ export default {
       const url =
         this.currentPreviewType === 'image' ? this.previewImageUrl : this.previewPdfUrl;
       if (!url) return;
-
       try {
         const response = await fetch(url);
         const blob = await response.blob();
         const downloadUrl = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = downloadUrl;
-
         if (this.currentPreviewType === 'image') {
           a.download = `image-${new Date().getTime()}.${url.split('.').pop()}`;
         } else if (this.currentPreviewType === 'pdf') {
           a.download = `document-${new Date().getTime()}.pdf`;
         }
-
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(downloadUrl);
         document.body.removeChild(a);
       } catch (error) {
-        console.error('Error downloading file:', error);
         alert('خطا در دانلود فایل');
       }
     },
     async deleteFile() {
       if (this.currentPreviewIndex === null || !this.currentPreviewType) return;
-
       try {
         const token = localStorage.getItem('token');
         let deleteUrl = '';
         let itemId = '';
         let fileArray = [];
-
         switch (this.currentPreviewType) {
           case 'image':
             fileArray = this.userData.images;
@@ -342,32 +345,16 @@ export default {
             deleteUrl = `${this.baseUrl}/deleteGlb/${itemId}/`;
             break;
         }
-
         await axios.delete(deleteUrl, {
           headers: {
             Authorization: `Token ${token}`,
           },
         });
-
         this.closePreviewDialog();
         await this.fetchUserData();
         alert('فایل با موفقیت حذف شد');
       } catch (error) {
-        console.error('Error deleting file:', error);
         alert('خطا در حذف فایل');
-      }
-    },
-    async fetchUserData() {
-      try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get(`${this.baseUrl}/getInfo`, {
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-        });
-        this.userData = response.data;
-      } catch (error) {
-        console.error('Error fetching user data:', error);
       }
     },
     getFullImageUrl(relativePath) {
@@ -381,7 +368,6 @@ export default {
     },
     openDialog(type) {
       this.currentUploadType = type;
-
       switch (type) {
         case 'image':
           this.dialogTitle = 'آپلود تصویر جدید';
@@ -400,7 +386,6 @@ export default {
           this.fileAccept = '.glb';
           break;
       }
-
       this.$refs.newFileDialog.showModal();
     },
     closeDialog() {
@@ -412,13 +397,12 @@ export default {
       this.selectedFile = event.target.files[0];
     },
     async uploadFile() {
-      if (!this.selectedFile) return;
-
+      if (!this.selectedFile) {
+        return;
+      }
       this.uploading = true;
-
       const formData = new FormData();
       formData.append('name', this.newFileName || this.selectedFile.name);
-
       switch (this.currentUploadType) {
         case 'image':
           formData.append('image', this.selectedFile);
@@ -433,11 +417,9 @@ export default {
           formData.append('glb', this.selectedFile);
           break;
       }
-
       try {
         const token = localStorage.getItem('token');
         let uploadUrl = '';
-
         switch (this.currentUploadType) {
           case 'image':
             uploadUrl = `${this.baseUrl}/uploadImage/`;
@@ -452,19 +434,16 @@ export default {
             uploadUrl = `${this.baseUrl}/uploadGlb/`;
             break;
         }
-
         await axios.post(uploadUrl, formData, {
           headers: {
             Authorization: `Token ${token}`,
             'Content-Type': 'multipart/form-data',
           },
         });
-
         this.closeDialog();
         await this.fetchUserData();
         alert('فایل با موفقیت آپلود شد');
       } catch (error) {
-        console.error('Error uploading file:', error);
         alert('خطا در آپلود فایل');
       } finally {
         this.uploading = false;
@@ -476,8 +455,8 @@ export default {
       if (newTab) {
         this.activeTab = newTab;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

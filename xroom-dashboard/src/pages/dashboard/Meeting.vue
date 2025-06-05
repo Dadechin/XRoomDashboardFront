@@ -1,136 +1,137 @@
 <template>
-    <div>
-      <!-- Description -->
-      <div class="section-description">
-        <div class="section-title">مدیریت جلسات</div>
-        <p class="title-description">
-          با استفاده از جلسات، می‌توانید همکاران و کاربران خارجی XRoom را به تیم و اتاق‌های خصوصی خود دعوت کنید. شرکت‌کنندگان جلسه شما می‌توانند با استفاده از کد جلسه ایجاد شده در زمان‌های معین به جلسه بپیوندند.
-        </p>
-      </div>
-
-      <!-- Meeting Section -->
-      <div class="meeting-section">
-        <div class="meeting-filters">
-          <div class="search-section">
-            <span style="font-size: 17px; font-weight: 600;">جستجو</span>
-            <div class="search-wrapper">
-              <input
-                type="text"
-                class="search-input"
-                placeholder="جستجو جلسه مدنظر ..."
-                v-model="searchQuery"
-                @input="filterMeetings"
-              />
-              <button class="search-button">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                >
-                  <path
-                    d="M7.33333 12.6667C10.2789 12.6667 12.6667 10.2789 12.6667 7.33333C12.6667 4.38781 10.2789 2 7.33333 2C4.38781 2 2 4.38781 2 7.33333C2 10.2789 4.38781 12.6667 7.33333 12.6667Z"
-                    stroke="#101010"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  <path
-                    d="M13.9995 14L11.1328 11.1333"
-                    stroke="#101010"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-              </button>
-            </div>
-          </div>
-          <div class="filter-section">
-            <span style="font-size: 17px; font-weight: 600;">فیلتر</span>
-            <div class="filter-buttons">
-              <button
-                :class="{ 'active-filter': activeFilter === 'future', 'disable-filter': activeFilter !== 'future' }"
-                @click="setFilter('future')"
-              >
-                آینده
-              </button>
-              <button
-                :class="{ 'active-filter': activeFilter === 'all', 'disable-filter': activeFilter !== 'all' }"
-                @click="setFilter('all')"
-              >
-                همه
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Meet Discover -->
-        <div :class="filteredMeetings.length === 0 ? 'meet-discover' : 'meetings-container'">
-          <span class="discover-result" v-if="filteredMeetings.length === 0">
-            هیچ جلسه‌ای یافت نشد. با کلیک کردن، یک جلسه جدید ایجاد کنید
-          </span>
-          <div v-else class="meetings-list">
-            <div v-for="meeting in filteredMeetings" :key="meeting.id" class="meeting-item">
-              <img :src="meeting.image" alt="Meeting Image" class="meeting-image" width="120px" height="120px" />
-              <div class="meeting-details" style="margin-right: 10px;">
-                <h3 class="meet-title">{{ meeting.title }}</h3>
-                <p class="meet-capacity">
-                  <span style="margin-left: 4px;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
-                      <g clip-path="url(#clip0_622_1334)">
-                        <path d="M3.33203 5.16667C3.33203 5.87391 3.61298 6.55219 4.11308 7.05228C4.61318 7.55238 5.29145 7.83333 5.9987 7.83333C6.70594 7.83333 7.38422 7.55238 7.88432 7.05228C8.38441 6.55219 8.66536 5.87391 8.66536 5.16667C8.66536 4.45942 8.38441 3.78115 7.88432 3.28105C7.38422 2.78095 6.70594 2.5 5.9987 2.5C5.29145 2.5 4.61318 2.78095 4.11308 3.28105C3.61298 3.78115 3.33203 4.45942 3.33203 5.16667Z" stroke="#718096" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M2 14.5V13.1667C2 12.4594 2.28095 11.7811 2.78105 11.281C3.28115 10.781 3.95942 10.5 4.66667 10.5H7.33333C8.04058 10.5 8.71885 10.781 9.21895 11.281C9.71905 11.7811 10 12.4594 10 13.1667V14.5" stroke="#718096" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M10.668 2.58667C11.2416 2.73354 11.75 3.06714 12.1131 3.53488C12.4761 4.00262 12.6732 5.17 12.6732 5.17C12.6732 5.76212 12.4761 6.33739 12.1131 6.80513C11.75 7.27287 11.2416 7.60647 10.668 7.75334" stroke="#718096" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M14 14.5V13.1666C13.9966 12.5781 13.7986 12.0072 13.4368 11.5429C13.0751 11.0786 12.5699 10.7471 12 10.6" stroke="#718096" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                      </g>
-                      <defs>
-                        <clipPath id="clip0_622_1334">
-                          <rect width="16" height="16" fill="white" transform="translate(0 0.5)"/>
-                        </clipPath>
-                      </defs>
-                    </svg>
-                  </span>
-                  حداکثر: {{ meeting.maxCapacity }} کاربر
-                </p>
-                <p class="meet-type">
-                  <span style="margin-left: 4px;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
-                      <path d="M4 15.1667V3.16671C4 2.81309 4.14048 2.47395 4.39052 2.2239C4.64057 1.97385 4.97971 1.83337 5.33333 1.83337H10.6667C11.0203 1.83337 11.3594 1.97385 11.6095 2.2239C11.8595 2.47395 12 2.81309 12 3.16671V15.1667H4Z" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-                      <path d="M3.9987 8.5H2.66536C2.31174 8.5 1.9726 8.64048 1.72256 8.89052C1.47251 9.14057 1.33203 9.47971 1.33203 9.83333V13.8333C1.33203 14.187 1.47251 14.5261 1.72256 14.7761C1.9726 15.0262 2.31174 15.1667 2.66536 15.1667H3.9987" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-                      <path d="M12 6.5H13.3333C13.687 6.5 14.0261 6.64048 14.2761 6.89052C14.5262 7.14057 14.6667 7.47971 14.6667 7.83333V13.8333C14.6667 14.187 14.5262 14.5261 14.2761 14.7761C14.0261 15.0262 13.687 15.1667 13.3333 15.1667H12" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-                      <path d="M6.66797 4.5H9.33464" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-                      <path d="M6.66797 7.16663H9.33464" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-                      <path d="M6.66797 9.83337H9.33464" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-                      <path d="M6.66797 12.5H9.33464" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                  </span>
-                  {{ meeting.type }}
-                </p>
-              </div>
-            </div>
-          </div>
-          <button
-            class="create-meet"
-            @click="showModal = true"
-            :style="{ width: filteredMeetings.length === 0 ? 'auto' : '191px', margin: filteredMeetings.length === 0 ? '0' : 'auto'}"
-          >
-            + <span style="margin-right: 0.5rem;">ایجاد جلسه جدید</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Create Meeting Modal -->
-      <CreateMeetingModal
-        :is-open="showModal"
-        @create-meeting="createNewMeeting"
-        @close="showModal = false"
-      />
+  <div>
+    <!-- Description -->
+    <div class="section-description">
+      <div class="section-title">مدیریت جلسات</div>
+      <p class="title-description">
+        با استفاده از جلسات، می‌توانید همکاران و کاربران خارجی XRoom را به تیم و اتاق‌های خصوصی خود دعوت کنید. شرکت‌کنندگان جلسه شما می‌توانند با استفاده از کد جلسه ایجاد شده در زمان‌های معین به جلسه بپیوندند.
+      </p>
     </div>
+
+    <!-- Meeting Section -->
+    <div class="meeting-section">
+      <div class="meeting-filters">
+        <div class="search-section">
+          <span style="font-size: 17px; font-weight: 600;">جستجو</span>
+          <div class="search-wrapper">
+            <input
+              type="text"
+              class="search-input"
+              placeholder="جستجو جلسه مدنظر ..."
+              v-model="searchQuery"
+              @input="filterMeetings"
+            />
+            <button class="search-button">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 16 16"
+                fill="none"
+              >
+                <path
+                  d="M7.33333 12.6667C10.2789 12.6667 12.6667 10.2789 12.6667 7.33333C12.6667 4.38781 10.2789 2 7.33333 2C4.38781 2 2 4.38781 2 7.33333C2 10.2789 4.38781 12.6667 7.33333 12.6667Z"
+                  stroke="#101010"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M13.9995 14L11.1328 11.1333"
+                  stroke="#101010"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="filter-section">
+          <span style="font-size: 17px; font-weight: 600;">فیلتر</span>
+          <div class="filter-buttons">
+            <button
+              :class="{ 'active-filter': activeFilter === 'future', 'disable-filter': activeFilter !== 'future' }"
+              @click="setFilter('future')"
+            >
+              آینده
+            </button>
+            <button
+              :class="{ 'active-filter': activeFilter === 'all', 'disable-filter': activeFilter !== 'all' }"
+              @click="setFilter('all')"
+            >
+              همه
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Meet Discover -->
+      <div :class="filteredMeetings.length === 0 ? 'meet-discover' : 'meetings-container'">
+        <span class="discover-result" v-if="filteredMeetings.length === 0">
+          هیچ جلسه‌ای یافت نشد. با کلیک کردن، یک جلسه جدید ایجاد کنید
+        </span>
+        <div v-else class="meetings-list">
+          <div v-for="meeting in filteredMeetings" :key="meeting.id" class="meeting-item">
+            <img :src="meeting.image" alt="Meeting Image" class="meeting-image" width="120px" height="120px" />
+            <div class="meeting-details" style="margin-right: 10px;">
+              <h3 class="meet-title">{{ meeting.title }}</h3>
+              <p class="meet-capacity">
+                <span style="margin-left: 4px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
+                    <g clip-path="url(#clip0_622_1334)">
+                      <path d="M3.33203 5.16667C3.33203 5.87391 3.61298 6.55219 4.11308 7.05228C4.61318 7.55238 5.29145 7.83333 5.9987 7.83333C6.70594 7.83333 7.38422 7.55238 7.88432 7.05228C8.38441 6.55219 8.66536 5.87391 8.66536 5.16667C8.66536 4.45942 8.38441 3.78115 7.88432 3.28105C7.38422 2.78095 6.70594 2.5 5.9987 2.5C5.29145 2.5 4.61318 2.78095 4.11308 3.28105C3.61298 3.78115 3.33203 4.45942 3.33203 5.16667Z" stroke="#718096" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M2 14.5V13.1667C2 12.4594 2.28095 11.7811 2.78105 11.281C3.28115 10.781 3.95942 10.5 4.66667 10.5H7.33333C8.04058 10.5 8.71885 10.781 9.21895 11.281C9.71905 11.7811 10 12.4594 10 13.1667V14.5" stroke="#718096" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M10.668 2.58667C11.2416 2.73354 11.75 3.06714 12.1131 3.53488C12.4761 4.00262 12.6732 5.17 12.6732 5.17C12.6732 5.76212 12.4761 6.33739 12.1131 6.80513C11.75 7.27287 11.2416 7.60647 10.668 7.75334" stroke="#718096" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M14 14.5V13.1666C13.9966 12.5781 13.7986 12.0072 13.4368 11.5429C13.0751 11.0786 12.5699 10.7471 12 10.6" stroke="#718096" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </g>
+                    <defs>
+                      <clipPath id="clip0_622_1334">
+                        <rect width="16" height="16" fill="white" transform="translate(0 0.5)"/>
+                      </clipPath>
+                    </defs>
+                  </svg>
+                </span>
+                حداکثر: {{ meeting.maxCapacity }} کاربر
+              </p>
+              <p class="meet-type">
+                <span style="margin-left: 4px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
+                    <path d="M4 15.1667V3.16671C4 2.81309 4.14048 2.47395 4.39052 2.2239C4.64057 1.97385 4.97971 1.83337 5.33333 1.83337H10.6667C11.0203 1.83337 11.3594 1.97385 11.6095 2.2239C11.8595 2.47395 12 2.81309 12 3.16671V15.1667H4Z" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M3.9987 8.5H2.66536C2.31174 8.5 1.9726 8.64048 1.72256 8.89052C1.47251 9.14057 1.33203 9.47971 1.33203 9.83333V13.8333C1.33203 14.187 1.47251 14.5261 1.72256 14.7761C1.9726 15.0262 2.31174 15.1667 2.66536 15.1667H3.9987" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 6.5H13.3333C13.687 6.5 14.0261 6.64048 14.2761 6.89052C14.5262 7.14057 14.6667 7.47971 14.6667 7.83333V13.8333C14.6667 14.187 14.5262 14.5261 14.2761 14.7761C14.0261 15.0262 13.687 15.1667 13.3333 15.1667H12" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M6.66797 4.5H9.33464" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M6.66797 7.16663H9.33464" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M6.66797 9.83337H9.33464" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M6.66797 12.5H9.33464" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+                {{ meeting.type }}
+              </p>
+            </div>
+          </div>
+        </div>
+        <button
+          class="create-meet"
+          @click="showModal = true"
+          :style="{ width: filteredMeetings.length === 0 ? 'auto' : '191px', margin: filteredMeetings.length === 0 ? '0' : 'auto'}"
+        >
+          + <span style="margin-right: 0.5rem;">ایجاد جلسه جدید</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Create Meeting Modal -->
+    <CreateMeetingModal
+      :is-open="showModal"
+      @create-meeting="createNewMeeting"
+      @close="showModal = false"
+    />
+  </div>
 </template>
 
 <script>
 import CreateMeetingModal from '@/components/CreateMeetingModal.vue';
+import axios from 'axios';
 
 export default {
   name: 'DashboardPage',
@@ -194,22 +195,90 @@ export default {
       this.activeFilter = filter;
       this.filterMeetings();
     },
-    createNewMeeting(meetingData) {
-      const newMeeting = {
-        id: this.meetings.length + 1,
-        title: meetingData.title,
-        date: meetingData.date,
-        image: 'https://via.placeholder.com/150',
-        type: meetingData.type,
-        maxCapacity: meetingData.maxCapacity,
-      };
-      this.meetings.push(newMeeting);
-      this.filterMeetings();
-      this.showModal = false;
+    async refreshToken() {
+      try {
+        const response = await axios.post('http://my.xroomapp.com:8000/refresh_token', {
+          refresh_token: localStorage.getItem('refresh_token'),
+        });
+        const newToken = response.data.access_token;
+        localStorage.setItem('token', newToken);
+        return newToken;
+      } catch (error) {
+        console.error('خطا در refresh توکن:', error);
+        alert('لطفاً دوباره وارد شوید');
+        window.location.href = '/login';
+        return null;
+      }
+    },
+    async createNewMeeting(meetingData) {
+      try {
+        console.log('داده‌های ارسالی به API:', JSON.stringify(meetingData, null, 2));
+        let token = localStorage.getItem('token');
+        console.log('توکن اولیه:', token);
+        if (!token) {
+          throw new Error('توکن احراز هویت پیدا نشد');
+        }
+
+        let response = await axios.post(
+          'http://my.xroomapp.com:8000/add_meeting',
+          meetingData,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Token ${token.trim()}`,
+            },
+          }
+        ).catch(async (error) => {
+          if (error.response && error.response.status === 403) {
+            console.log('تلاش برای refresh توکن...');
+            token = await this.refreshToken();
+            if (token) {
+              return await axios.post(
+                'http://my.xroomapp.com:8000/add_meeting',
+                meetingData,
+                {
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token ${token.trim()}`,
+                  },
+                }
+              );
+            }
+          }
+          throw error;
+        });
+
+        console.log('پاسخ API:', response.data);
+
+        const newMeeting = {
+          id: response.data.meeting.id,
+          title: response.data.meeting.name,
+          date: response.data.meeting.date_time,
+          image: 'https://via.placeholder.com/150',
+          type: 'جلسه',
+          maxCapacity: 10,
+        };
+
+        this.meetings.push(newMeeting);
+        this.filterMeetings();
+        this.showModal = false;
+        alert('جلسه با موفقیت ایجاد شد!');
+      } catch (error) {
+        console.error('خطا در ارسال درخواست به API:', error);
+        if (error.response) {
+          console.error('جزئیات پاسخ سرور:', error.response.data);
+          alert(`خطایی در ایجاد جلسه رخ داد: ${error.response.data.message || error.message}`);
+        } else {
+          alert(`خطایی در ایجاد جلسه رخ داد: ${error.message}`);
+        }
+      }
     },
   },
 };
 </script>
+
+
+
 <style scoped>
 /*     .dashboard-page {
         margin-right: 360px;
@@ -278,7 +347,8 @@ export default {
 
     .search-wrapper {
         margin-top: 1rem;
-        padding: 1.2px;
+        padding: 1px;
+        padding-left: 0.7px;
         border-radius: 10px;
         background: linear-gradient(to right, #001940, #4364F7);
         position: relative;

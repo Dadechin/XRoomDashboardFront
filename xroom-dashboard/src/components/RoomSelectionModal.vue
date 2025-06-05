@@ -2,7 +2,7 @@
   <div v-if="isOpen" class="modal-overlay" @click="cancel">
     <div class="modal-content" @click.stop>
       <div class="popUp-header">
-        <h2>اتاق‌های این جلسه را انتخاب کنید</h2>
+        <h2>اتاق این جلسه را انتخاب کنید</h2>
         <button @click="cancel">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -32,15 +32,15 @@
       </div>
       <div class="popUp-title">
         <h2>فضاها</h2>
-        <span>اجازه دسترسی به این اتاق‌های تیم را بدهید</span>
+        <span>یک اتاق برای این جلسه انتخاب کنید</span>
       </div>
-      <div class="rooms-list">
+      <div class="rooms-list" v-if="rooms.length > 0">
         <div
           v-for="room in rooms"
           :key="room.id"
           class="room-item"
-          :class="{ selected: selectedRooms.includes(room.id) }"
-          @click="toggleRoomSelection(room.id)"
+          :class="{ selected: selectedRoom === room.id }"
+          @click="selectRoom(room.id)"
         >
           <img
             :src="room.image"
@@ -48,6 +48,7 @@
             class="room-image"
             width="120px"
             height="120px"
+            @error="room.image = 'https://via.placeholder.com/150'"
           />
           <div class="room-details" style="margin-right: 10px;">
             <h3 class="room-title">{{ room.name }}</h3>
@@ -164,145 +165,149 @@
           </div>
         </div>
       </div>
-      <div v-if="Temporaryrooms.length > 0">
-      <div class="popUp-title">
-        <h2>اتاق‌های موقت</h2>
-        <span>اتاق‌های موقت ایجادشده برای این جلسه</span>
+      <div v-else>
+        <span>هیچ فضایی یافت نشد.</span>
       </div>
-      <div class="temporary-rooms-list">
-        <div
-           v-for="room in Temporaryrooms"
-          :key="room.id"
-          class="room-item"
-          :class="{ selected: selectedRooms.includes(room.id) }"
-          @click="toggleRoomSelection(room.id)"
-        >
-        <img
-            :src="room.image"
-            alt="Room Image"
-            class="room-image"
-            width="120px"
-            height="120px"
-          />
-          <div class="room-details" style="margin-right: 10px;">
-            <h3 class="room-title">{{ room.name }}</h3>
-            <p class="room-capacity">
-              <span style="margin-left: 4px;">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="17"
-                  viewBox="0 0 16 17"
-                  fill="none"
-                >
-                  <g clip-path="url(#clip0_622_1334)">
+      <div v-if="temporaryRooms.length > 0">
+        <div class="popUp-title">
+          <h2>اتاق‌های موقت</h2>
+          <span>اتاق‌های موقت ایجادشده برای این جلسه</span>
+        </div>
+        <div class="temporary-rooms-list">
+          <div
+            v-for="room in temporaryRooms"
+            :key="room.id"
+            class="room-item"
+            :class="{ selected: selectedRoom === room.id }"
+            @click="selectRoom(room.id)"
+          >
+            <img
+              :src="room.image"
+              alt="Room Image"
+              class="room-image"
+              width="120px"
+              height="120px"
+              @error="room.image = 'https://via.placeholder.com/150'"
+            />
+            <div class="room-details" style="margin-right: 10px;">
+              <h3 class="room-title">{{ room.name }}</h3>
+              <p class="room-capacity">
+                <span style="margin-left: 4px;">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="17"
+                    viewBox="0 0 16 17"
+                    fill="none"
+                  >
+                    <g clip-path="url(#clip0_622_1334)">
+                      <path
+                        d="M3.33203 5.16667C3.33203 5.87391 3.61298 6.55219 4.11308 7.05228C4.61318 7.55238 5.29145 7.83333 5.9987 7.83333C6.70594 7.83333 7.38422 7.55238 7.88432 7.05228C8.38441 6.55219 8.66536 5.87391 8.66536 5.16667C8.66536 4.45942 8.38441 3.78115 7.88432 3.28105C7.38422 2.78095 6.70594 2.5 5.9987 2.5C5.29145 2.5 4.61318 2.78095 4.11308 3.28105C3.61298 3.78115 3.33203 4.45942 3.33203 5.16667Z"
+                        stroke="#718096"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M2 14.5V13.1667C2 12.4594 2.28095 11.7811 2.78105 11.281C3.28115 10.781 3.95942 10.5 4.66667 10.5H7.33333C8.04058 10.5 8.71885 10.781 9.21895 11.281C9.71905 11.7811 10 12.4594 10 13.1667V14.5"
+                        stroke="#718096"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M10.668 2.58667C11.2416 2.73354 11.75 3.06714 12.1131 3.53488C12.4761 4.00262 12.6732 5.17 12.6732 5.17C12.6732 5.76212 12.4761 6.33739 12.1131 6.80513C11.75 7.27287 11.2416 7.60647 10.668 7.75334"
+                        stroke="#718096"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M14 14.5V13.1666C13.9966 12.5781 13.7986 12.0072 13.4368 11.5429C13.0751 11.0786 12.5699 10.7471 12 10.6"
+                        stroke="#718096"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </g>
+                    <defs>
+                      <clipPath id="clip0_622_1334">
+                        <rect width="16" height="16" fill="white" transform="translate(0 0.5)" />
+                      </clipPath>
+                    </defs>
+                  </svg>
+                </span>
+                حداکثر: {{ room.capacity }} کاربر
+              </p>
+              <p class="room-type">
+                <span style="margin-left: 4px;">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="17"
+                    viewBox="0 0 16 17"
+                    fill="none"
+                  >
                     <path
-                      d="M3.33203 5.16667C3.33203 5.87391 3.61298 6.55219 4.11308 7.05228C4.61318 7.55238 5.29145 7.83333 5.9987 7.83333C6.70594 7.83333 7.38422 7.55238 7.88432 7.05228C8.38441 6.55219 8.66536 5.87391 8.66536 5.16667C8.66536 4.45942 8.38441 3.78115 7.88432 3.28105C7.38422 2.78095 6.70594 2.5 5.9987 2.5C5.29145 2.5 4.61318 2.78095 4.11308 3.28105C3.61298 3.78115 3.33203 4.45942 3.33203 5.16667Z"
-                      stroke="#718096"
-                      stroke-width="1.5"
+                      d="M4 15.1667V3.16671C4 2.81309 4.14048 2.47395 4.39052 2.2239C4.64057 1.97385 4.97971 1.83337 5.33333 1.83337H10.6667C11.0203 1.83337 11.3594 1.97385 11.6095 2.2239C11.8595 2.47395 12 2.81309 12 3.16671V15.1667H4Z"
+                      stroke="#3A57E8"
+                      stroke-width="1.25"
                       stroke-linecap="round"
                       stroke-linejoin="round"
                     />
                     <path
-                      d="M2 14.5V13.1667C2 12.4594 2.28095 11.7811 2.78105 11.281C3.28115 10.781 3.95942 10.5 4.66667 10.5H7.33333C8.04058 10.5 8.71885 10.781 9.21895 11.281C9.71905 11.7811 10 12.4594 10 13.1667V14.5"
-                      stroke="#718096"
-                      stroke-width="1.5"
+                      d="M3.9987 8.5H2.66536C2.31174 8.5 1.9726 8.64048 1.72256 8.89052C1.47251 9.14057 1.33203 9.47971 1.33203 9.83333V13.8333C1.33203 14.187 1.47251 14.5261 1.72256 14.7761C1.9726 15.0262 2.31174 15.1667 2.66536 15.1667H3.9987"
+                      stroke="#3A57E8"
+                      stroke-width="1.25"
                       stroke-linecap="round"
                       stroke-linejoin="round"
                     />
                     <path
-                      d="M10.668 2.58667C11.2416 2.73354 11.75 3.06714 12.1131 3.53488C12.4761 4.00262 12.6732 5.17 12.6732 5.17C12.6732 5.76212 12.4761 6.33739 12.1131 6.80513C11.75 7.27287 11.2416 7.60647 10.668 7.75334"
-                      stroke="#718096"
-                      stroke-width="1.5"
+                      d="M12 6.5H13.3333C13.687 6.5 14.0261 6.64048 14.2761 6.89052C14.5262 7.14057 14.6667 7.47971 14.6667 7.83333V13.8333C14.6667 14.187 14.5262 14.5261 14.2761 14.7761C14.0261 15.0262 13.687 15.1667 13.3333 15.1667H12"
+                      stroke="#3A57E8"
+                      stroke-width="1.25"
                       stroke-linecap="round"
                       stroke-linejoin="round"
                     />
                     <path
-                      d="M14 14.5V13.1666C13.9966 12.5781 13.7986 12.0072 13.4368 11.5429C13.0751 11.0786 12.5699 10.7471 12 10.6"
-                      stroke="#718096"
-                      stroke-width="1.5"
+                      d="M6.66797 4.5H9.33464"
+                      stroke="#3A57E8"
+                      stroke-width="1.25"
                       stroke-linecap="round"
                       stroke-linejoin="round"
                     />
-                  </g>
-                  <defs>
-                    <clipPath id="clip0_622_1334">
-                      <rect width="16" height="16" fill="white" transform="translate(0 0.5)" />
-                    </clipPath>
-                  </defs>
-                </svg>
-              </span>
-              حداکثر: {{ room.capacity }} کاربر
-            </p>
-            <p class="room-type">
-              <span style="margin-left: 4px;">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="17"
-                  viewBox="0 0 16 17"
-                  fill="none"
-                >
-                  <path
-                    d="M4 15.1667V3.16671C4 2.81309 4.14048 2.47395 4.39052 2.2239C4.64057 1.97385 4.97971 1.83337 5.33333 1.83337H10.6667C11.0203 1.83337 11.3594 1.97385 11.6095 2.2239C11.8595 2.47395 12 2.81309 12 3.16671V15.1667H4Z"
-                    stroke="#3A57E8"
-                    stroke-width="1.25"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  <path
-                    d="M3.9987 8.5H2.66536C2.31174 8.5 1.9726 8.64048 1.72256 8.89052C1.47251 9.14057 1.33203 9.47971 1.33203 9.83333V13.8333C1.33203 14.187 1.47251 14.5261 1.72256 14.7761C1.9726 15.0262 2.31174 15.1667 2.66536 15.1667H3.9987"
-                    stroke="#3A57E8"
-                    stroke-width="1.25"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  <path
-                    d="M12 6.5H13.3333C13.687 6.5 14.0261 6.64048 14.2761 6.89052C14.5262 7.14057 14.6667 7.47971 14.6667 7.83333V13.8333C14.6667 14.187 14.5262 14.5261 14.2761 14.7761C14.0261 15.0262 13.687 15.1667 13.3333 15.1667H12"
-                    stroke="#3A57E8"
-                    stroke-width="1.25"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  <path
-                    d="M6.66797 4.5H9.33464"
-                    stroke="#3A57E8"
-                    stroke-width="1.25"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  <path
-                    d="M6.66797 7.16663H9.33464"
-                    stroke="#3A57E8"
-                    stroke-width="1.25"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  <path
-                    d="M6.66797 9.83337H9.33464"
-                    stroke="#3A57E8"
-                    stroke-width="1.25"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  <path
-                    d="M6.66797 12.5H9.33464"
-                    stroke="#3A57E8"
-                    stroke-width="1.25"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-              </span>
-              {{ room.type }}
-            </p>
+                    <path
+                      d="M6.66797 7.16663H9.33464"
+                      stroke="#3A57E8"
+                      stroke-width="1.25"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M6.66797 9.83337H9.33464"
+                      stroke="#3A57E8"
+                      stroke-width="1.25"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M6.66797 12.5H9.33464"
+                      stroke="#3A57E8"
+                      stroke-width="1.25"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+                {{ room.type }}
+              </p>
+            </div>
           </div>
         </div>
-      </div>
       </div>
       <div class="popUp-title">
         <h2>ایجاد اتاق موقت</h2>
-        <span>اتاق‌های موقت را فقط برای این جلسه ایجاد کنید</span>
+        <span>اتاق موقت را فقط برای این جلسه ایجاد کنید</span>
       </div>
       <div class="temporary-room-form">
         <form @submit.prevent="createTemporaryRoom">
@@ -332,13 +337,15 @@
       </div>
       <div class="form-actions">
         <button type="button" class="cancel-button" @click="cancel">لغو</button>
-        <button type="button" class="submit-button" @click="submitRooms">تأیید</button>
+        <button type="button" class="submit-button" @click="submitRoom" :disabled="!selectedRoom">تأیید</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'RoomSelectionModal',
   props: {
@@ -349,110 +356,77 @@ export default {
   },
   data() {
     return {
-      rooms: [
-        {
-          id: 1,
-          image: require('@/assets/img/img.jpg'),
-          name: 'Interview room 1',
-          capacity: 33,
-          type: 'فضا تیم',
-          isTemporary: false, // اضافه کردن ویژگی isTemporary
-        },
-        {
-          id: 2,
-          image: require('@/assets/img/img.jpg'),
-          name: 'Interview room 2',
-          capacity: 24,
-          type: 'آموزشی',
-          isTemporary: false,
-        },
-        {
-          id: 3,
-          image: require('@/assets/img/img.jpg'),
-          name: 'Interview room 3',
-          capacity: 60,
-          type: 'جلسه تیمی',
-          isTemporary: false,
-        },
-        {
-          id: 4,
-          image: require('@/assets/img/img.jpg'),
-          name: 'Interview room 4',
-          capacity: 33,
-          type: 'فضا تیم',
-          isTemporary: false,
-        },
-        {
-          id: 5,
-          image: require('@/assets/img/img.jpg'),
-          name: 'Interview room 5',
-          capacity: 24,
-          type: 'آموزشی',
-          isTemporary: false,
-        },
-        {
-          id: 6,
-          image: require('@/assets/img/img.jpg'),
-          name: 'Interview room 6',
-          capacity: 60,
-          type: 'جلسه تیمی',
-          isTemporary: false,
-        },
-        {
-          id: 7,
-          image: require('@/assets/img/img.jpg'),
-          name: 'Interview room 7',
-          capacity: 33,
-          type: 'فضا تیم',
-          isTemporary: false,
-        },
-        {
-          id: 8,
-          image: require('@/assets/img/img.jpg'),
-          name: 'Interview room 8',
-          capacity: 24,
-          type: 'آموزشی',
-          isTemporary: false,
-        },
-      ],
-      Temporaryrooms: [],
-      selectedRooms: [],
+      rooms: [],
+      temporaryRooms: [],
+      selectedRoom: null,
       newTempRoom: {
         name: '',
         capacity: 0,
         type: '',
         image: null,
       },
+      error: null,
     };
   },
+  created() {
+    this.fetchSpaces();
+  },
   methods: {
-    toggleRoomSelection(roomId) {
-      if (this.selectedRooms.includes(roomId)) {
-        this.selectedRooms = this.selectedRooms.filter((id) => id !== roomId);
-      } else {
-        this.selectedRooms.push(roomId);
+    async fetchSpaces() {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          this.error = 'توکن احراز هویت پیدا نشد';
+          console.error('توکن احراز هویت پیدا نشد');
+          return;
+        }
+
+        const response = await axios.get('http://my.xroomapp.com:8000/get_space', {
+          headers: {
+            Authorization: `Token ${token.trim()}`,
+          },
+        });
+
+        console.log('فضاها:', response.data.spaces);
+        this.rooms = response.data.spaces.map((space) => {
+          const imageUrl = space.assetBundleRoomId?.img
+            ? `http://my.xroomapp.com:8000${space.assetBundleRoomId.img}`
+            : 'https://via.placeholder.com/150';
+          return {
+            id: space.id,
+            image: imageUrl,
+            name: space.name,
+            capacity: space.capacity,
+            type: space.description || 'فضا',
+            isTemporary: false,
+          };
+        });
+      } catch (error) {
+        console.error('خطا در دریافت فضاها:', error);
+        this.error = 'خطا در بارگذاری لیست اتاق‌ها';
+        if (error.response && error.response.status === 403) {
+          alert('لطفاً دوباره وارد شوید');
+          window.location.href = '/login';
+        }
       }
+    },
+    selectRoom(roomId) {
+      this.selectedRoom = roomId;
     },
     cancel() {
       this.$emit('close');
-      this.selectedRooms = [];
+      this.selectedRoom = null;
     },
-    submitRooms() {
-      const selectedRoomDetails = [
-        ...this.rooms,
-        ...this.Temporaryrooms,
-      ]
-        .filter((room) => this.selectedRooms.includes(room.id))
-        .map((room) => ({
-          id: room.id,
-          name: room.name,
-          capacity: room.capacity,
-          type: room.type,
-          image: room.image,
-          isTemporary: room.isTemporary,
-        }));
-      this.$emit('submit-rooms', selectedRoomDetails);
-      this.selectedRooms = [];
+    submitRoom() {
+      if (!this.selectedRoom) {
+        alert('لطفاً یک اتاق انتخاب کنید.');
+        return;
+      }
+      const selectedRoomDetails = [...this.rooms, ...this.temporaryRooms].find(
+        (room) => room.id === this.selectedRoom
+      );
+      this.$emit('submit-room', selectedRoomDetails);
+      this.selectedRoom = null;
     },
     handleImageUpload(event) {
       const file = event.target.files[0];
@@ -462,19 +436,20 @@ export default {
     },
     createTemporaryRoom() {
       const newRoom = {
-        id: this.rooms.length + this.Temporaryrooms.length + 1,
-        image: this.newTempRoom.image || require('@/assets/img/img.jpg'),
+        id: this.rooms.length + this.temporaryRooms.length + 1,
+        image: this.newTempRoom.image || 'https://via.placeholder.com/150',
         name: this.newTempRoom.name,
         capacity: this.newTempRoom.capacity,
         type: this.newTempRoom.type,
         isTemporary: true,
       };
-      this.Temporaryrooms.push(newRoom);
+      this.temporaryRooms.push(newRoom);
       this.newTempRoom = { name: '', capacity: 0, type: '', image: null };
     },
   },
 };
 </script>
+
 
 <style scoped>
 .modal-overlay {

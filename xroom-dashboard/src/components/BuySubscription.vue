@@ -179,7 +179,6 @@ export default {
         this.selectedPlan = null;
         this.$emit('payment-success');
       } catch (error) {
-        console.error('خطا در ارسال اطلاعات اشتراک:', error);
         alert('خطا در ثبت اشتراک. لطفاً دوباره تلاش کنید.');
       }
     },

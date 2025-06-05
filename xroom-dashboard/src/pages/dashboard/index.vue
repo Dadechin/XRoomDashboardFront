@@ -98,7 +98,11 @@
             </router-link>
           </div>
         </div>
+        <div v-if="recentFiles.length === 0" class="no-files-message">
+          <p>شما اخیرا فایلی آپلود نکردید</p>
+        </div>
         <swiper
+          v-else
           :slides-per-view="2.2"
           :space-between="15"
           :loop="true"
@@ -322,6 +326,14 @@ export default {
 </script>
 
 <style scoped>
+
+.no-files-message{
+  text-align: center;
+  margin-top: 3rem;
+  font-size: 20px;
+}
+
+
 .dashboard {
   padding: 20px 0px;
   font-family: 'IRANSansXFaNum-Medium', Helvetica, sans-serif;

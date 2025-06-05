@@ -208,9 +208,6 @@ export default {
     updateBillingInfo(newBillingInfo) {
       this.billingInfo = { ...newBillingInfo };
     },
-    manageMemberships() {
-      console.log('مدیریت عضویت‌ها');
-    },
   },
 };
 </script>
