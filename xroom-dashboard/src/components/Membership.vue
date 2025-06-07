@@ -1,7 +1,7 @@
 <template>
   <div class="tab-content">
+    <!-- Access Container -->
     <div class="access-container">
-      <!-- Header Section -->
       <div class="access-header">
         <div class="header-content">
           <img :src="require('@/assets/img/lock Icon.png')" alt="lock" class="lock-icon" />
@@ -16,90 +16,83 @@
         </button>
       </div>
 
-      <!-- Info Cards Section -->
-      <div class="info-cards" v-if="isLoading">
-        <div class="loading">در حال بارگذاری...</div>
-      </div>
-      <div class="info-cards" v-else-if="error">
-        <div class="error">{{ error }} <button @click="retryFetch">تلاش مجدد</button></div>
-      </div>
-      <div class="info-cards" v-else>
-        <!-- Billing Info Card -->
-        <div class="info-card">
-          <div class="card-content">
-            <h4>{{ translations.billing.title }}</h4>
-            <div class="billing-info">
-              <p class="billing-address">{{ billingInfo.address }}</p>
-              <p class="billing-phoneNum">
-                {{ translations.billing.phone }}: <span>{{ billingInfo.phone }}</span>
+      <!-- Info Cards -->
+      <div class="info-cards">
+        <div v-if="isLoading" class="loading">در حال بارگذاری...</div>
+        <div v-else-if="error" class="error">
+          {{ error }} <button @click="retryFetch">تلاش مجدد</button>
+        </div>
+        <template v-else>
+          <div class="info-card">
+            <div class="card-content">
+              <h4>{{ translations.billing.title }}</h4>
+              <div class="billing-info">
+                <p class="billing-address">{{ billingInfo.address }}</p>
+                <p class="billing-phoneNum">
+                  {{ translations.billing.phone }}: <span>{{ billingInfo.phone }}</span>
+                </p>
+                <p class="billing-email">
+                  {{ translations.billing.email }}: <span>{{ billingInfo.email }}</span>
+                </p>
+              </div>
+            </div>
+            <button class="secondary-button" @click="openBillingModal">
+              {{ translations.billing.editButton }}
+            </button>
+          </div>
+          <div class="info-card">
+            <div class="card-content">
+              <h4>{{ translations.memberships.title }}</h4>
+              <p class="memberships">
+                {{ hasActiveSubscription ? translations.memberships.active : translations.memberships.inactive }}
               </p>
-              <p class="billing-email">
-                {{ translations.billing.email }}: <span>{{ billingInfo.email }}</span>
+            </div>
+            <button class="secondary-button" @click="navigateToSubscription">
+              {{ translations.memberships.manageButton }}
+            </button>
+          </div>
+          <div class="info-card">
+            <div class="card-content">
+              <h4>{{ translations.payment.title }}</h4>
+              <p class="payment-method">
+                {{ paymentMethod || translations.payment.noMethod }}
               </p>
             </div>
           </div>
-          <button class="secondary-button" @click="openBillingModal">
-            {{ translations.billing.editButton }}
-          </button>
-        </div>
-
-        <!-- Memberships Card -->
-        <div class="info-card">
-          <div class="card-content">
-            <h4>{{ translations.memberships.title }}</h4>
-            <p class="memberships">
-              {{ hasActiveSubscription ? translations.memberships.active : translations.memberships.inactive }}
-            </p>
-          </div>
-          <button class="secondary-button" @click="manageMemberships">
-            {{ translations.memberships.manageButton }}
-          </button>
-        </div>
-
-        <!-- Payment Method Card -->
-        <div class="info-card">
-          <div class="card-content">
-            <h4>{{ translations.payment.title }}</h4>
-            <p class="payment-method">
-              {{ paymentMethod || translations.payment.noMethod }}
-            </p>
-          </div>
-        </div>
-
-        <!-- Team Subscription Card -->
-        <div class="info-card">
-          <div class="card-content">
-            <h4>{{ translations.subscription.title }}</h4>
-            <div class="subscription-info" v-if="hasRemainingCapacity">
-              <p class="subscription-all">
-                {{ translations.subscription.total }}: <span>{{ subscriptionCount }} {{ translations.subscription.users }}</span>
-              </p>
-              <p class="subscription-remainder">
-                {{ translations.subscription.remaining }}: <span>{{ remainingCapacity }} {{ translations.subscription.users }}</span>
-              </p>
-              <p class="subscription-added">
-                {{ translations.subscription.added }}: <span>{{ teamMemberCapacity }} {{ translations.subscription.users }}</span>
+          <div class="info-card">
+            <div class="card-content">
+              <h4>{{ translations.subscription.title }}</h4>
+              <div v-if="hasRemainingCapacity" class="subscription-info">
+                <p class="subscription-all">
+                  {{ translations.subscription.total }}: <span>{{ subscriptionCount }} {{ translations.subscription.users }}</span>
+                </p>
+                <p class="subscription-remainder">
+                  {{ translations.subscription.remaining }}: <span>{{ remainingCapacity }} {{ translations.subscription.users }}</span>
+                </p>
+                <p class="subscription-added">
+                  {{ translations.subscription.added }}: <span>{{ teamMemberCapacity }} {{ translations.subscription.users }}</span>
+                </p>
+              </div>
+              <p v-else class="invalid-subscription">
+                {{ translations.subscription.noActive }}
               </p>
             </div>
-            <p class="invalid-subscription" v-else>
-              {{ translations.subscription.noActive }}
-            </p>
+            <button
+              :class="hasRemainingCapacity ? 'disable-button' : 'secondary-button'"
+              :disabled="hasRemainingCapacity"
+              @click="navigateToSubscription"
+            >
+              {{ hasRemainingCapacity ? translations.subscription.activeButton : translations.subscription.buyButton }}
+            </button>
           </div>
-          <button
-            :class="hasRemainingCapacity ? 'disable-button' : 'secondary-button'"
-            :disabled="hasRemainingCapacity"
-            @click="navigateToSubscription"
-          >
-            {{ hasRemainingCapacity ? translations.subscription.activeButton : translations.subscription.buyButton }}
-          </button>
-        </div>
+        </template>
       </div>
 
-      <!-- Billing Modal -->
+      <!-- Edit Billing Modal -->
       <EditBillingModal
-        :isVisible="isBillingModalVisible"
+        :is-visible="isBillingModalVisible"
         @close="closeBillingModal"
-        @update:billingInfo="updateBillingInfo"
+        @update:billing-info="updateBillingInfo"
       />
     </div>
   </div>
@@ -110,24 +103,11 @@ import EditBillingModal from '@/components/EditBillingModal.vue';
 
 export default {
   name: 'Membership',
-  components: {
-    EditBillingModal,
-  },
+  components: { EditBillingModal },
   props: {
-    subscriptionCount: {
-      type: Number,
-      required: true,
-      validator: (value) => value >= 0,
-    },
-    teamMemberCapacity: {
-      type: Number,
-      required: true,
-      validator: (value) => value >= 0,
-    },
-    isBillingModalVisible: {
-      type: Boolean,
-      default: false,
-    },
+    subscriptionCount: { type: Number, required: true, validator: value => value >= 0 },
+    teamMemberCapacity: { type: Number, required: true, validator: value => value >= 0 },
+    isBillingModalVisible: { type: Boolean, default: false },
   },
   data() {
     return {
@@ -141,7 +121,7 @@ export default {
         memberships: {
           title: 'عضویت‌ها',
           active: 'اشتراک فعال است',
-          inactive: 'هنوز مجوزی فعال نیست. کاربران شما نمی‌توانند از XRoom با واترمارک استفاده کنند.',
+          inactive: 'هنوز مجوزی فعال نیست. کاربران شما نمی‌توانند از XRoom بدون واترمارک استفاده کنند.',
           manageButton: 'مدیریت عضویت‌ها',
         },
         payment: {
@@ -152,15 +132,13 @@ export default {
           title: 'وضعیت اشتراک تیم',
           total: 'ظرفیت کل تیم',
           remaining: 'ظرفیت باقی‌مانده',
-          added: 'کاربران اضافه کرده',
+          added: 'کاربران اضافه شده',
           users: 'کاربر',
-          noActive: 'شما اشتراک فعالی ندارین، لطفا اشتراک جدیدی خریداری نمایید.',
+          noActive: 'شما اشتراک فعالی ندارید، لطفاً اشتراک جدیدی خریداری کنید.',
           activeButton: 'اشتراک فعال دارید',
           buyButton: 'خرید اشتراک جدید',
         },
-        error: {
-          fetchFailed: 'خطا در دریافت اطلاعات. لطفاً دوباره تلاش کنید.',
-        },
+        error: { fetchFailed: 'خطا در دریافت اطلاعات. لطفاً دوباره تلاش کنید.' },
       },
       billingInfo: {
         address: 'اصفهان، خیابان وحید، نبش خیابان حسین آباد، مجتمع عسگری ۳، واحد ۳ ۸۱۷۵۹۴۹۹۹۱',
@@ -182,19 +160,23 @@ export default {
     },
   },
   created() {
-    this.simulateFetch();
+    this.fetchData();
   },
   methods: {
-    simulateFetch() {
-      // شبیه‌سازی دریافت داده‌ها
+    async fetchData() {
       this.isLoading = true;
-      setTimeout(() => {
+      try {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        this.hasActiveSubscription = this.subscriptionCount > 0;
+      } catch {
+        this.error = this.translations.error.fetchFailed;
+      } finally {
         this.isLoading = false;
-      }, 1000);
+      }
     },
     retryFetch() {
       this.error = null;
-      this.simulateFetch();
+      this.fetchData();
     },
     navigateToSubscription() {
       this.$emit('change-tab', 'buy-subscription');
@@ -211,6 +193,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 

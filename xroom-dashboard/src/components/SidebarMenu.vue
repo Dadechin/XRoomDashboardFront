@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Overlay for mobile when sidebar is open -->
-    <div class="overlay" v-if="isOpen && isMobile" @click="$emit('close')"></div>
+    <div class="overlay" :class="{ active: isOpen && isMobile }" v-if="isOpen && isMobile" @click="$emit('close')"></div>
     
     <div class="sidebar" :class="{ 'open': isOpen }">
 
@@ -62,16 +62,14 @@
           <div class="text-wrapper">پشتیبانی</div>
         </router-link>
       </div>
+    </div>
 
       <!-- Close Button for mobile -->
-      <button class="close-button" v-if="isMobile" @click="$emit('close')">
+      <button class="close-button" v-show="isOpen" v-if="isMobile" @click="$emit('close')">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
-    </div>
-
-
   </div>
 </template>
 
@@ -134,6 +132,8 @@ export default {
   overflow-x: hidden;
   overflow-y: auto;
   z-index: 1000;
+  transform: transform  translateX(100%);
+  transition: transform 0.3s ease-in-out;
 }
 
 .sidebar::-webkit-scrollbar {
@@ -146,6 +146,7 @@ export default {
 }
 
 .sidebar.open {
+  transform: translateX(0);
   display: flex;
   flex-direction: column;
   gap: 3rem;
@@ -159,6 +160,14 @@ export default {
   height: 100vh;
   background: rgba(0, 0, 0, 0.5);
   z-index: 999;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  pointer-events: none;
+}
+
+.overlay.active {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .close-button {
@@ -171,6 +180,7 @@ export default {
   background-color: #fff;
   border-radius: 5px;
   padding-top: 7px;
+  z-index: 10000;
 }
 
 .close-button svg {
@@ -337,8 +347,12 @@ export default {
   .sidebar {
     width: 250px;
     padding: 1rem 1rem 1rem 0.5rem;
-    display: none;
     transition: transform 0.3s ease-in-out;
+    transform: translateX(100%);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
   }
 
   .nav-button {
@@ -366,8 +380,11 @@ export default {
   .sidebar {
     width: 22rem;
     padding: 1rem 1rem 1rem 0.5rem;
-    display: none;
-    transition: transform 0.3s ease-in-out;
+    transform: translateX(100%);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
   }
 
   .nav-button {
@@ -397,6 +414,8 @@ export default {
     padding: 30px 50px;
     display: flex;
     flex-direction: column;
+    transform: translateX(0);
+
   }
 
   .close-button {
@@ -440,8 +459,7 @@ export default {
   .sidebar {
     width: 360px;
     padding: 30px 50px;
-    display: flex;
-    flex-direction: column;
+    transform: translateX(0);
   }
 
   .close-button {

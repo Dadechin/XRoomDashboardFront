@@ -1,66 +1,40 @@
 <template>
   <div class="buy-subscription-container">
+    <!-- Subscription Title -->
     <div class="subscription-title">
-      <h3 style="text-align: center; margin-bottom: 20px;">
-        لطفا نوع اشتراک خود را انتخاب کنید
-      </h3>
-      <span>
-        ما مدل مجوزدهی انعطاف‌پذیری ارائه می‌دهد. شما می‌توانید به‌صورت ماهانه و به ازای هر کاربر پرداخت کنید. تعداد کاربران را می‌توان فوراً افزایش داد، اما در صورت کاهش مجوزها، تغییرات در پایان دوره‌ی صورتحساب اعمال خواهند شد.
-      </span>
+      <h3 style="text-align: center; margin-bottom: 20px;">لطفا نوع اشتراک خود را انتخاب کنید</h3>
+      <span>مدل مجوزدهی انعطاف‌پذیر با پرداخت ماهانه به ازای هر کاربر. تعداد کاربران را می‌توان فوراً افزایش داد، اما کاهش مجوزها در پایان دوره‌ی صورتحساب اعمال می‌شود.</span>
     </div>
 
+    <!-- User Count Selector -->
     <div class="user-count" style="text-align: start; margin: 3rem 0 2rem 0;">
-      <label for="memberCount" style="margin-left: 10px;">تعداد کاربران : </label>
+      <label for="memberCount" style="margin-left: 10px;">تعداد کاربران:</label>
       <select
         id="memberCount"
         :value="memberCount"
-        @change="updateMemberCount($event)">
+        @change="updateMemberCount($event)"
+      >
         <option v-for="count in availableMemberOptions" :key="count" :value="count">
           {{ count }} کاربر
         </option>
       </select>
     </div>
 
+    <!-- Plan Cards -->
     <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
-      <div class="plan-card">
+      <div v-for="(plan, key) in plans" :key="key" class="plan-card">
         <div class="card-inner">
-          <h4>هفتگی</h4>
+          <h4>{{ plan.name }}</h4>
           <div class="card-price-title">
-            <p>{{ (plans.weekly.price * memberCount).toLocaleString() }} تومان</p>
-            <small>برای {{ memberCount }} کاربر، در هفته</small>
+            <p>{{ (plan.price * memberCount).toLocaleString() }} تومان</p>
+            <small>برای {{ memberCount }} کاربر، در {{ plan.name.toLowerCase() }}</small>
           </div>
-          <button class="primary-button" @click="selectPlan('weekly')">
-            انتخاب طرح اشتراک
-          </button>
-        </div>
-      </div>
-      <div class="plan-card">
-        <div class="card-inner">
-          <h4>ماهانه</h4>
-          <div class="card-price-title">
-            <p>{{ (plans.monthly.price * memberCount).toLocaleString() }} تومان</p>
-            <small>برای {{ memberCount }} کاربر، در ماه</small>
-          </div>
-          <button class="primary-button" @click="selectPlan('monthly')">
-            انتخاب طرح اشتراک
-          </button>
-        </div>
-      </div>
-      <div class="plan-card">
-        <div class="card-inner">
-          <h4>سالانه</h4>
-          <div class="card-price-title">
-            <p>{{ (plans.yearly.price * memberCount).toLocaleString() }} تومان</p>
-            <small>برای {{ memberCount }} کاربر، در سال</small>
-          </div>
-          <button class="primary-button" @click="selectPlan('yearly')">
-            انتخاب طرح اشتراک
-          </button>
+          <button class="primary-button" @click="selectPlan(key)">انتخاب طرح اشتراک</button>
         </div>
       </div>
     </div>
 
-    <!-- فاکتور -->
+    <!-- Invoice -->
     <div
       v-if="selectedPlan"
       class="invoice-box"
@@ -75,15 +49,11 @@
         <span>مالیات (۹٪):</span>
         <span>{{ selectedPlan.tax.toLocaleString() }} تومان</span>
       </div>
-      <div
-        style="display: flex; justify-content: space-between; font-weight: bold; font-size: 16px; margin-bottom: 20px;"
-      >
+      <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 16px; margin-bottom: 20px;">
         <span>مبلغ قابل پرداخت:</span>
         <span>{{ selectedPlan.total.toLocaleString() }} تومان</span>
       </div>
-      <button class="primary-button" style="width: 100%;" @click="pay">
-        پرداخت
-      </button>
+      <button class="primary-button" style="width: 100%;" @click="pay">پرداخت</button>
     </div>
   </div>
 </template>
@@ -94,18 +64,11 @@ import axios from 'axios';
 export default {
   name: 'BuySubscription',
   props: {
-    memberCount: {
-      type: Number,
-      default: 5,
-    },
-    availableMemberOptions: {
-      type: Array,
-      default: () => [5, 10, 20, 100],
-    },
-    baseUrl: {
-      type: String,
-      required: true,
-    },
+    memberCount: { type: Number, default: 5 },
+    availableMemberOptions: { type: Array, default: () => [5, 10, 20, 100] },
+    baseUrl: { type: String, required: true },
+    hasActiveSubscription: { type: Boolean, default: false },
+    hasExpiredSubscription: { type: Boolean, default: false }, // جدید
   },
   data() {
     return {
@@ -121,65 +84,58 @@ export default {
     updateMemberCount(event) {
       const newCount = Number(event.target.value);
       this.$emit('update:memberCount', newCount);
-      if (this.selectedPlan) {
-        this.selectPlan(
-          this.selectedPlan.name === 'هفتگی' ? 'weekly' : this.selectedPlan.name === 'ماهانه' ? 'monthly' : 'yearly'
-        );
-      }
+      if (this.selectedPlan) this.selectPlan(this.selectedPlan.name.toLowerCase());
     },
     selectPlan(planKey) {
       const plan = this.plans[planKey];
       if (!plan) return;
-
       const base = plan.price * this.memberCount;
       const tax = Math.round(base * 0.09);
-
-      this.selectedPlan = {
-        ...plan,
-        basePrice: base,
-        tax,
-        total: base + tax,
-      };
-      this.$emit('plan-selected', this.selectedPlan);
+      this.selectedPlan = { ...plan, basePrice: base, tax, total: base + tax };
     },
     async pay() {
-      if (!this.selectedPlan) {
-        alert('لطفاً ابتدا یک طرح اشتراک انتخاب کنید.');
+      if (this.hasActiveSubscription) {
+        alert('شما اشتراک فعالی دارید و نمی‌توانید اشتراک دیگری خریداری کنید.');
         return;
       }
-
+      if (this.hasExpiredSubscription) {
+        alert('شما یکبار اشتراک تهیه کردید و نمی‌توانید دوباره اشتراک تهیه کنید.');
+        return;
+      }
+      if (!this.selectedPlan) {
+        alert('لطفاً یک طرح اشتراک انتخاب کنید.');
+        return;
+      }
       try {
         const startTime = new Date().toISOString();
-        let endTime;
-        if (this.selectedPlan.name === 'هفتگی') {
-          endTime = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
-        } else if (this.selectedPlan.name === 'ماهانه') {
-          endTime = new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
-        } else if (this.selectedPlan.name === 'سالانه') {
-          endTime = new Date(new Date().getTime() + 365 * 24 * 60 * 60 * 1000).toISOString();
-        }
-
+        const endTime = this.calculateEndTime(this.selectedPlan.name);
         const subscriptionData = {
           user_count: this.memberCount,
           license_number: `ABC-${Math.random().toString(36).substr(2, 6).toUpperCase()}-XYZ`,
-          startTime: startTime,
-          endTime: endTime,
+          startTime,
+          endTime,
           price: this.selectedPlan.total,
         };
-
         const token = localStorage.getItem('token');
-        await axios.post(`${this.baseUrl}/add_subscription/`, subscriptionData, {
-          headers: {
-            Authorization: `Token ${token}`,
-            'Content-Type': 'application/json',
-          },
+        if (!token) throw new Error('توکن احراز هویت یافت نشد.');
+        const response = await axios.post(`${this.baseUrl}/add_subscription/`, subscriptionData, {
+          headers: { Authorization: `Token ${token}`, 'Content-Type': 'application/json' },
         });
-
-        alert(`پرداخت با موفقیت انجام شد برای ${this.memberCount} کاربر`);
+        this.$emit('payment-success', { subscriptionId: response.data.subscription_id });
         this.selectedPlan = null;
-        this.$emit('payment-success');
       } catch (error) {
+        console.error('Error registering subscription:', error);
         alert('خطا در ثبت اشتراک. لطفاً دوباره تلاش کنید.');
+      }
+    },
+    calculateEndTime(planName) {
+      const now = new Date();
+      if (planName === 'هفتگی') {
+        return new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
+      } else if (planName === 'ماهانه') {
+        return new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
+      } else {
+        return new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000).toISOString();
       }
     },
   },

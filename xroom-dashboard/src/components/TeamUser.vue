@@ -1,9 +1,14 @@
 <template>
-  <div class="card license-card">
-    <span>لایسنس‌های قابل استفاده: {{ remainingCapacity }}</span>
-    <div class="buy-subscription" @click="goToBuySubscription">
-      <p>خرید اشتراک</p>
-      <span>
+  <div>
+    <!-- License Info -->
+    <div class="card license-card">
+      <span>لایسنس‌های قابل استفاده: {{ remainingCapacity }}</span>
+      <div
+        v-if="!hasActiveSubscription"
+        class="buy-subscription"
+        @click="goToBuySubscription"
+      >
+        <p>خرید اشتراک</p>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -26,30 +31,29 @@
             stroke-linejoin="round"
           />
         </svg>
-      </span>
+      </div>
     </div>
-  </div>
 
-  <div class="user-cards">
-    <div class="user-card" v-for="(user, index) in userList" :key="index">
-      <div class="user-card-header">
-        <img :src="user.avatar" class="user-avatar" alt="avatar" />
-        <div class="user-info-box">
-          <div class="user-info-tags">
-            <div class="user-name">{{ user.name }}</div>
-            <div class="user-email">{{ user.email }}</div>
-          </div>
-          <div class="user-activity">
-            <div class="user-role">{{ user.role }}</div>
-            <div class="user-version">{{ user.version }}</div>
+    <!-- User List -->
+    <div class="user-cards">
+      <div v-for="(user, index) in userList" :key="index" class="user-card">
+        <div class="user-card-header">
+          <img :src="user.avatar" class="user-avatar" alt="avatar" />
+          <div class="user-info-box">
+            <div class="user-info-tags">
+              <div class="user-name">{{ user.name }}</div>
+              <div class="user-email">{{ user.email }}</div>
+            </div>
+            <div class="user-activity">
+              <div class="user-role">{{ user.role }}</div>
+              <div class="user-version">{{ user.version }}</div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="user-footer">
-        <span>اکانت XRoom</span>
-        <div class="user-actions">
-          <button>
-            <i class="icon">
+        <div class="user-footer">
+          <span>اکانت XRoom</span>
+          <div class="user-actions">
+            <button>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="25"
@@ -86,10 +90,8 @@
                   stroke-linejoin="round"
                 />
               </svg>
-            </i>
-          </button>
-          <button>
-            <i class="icon">
+            </button>
+            <button>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="25"
@@ -133,59 +135,55 @@
                   stroke-linejoin="round"
                 />
               </svg>
-            </i>
-          </button>
+            </button>
+          </div>
         </div>
       </div>
+      <!-- Add User Card -->
+      <div class="user-card add-card" @click="openAddUserModal">
+        <span class="add-text">
+          <span style="font-size: 23px; margin-left: 0.5rem;">+</span>
+          اضافه کردن کاربر جدید
+        </span>
+      </div>
     </div>
-    <div class="user-card add-card" @click="openAddUserModal">
-      <span class="add-text">
-        <span style="font-size: 23px; margin-left: 0.5rem;">+</span> اضافه کردن کاربر جدید
-      </span>
-    </div>
-  </div>
 
-  <!-- Modal -->
-  <AddUserModal
-    :isVisible="isAddUserModalVisible"
-    @close="closeAddUserModal"
-    @add-user="submitNewUser"
-  />
+    <!-- Add User Modal -->
+    <AddUserModal
+      :is-visible="isAddUserModalVisible"
+      @close="closeAddUserModal"
+      @add-user="submitNewUser"
+    />
+  </div>
 </template>
 
 <script>
 import AddUserModal from '@/components/AddUserModal.vue';
 
 export default {
-  name: 'UsersTab',
-  components: {
-    AddUserModal,
-  },
+  name: 'TeamUser',
+  components: { AddUserModal },
   props: {
-    userList: {
-      type: Array,
-      default: () => [],
-    },
-    teamMemberCapacity: {
-      type: Number,
-      default: 0,
-    },
-    subscriptionCount: {
-      type: Number,
-      default: 0,
-    },
+    userList: { type: Array, default: () => [] },
+    teamMemberCapacity: { type: Number, default: 0 },
+    subscriptionCount: { type: Number, default: 0 },
+    hasActiveSubscription: { type: Boolean, default: false },
+  },
+  data() {
+    return {
+      isAddUserModalVisible: false,
+    };
   },
   computed: {
     remainingCapacity() {
-      const capacity = this.subscriptionCount - this.teamMemberCapacity;
-      return capacity;
+      return this.subscriptionCount - this.teamMemberCapacity;
     },
   },
   methods: {
     openAddUserModal() {
       if (this.remainingCapacity <= 0) {
-        alert('ظرفیت تیم پر شده است. لطفاً اشتراک جدیدی خریداری کنید.');
-        this.goToBuySubscription();
+        this.$emit('change-tab', 'buy-subscription');
+        alert('اشتراک فعالی ندارید , لطفا اشتراک تهیه نمایید.');
         return;
       }
       this.isAddUserModalVisible = true;
@@ -201,14 +199,8 @@ export default {
       this.$emit('change-tab', 'buy-subscription');
     },
   },
-  data() {
-    return {
-      isAddUserModalVisible: false,
-    };
-  },
 };
 </script>
-
 
 <style scoped>
 /* User Info Section */
@@ -283,6 +275,10 @@ export default {
   color: #3a57e8;
   font-weight: 600;
   font-size: 17px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 110px;
+  overflow-x: clip;
 }
 
 .buy-subscription {

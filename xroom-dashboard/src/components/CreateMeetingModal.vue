@@ -1,9 +1,9 @@
 <template>
   <div v-if="isOpen && !isRoomSelectionOpen" class="modal-overlay" @click="closeModal">
-    <div class="modal-content" @click.stop>
+    <div class="modal-content" ref="modalContent" @click.stop>
       <div class="popUp-header">
         <h2>ایجاد جلسه جدید</h2>
-        <button @click="closeModal">
+        <button @click="closeModalByButton">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="35"
@@ -38,25 +38,16 @@
         <form @submit.prevent="handleSubmit">
           <div class="form-group">
             <label for="meetingTitle">نام جلسه</label>
-            <input
-              type="text"
-              id="meetingTitle"
-              v-model="form.title"
-              required
-            />
+            <input type="text" id="meetingTitle" v-model="form.title" required />
           </div>
           <div class="form-group">
             <label for="meet-description">شرح جلسه</label>
-            <textarea
-              name="meet-description"
-              id="meet-description"
-              v-model="form.description"
-            ></textarea>
+            <textarea name="meet-description" id="meet-description" v-model="form.description"></textarea>
           </div>
           <div class="form-group">
             <label for="meetingDate">روز</label>
             <div class="input-group">
-              <span style="position: absolute; z-index: 1; top: 10px; right: 32%;">
+              <span class="calendar-icon" style="position: absolute; z-index: 99; top: 10px; left: 65%;">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="18"
@@ -95,8 +86,8 @@
                 :auto-submit="true"
                 input-class="form-control"
                 id="meetingDate"
-                required
                 style="border-radius: 0 8px 8px 0; text-align: center; position: relative;"
+                required
               />
             </div>
           </div>
@@ -286,31 +277,31 @@
           <div class="form-group">
             <label style="font-size: 19px; font-weight: 600;">اتاق جلسه</label>
             <div class="rooms-selecter">
-              <span>{{ form.selectedRoom ? '0 اتاق انتخاب شده' : '0 اتاق انتخاب شده' }}</span>
-              <button type="button" @click="openRoomSelection" style="cursor: pointer;">انتخاب اتاق جلسه</button>
+              <span>{{ form.selectedRoom ? '1 اتاق انتخاب شده' : '0 اتاق انتخاب شده' }}</span>
+              <button type="button" @click="openRoomSelection">انتخاب اتاق جلسه</button>
             </div>
           </div>
           <div class="participants-objects">
             <h2>شرکت کنندگان</h2>
-            <p><span style="color: #101010;font-weight: 600;">کاربران</span> یا <span style="color: #101010;font-weight: 600;">مهمانان تیم</span> را با پر کردن شماره تلفن آنها دعوت کنید.</p>
+            <p><span style="color: #101010; font-weight: 600;">کاربران</span> یا <span style="color: #101010; font-weight: 600;">مهمانان تیم</span> را از لیست زیر انتخاب کنید.</p>
             <span class="participants-guide">
               می‌توانید به مجری اجازه بدهید تا ابزارهایی برای مدیریت این جلسه و همچنین ابزارهایی برای مدیریت مجوزها در طول جلسه به او بدهد.
             </span>
           </div>
-        <div class="presenter">
+          <div class="presenter">
             <div style="display: flex; align-items: center; height: 100%;">
               <div class="avatar-wrapper">
                 <img class="user-avatar" :src="profileIcon" />
               </div>
               <div class="user-info">
                 <p class="user-name">{{ fullName }}</p>
-                <span>{{ userPhone || 'شماره تلفن موجود نیست' }}</span>
+                <span>{{ userPhone }}</span>
               </div>
             </div>
             <p class="presenter-role">{{ userRole }}</p>
           </div>
-          <div class="presenter" v-for="participant in participants" :key="participant.phone">
-            <div style="display: flex;align-items: center;height: 100%;">
+          <div class="presenter" v-for="participant in participants" :key="participant.id">
+            <div style="display: flex; align-items: center; height: 100%;">
               <div class="avatar-wrapper">
                 <img class="user-avatar" :src="participant.profile_img || defaultProfileIcon" />
               </div>
@@ -320,7 +311,7 @@
               </div>
             </div>
             <p class="presenter-role">{{ participant.role }}</p>
-            <button @click="removeParticipant(participant.phone)">
+            <button @click="removeParticipant(participant.id)">
               <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 32 32" fill="none">
                 <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" fill="white"/>
                 <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" stroke="#E2DEE9"/>
@@ -330,21 +321,55 @@
             </button>
           </div>
           <div class="form-group">
-            <label for="participantPhone">اضافه کردن شرکت کننده</label>
+            <label for="participantInput">اضافه کردن شرکت کننده</label>
             <div class="participant-input">
-              <input
-                type="tel"
-                id="participantPhone"
-                v-model="newParticipantPhone"
-                placeholder="لطفا شماره تلفن شرکت کننده را وارد کنید"
-                @keyup.enter="addParticipant"
-              />
-              <button type="button" @click="addParticipant">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 16 16" fill="none">
-                  <path d="M3.33203 8H12.6654" stroke="#3A57E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M8 3.33325V12.6666" stroke="#3A57E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <div class="custom-input" @click="toggleDropdown" ref="customInput">
+                <span v-if="!selectedParticipantId">یک عضو تیم انتخاب کنید</span>
+                <span v-else>{{ getParticipantName(selectedParticipantId) }}</span>
+                <svg
+                  class="dropdown-icon"
+                  :class="{ active: isDropdownOpen }"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                >
+                  <path
+                    d="M5 7.5L10 12.5L15 7.5"
+                    stroke="#3A57E8"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
                 </svg>
-              </button>
+              </div>
+              <div v-if="isDropdownOpen" class="dropdown-menu" ref="dropdownMenu">
+                <div
+                  v-for="member in teamMembers"
+                  :key="member.user.id"
+                  class="dropdown-item"
+                  @click="selectParticipant(member.user.id)"
+                >
+                  <div class="avatar-wrapper">
+                    <img
+                      :src="member.profile_img || defaultProfileIcon"
+                      class="user-avatar"
+                      alt="Profile"
+                    />
+                  </div>
+                  <div class="user-info">
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                      <p class="user-name">{{ member.user.first_name }} {{ member.user.last_name }}</p>
+                      <span>{{ member.mobile_number }}</span>
+                    </div>
+                    <span class="user-role">{{ member.semat || 'بدون سمت' }}</span>
+                  </div>
+                </div>
+                <div v-if="!teamMembers.length" class="dropdown-item no-members">
+                  هیچ عضوی یافت نشد
+                </div>
+              </div>
             </div>
           </div>
         </form>
@@ -353,7 +378,7 @@
         </span>
       </div>
       <div class="form-actions">
-        <button type="button" class="cancel-button" @click="closeModal">بازگشت</button>
+        <button type="button" class="cancel-button" @click="closeModalByButton">بازگشت</button>
         <button type="button" class="submit-button" @click="handleSubmit">ایجاد جلسه</button>
       </div>
     </div>
@@ -369,21 +394,19 @@
 import VuePersianDatetimePicker from 'vue3-persian-datetime-picker';
 import moment from 'moment-jalaali';
 import RoomSelectionModal from './RoomSelectionModal.vue';
+import axios from 'axios';
+
+const API_BASE_URL = 'http://my.xroomapp.com:8000';
 
 export default {
-  name: 'MeetingModal',
-  components: {
-    VuePersianDatetimePicker,
-    RoomSelectionModal,
-  },
+  name: 'CreateMeetingModal',
+  components: { VuePersianDatetimePicker, RoomSelectionModal },
   props: {
-    isOpen: {
-      type: Boolean,
-      default: false,
-    },
+    isOpen: { type: Boolean, default: false },
   },
   data() {
     return {
+      defaultProfileIcon: 'https://models.readyplayer.me/681f59760bc631a87ad25172.png',
       form: {
         title: '',
         description: '',
@@ -393,27 +416,26 @@ export default {
         endHour: 18,
         endMinute: 0,
         selectedRoom: null,
+        use_space: false,
       },
       participants: [],
-      newParticipantPhone: '',
-      defaultProfileIcon: 'https://c.animaapp.com/m9nvumalUMfQbN/img/frame.svg',
-      error: null,
+      teamMembers: [],
+      selectedParticipantId: '',
+      isDropdownOpen: false,
       isRoomSelectionOpen: false,
+      error: null,
     };
   },
   computed: {
     customer() {
-      // دریافت اطلاعات کاربر از localStorage با کلید customer
       return JSON.parse(localStorage.getItem('customer') || '{}');
     },
     fullName() {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
-      return user.first_name && user.last_name
-        ? `${user.first_name} ${user.last_name}`
-        : 'کاربر مهمان';
+      return user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : 'کاربر مهمان';
     },
     userPhone() {
-      return 3;
+      return this.customer.mobile_number || 'شماره تلفن موجود نیست';
     },
     userRole() {
       return this.customer.semat || 'مجری';
@@ -422,65 +444,122 @@ export default {
       return this.customer.profile_img || this.defaultProfileIcon;
     },
     userId() {
-    const customer = JSON.parse(localStorage.getItem('customer') || '{}');
-    return customer.id || null;
-    }
+      return this.customer.id || null;
+    },
   },
   watch: {
     isOpen(newVal) {
+      document.body.style.overflow = newVal && !this.isRoomSelectionOpen ? 'hidden' : '';
       if (newVal) {
-        document.body.style.overflow = 'hidden';
-      } else if (!this.isRoomSelectionOpen) {
-        document.body.style.overflow = '';
+        this.$nextTick(() => {
+          if (this.$refs.modalContent) {
+            this.$refs.modalContent.addEventListener('click', this.closeDropdownOnClick);
+          }
+        });
+      } else {
+        if (this.$refs.modalContent) {
+          this.$refs.modalContent.removeEventListener('click', this.closeDropdownOnClick);
+        }
       }
     },
     isRoomSelectionOpen(newVal) {
-      if (newVal) {
-        document.body.style.overflow = 'hidden';
-      } else if (!this.isOpen) {
-        document.body.style.overflow = '';
-      }
+      document.body.style.overflow = newVal ? 'hidden' : '';
     },
   },
+  mounted() {
+    if (this.$refs.modalContent) {
+      this.$refs.modalContent.addEventListener('click', this.closeDropdownOnClick);
+    }
+  },
+  beforeUnmount() {
+    if (this.$refs.modalContent) {
+      this.$refs.modalContent.removeEventListener('click', this.closeDropdownOnClick);
+    }
+  },
   methods: {
-    beforeDestroy() {
-      document.body.style.overflow = '';
+    async fetchTeamMembers() {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('توکن احراز هویت پیدا نشد');
+        const response = await axios.get(`${API_BASE_URL}/get_all_team_members`, {
+          headers: { Authorization: `Token ${token.trim()}` },
+        });
+        this.teamMembers = response.data.members.filter(
+          (member) => member.user?.id && member.user.first_name && member.user.last_name
+        );
+      } catch (error) {
+        if (error.response?.status === 403) {
+          alert('لطفاً دوباره وارد شوید');
+          window.location.href = '/login';
+        }
+        this.error = 'خطا در بارگذاری لیست اعضای تیم';
+      }
+    },
+    toggleDropdown(event) {
+      this.isDropdownOpen = !this.isDropdownOpen;
+      event.stopPropagation();
+    },
+    selectParticipant(id) {
+      this.selectedParticipantId = id;
+      this.isDropdownOpen = false;
+      this.addParticipant();
+    },
+    closeDropdownOnClick(event) {
+      if (this.isDropdownOpen && this.$refs.customInput && !this.$refs.customInput.contains(event.target)) {
+        this.isDropdownOpen = false;
+      }
     },
     openRoomSelection() {
       this.isRoomSelectionOpen = true;
     },
     handleRoomSelection(room) {
       this.form.selectedRoom = room;
+      this.form.use_space = room.use_space;
       this.isRoomSelectionOpen = false;
     },
+    getParticipantName(id) {
+      const member = this.teamMembers.find((m) => m.user.id === id);
+      return member ? `${member.user.first_name} ${member.user.last_name}` : '';
+    },
     addParticipant() {
-      if (!this.newParticipantPhone || !this.validatePhone(this.newParticipantPhone)) {
-        this.error = 'لطفاً شماره تلفن معتبر وارد کنید (مثال: 09123456789)';
+      if (!this.selectedParticipantId) {
+        this.error = 'لطفاً یک عضو تیم انتخاب کنید.';
         return;
       }
-      if (
-        this.participants.some((p) => p.phone === this.newParticipantPhone) ||
-        this.newParticipantPhone === this.userPhone
-      ) {
-        this.error = 'این شماره تلفن قبلاً اضافه شده است';
+      const selectedMember = this.teamMembers.find((member) => member.user.id === this.selectedParticipantId);
+      if (!selectedMember) {
+        this.error = 'کاربر انتخاب‌شده یافت نشد.';
+        return;
+      }
+      if (this.participants.some((p) => p.id === this.selectedParticipantId)) {
+        this.error = 'این کاربر قبلاً اضافه شده است.';
+        return;
+      }
+      if (this.selectedParticipantId === this.userId) {
+        this.error = 'نمی‌توانید خودتان را به‌عنوان شرکت‌کننده اضافه کنید.';
         return;
       }
       this.participants.push({
-        phone: this.newParticipantPhone,
-        name: 'کاربر مهمان',
-        role: 'شرکت‌کننده',
-        profile_img: this.defaultProfileIcon,
+        id: selectedMember.user.id,
+        phone: selectedMember.mobile_number,
+        name: `${selectedMember.user.first_name} ${selectedMember.user.last_name}`,
+        role: selectedMember.semat || 'بدون سمت',
+        profile_img: selectedMember.profile_img || this.defaultProfileIcon,
       });
-      this.newParticipantPhone = '';
+      this.selectedParticipantId = '';
+      this.isDropdownOpen = false;
       this.error = null;
     },
-    removeParticipant(phone) {
-      this.participants = this.participants.filter((p) => p.phone !== phone);
+    removeParticipant(id) {
+      this.participants = this.participants.filter((p) => p.id !== id);
     },
-    validatePhone(phone) {
-      return /^09[0-9]{9}$/.test(phone);
+    closeModal(event) {
+      if (event && event.target.classList.contains('modal-overlay')) {
+        this.$emit('close');
+        this.resetForm();
+      }
     },
-    closeModal() {
+    closeModalByButton() {
       this.$emit('close');
       this.resetForm();
     },
@@ -494,37 +573,28 @@ export default {
         endHour: 18,
         endMinute: 0,
         selectedRoom: null,
+        use_space: false,
       };
       this.participants = [];
-      this.newParticipantPhone = '';
+      this.selectedParticipantId = '';
+      this.isDropdownOpen = false;
       this.error = null;
       this.isRoomSelectionOpen = false;
     },
     incrementTime(field) {
-      if (field === 'startHour' && this.form.startHour < 23) {
-        this.form.startHour++;
-      } else if (field === 'startMinute' && this.form.startMinute < 59) {
-        this.form.startMinute++;
-      } else if (field === 'endHour' && this.form.endHour < 23) {
-        this.form.endHour++;
-      } else if (field === 'endMinute' && this.form.endMinute < 59) {
-        this.form.endMinute++;
-      }
+      const limits = { startHour: 23, startMinute: 59, endHour: 23, endMinute: 59 };
+      if (this.form[field] < limits[field]) this.form[field]++;
     },
     decrementTime(field) {
-      if (field === 'startHour' && this.form.startHour > 0) {
-        this.form.startHour--;
-      } else if (field === 'startMinute' && this.form.startMinute > 0) {
-        this.form.startMinute--;
-      } else if (field === 'endHour' && this.form.endHour > 0) {
-        this.form.endHour--;
-      } else if (field === 'endMinute' && this.form.endMinute > 0) {
-        this.form.endMinute--;
-      }
+      if (this.form[field] > 0) this.form[field]--;
     },
     async handleSubmit() {
       if (!this.form.title || !this.form.date) {
         this.error = 'لطفاً نام جلسه و تاریخ را وارد کنید.';
+        return;
+      }
+      if (!this.form.selectedRoom) {
+        this.error = 'لطفاً یک اتاق برای جلسه انتخاب کنید.';
         return;
       }
       const momentDate = moment(this.form.date, 'jYYYY/jMM/jDD');
@@ -540,43 +610,162 @@ export default {
       }
       const startDateTime = momentDate
         .clone()
-        .set({
-          hour: this.form.startHour,
-          minute: this.form.startMinute,
-          second: 0,
-        })
+        .set({ hour: this.form.startHour, minute: this.form.startMinute, second: 0 })
         .toISOString();
-
       try {
-        const userIds = [
-          ...(this.userPhone ? [this.userPhone] : []),
-          ...this.participants.map((p) => p.phone),
-        ];
-
         const meetingData = {
           name: this.form.title,
           description: this.form.description,
           date_time: startDateTime,
-          space: this.form.selectedRoom ? this.form.selectedRoom.id : null,
+          space: this.form.selectedRoom.id,
           asset_bundle: 1,
-          use_space: !!this.form.selectedRoom,
-          user_ids: userIds,
+          use_space: this.form.use_space,
+          user_ids: [this.userId, ...this.participants.map((p) => p.id)],
         };
-
-        console.log('داده‌های ارسالی به API:', JSON.stringify(meetingData, null, 2));
-
         this.$emit('create-meeting', meetingData);
-        this.closeModal();
+        this.closeModalByButton();
       } catch (error) {
         this.error = `خطا در آماده‌سازی داده‌ها: ${error.message}`;
-        console.error('خطا در handleSubmit:', error);
       }
     },
+  },
+  created() {
+    this.fetchTeamMembers();
   },
 };
 </script>
 
 <style scoped>
+.participant-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.custom-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #E2DEE9;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  transition: border-color 0.3s ease;
+  user-select: none;
+}
+
+.custom-input:hover {
+  border-color: #3A57E8;
+}
+
+.dropdown-icon {
+  transition: transform 0.3s ease;
+}
+
+.custom-input.active .dropdown-icon {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #E2DEE9;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+  margin-top: 5px;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 0px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #f5f7fa;
+}
+
+.dropdown-item .avatar-wrapper {
+  width: 90px;
+  height: 90px;
+  margin-right: 0px;
+}
+
+.dropdown-item .user-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.dropdown-item .user-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding-left: 2.5rem;
+  margin-top: 15px;
+}
+
+
+.dropdown-item .user-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #101010;
+  margin: 0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow-x: clip;
+  width: 100px;
+}
+
+.dropdown-item .user-info span {
+    font-size: 14px;
+    color: #718096;
+    width: 75px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow-x: clip;
+}
+
+.dropdown-item .user-role {
+  font-size: 12px;
+  color: #3A57E8;
+  font-weight: 500;
+}
+
+.no-members {
+  padding: 10px;
+  text-align: center;
+  color: #718096;
+}
+
+.participant-input button {
+  margin-left: 10px;
+  padding: 10px;
+  background: #3A57E8;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/*  */
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -876,6 +1065,10 @@ export default {
   font-size: 18px;
   color: #101010;
   font-weight: 600;
+  width: 160px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow-x: clip;
 }
 
 .presenter button {

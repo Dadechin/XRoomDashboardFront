@@ -1,72 +1,66 @@
 <template>
-    <div>
-      <!-- Description -->
-      <div class="section-description">
-        <div class="section-title">مدیریت اعضا</div>
-        <p>
-          در این بخش به شما امکان می‌دهد تا اتاق‌ها، فایل‌ها و جلسات را با همکاران خود به اشتراک بگذارید. در این بخش می‌توانید تیم خود را مدیریت کنید.
-        </p>
-      </div>
-      <!-- Tab Buttons -->
-      <div class="tab-buttons">
-        <button
-          :class="['tab-btn', activeTab === 'users' ? 'active' : '']"
-          @click="activeTab = 'users'"
-        >
-          کاربران
-        </button>
-        <button
-          :class="['tab-btn', activeTab === 'buy-subscription' ? 'active' : '']"
-          @click="activeTab = 'buy-subscription'"
-        >
-          خرید اشتراک
-        </button>
-        <button
-          :class="['tab-btn', activeTab === 'membership' ? 'active' : '']"
-          @click="activeTab = 'membership'"
-        >
-          اشتراک ها
-        </button>
-        <button
-          :class="['tab-btn', activeTab === 'details' ? 'active' : '']"
-          @click="activeTab = 'details'"
-        >
-          جزئیات
-        </button>
-      </div>
-      <!-- Tab Content -->
-      <div v-if="activeTab === 'users'">
-        <TeamUser 
-          :userList="userList" 
-          :teamMemberCapacity="teamMemberCapacity"
-          :subscriptionCount="subscriptionCount"
-          @add-user="submitNewUser" 
-          @change-tab="changeTab" 
-        />
-      </div>
-      <div v-if="activeTab === 'membership'">
-        <Membership
-          :subscriptionCount="subscriptionCount"
-          :teamMemberCapacity="teamMemberCapacity"
-          :isBillingModalVisible="isBillingModalVisible"
-          @change-tab="changeTab"
-          @update:isBillingModalVisible="isBillingModalVisible = $event"
-        />
-      </div>
-      <div v-if="activeTab === 'details'">
-        <TeamDetails @update:teamData="handleTeamData" />
-      </div>
-      <div v-if="activeTab === 'buy-subscription'">
-        <BuySubscription
-          :memberCount="memberCount"
-          :availableMemberOptions="availableMemberOptions"
-          :baseUrl="baseUrl"
-          @update:memberCount="memberCount = $event"
-          @plan-selected="selectedPlan = $event"
-          @payment-success="handlePaymentSuccess"
-        />
-      </div>
+  <div>
+    <!-- Section Description -->
+    <div class="section-description">
+      <div class="section-title">مدیریت اعضا</div>
+      <p>در این بخش می‌توانید اتاق‌ها، فایل‌ها و جلسات را با همکاران خود به اشتراک بگذارید و تیم خود را مدیریت کنید.</p>
     </div>
+
+    <!-- Tab Buttons -->
+    <div class="tab-buttons">
+      <button
+        :class="['tab-btn', { active: activeTab === 'users' }]"
+        @click="activeTab = 'users'"
+      >کاربران</button>
+      <button
+        :class="['tab-btn', { active: activeTab === 'buy-subscription' }]"
+        @click="activeTab = 'buy-subscription'"
+      >خرید اشتراک</button>
+      <button
+        :class="['tab-btn', { active: activeTab === 'membership' }]"
+        @click="activeTab = 'membership'"
+      >اشتراک‌ها</button>
+      <button
+        :class="['tab-btn', { active: activeTab === 'details' }]"
+        @click="activeTab = 'details'"
+      >جزئیات</button>
+    </div>
+
+    <!-- Tab Content -->
+    <div v-if="activeTab === 'users'">
+      <TeamUser
+        :user-list="userList"
+        :team-member-capacity="teamMemberCapacity"
+        :subscription-count="subscriptionCount"
+        :has-active-subscription="hasActiveSubscription"
+        @add-user="submitNewUser"
+        @change-tab="changeTab"
+      />
+    </div>
+    <div v-if="activeTab === 'membership'">
+      <Membership
+        :subscription-count="subscriptionCount"
+        :team-member-capacity="teamMemberCapacity"
+        :is-billing-modal-visible="isBillingModalVisible"
+        @change-tab="changeTab"
+        @update:is-billing-modal-visible="isBillingModalVisible = $event"
+      />
+    </div>
+    <div v-if="activeTab === 'details'">
+      <TeamDetails @update:team-data="handleTeamData" />
+    </div>
+    <div v-if="activeTab === 'buy-subscription'">
+      <BuySubscription
+        :member-count="memberCount"
+        :available-member-options="availableMemberOptions"
+        :base-url="baseUrl"
+        :has-active-subscription="hasActiveSubscription"
+        :has-expired-subscription="hasExpiredSubscription"
+        @update:member-count="memberCount = $event"
+        @payment-success="handlePaymentSuccess"
+      />
+    </div>
+  </div>
 </template>
 
 <script>
@@ -77,160 +71,127 @@ import TeamDetails from '@/components/TeamDetails.vue';
 import axios from 'axios';
 
 export default {
-  name: 'DashboardPage',
-  components: {
-    TeamUser,
-    BuySubscription,
-    Membership,
-    TeamDetails,
-  },
+  name: 'Team',
+  components: { TeamUser, BuySubscription, Membership, TeamDetails },
   data() {
     return {
-      isBillingModalVisible: false,
+      activeTab: 'users',
+      userList: [],
       memberCount: 5,
       availableMemberOptions: [5, 10, 20, 100],
-      selectedPlan: null,
-      userList: [],
-      activeTab: 'users',
-      previewUrl: '',
-      currentPreviewIndex: null,
-      currentPreviewType: null,
-      videoOptions: {
-        autoplay: false,
-        controls: true,
-        sources: [
-          {
-            type: 'video/mp4',
-            src: '',
-          },
-        ],
-      },
-      userData: {
-        customer: {},
-        user: {
-          first_name: '',
-          last_name: '',
-        },
-        images: [],
-        pdfs: [],
-        videos: [],
-        glbs: [],
-        subscription: null,
-      },
-      newFileName: '',
-      selectedFile: null,
-      uploading: false,
-      baseUrl: 'http://194.62.43.230:8000',
-      currentUploadType: 'image',
-      dialogTitle: 'آپلود فایل جدید',
-      fileAccept: '*/*',
       teamMemberCapacity: 0,
       subscriptionCount: 0,
+      hasActiveSubscription: false,
+      hasExpiredSubscription: false, // جدید: بررسی اشتراک منقضی‌شده
+      subscriptionEndTime: null, // جدید: ذخیره تاریخ انقضای اشتراک
       teamId: null,
+      subscriptionId: null,
+      isBillingModalVisible: false,
+      baseUrl: 'http://my.xroomapp.com:8000',
     };
   },
   created() {
-    this.fetchUserData();
-    this.fetchTeamMemberInfo();
-    this.fetchTeamData();
-    const tab = this.$route.query.tab;
-    if (tab) {
-      this.activeTab = tab;
-    }
+    this.initializeData();
   },
   methods: {
+    async initializeData() {
+      const tab = this.$route.query.tab;
+      if (tab) this.activeTab = tab;
+      await Promise.all([
+        this.fetchUserData(),
+        this.fetchTeamMemberInfo(),
+        this.fetchTeamData(),
+      ]);
+    },
     changeTab(tabName) {
       this.activeTab = tabName;
     },
     async fetchTeamData() {
       try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get('http://my.xroomapp.com:8000/get_team', {
-          headers: {
-            Authorization: `Token ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
+        const response = await this.axiosGet('/get_team');
         const team = response.data.teams[0];
-        if (team) {
-          this.teamId = team.id;
-        } else {
-          this.teamId = null;
-        }
+        this.teamId = team?.id || null;
       } catch (error) {
-        alert('خطا در بارگذاری اطلاعات تیم. لطفاً دوباره تلاش کنید.');
+        console.error('Error fetching team data:', error);
+        alert('خطا در بارگذاری اطلاعات تیم.');
       }
-    },
-    async handlePaymentSuccess() {
-      await this.fetchTeamMemberInfo();
-      await this.fetchUserData();
-      this.activeTab = 'membership';
     },
     async fetchTeamMemberInfo() {
       try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get(`${this.baseUrl}/get_all_team_members`, {
-          headers: {
-            Authorization: `Token ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
-        this.userList = response.data.members.map((member) => ({
-          name: `${member.first_name} ${member.last_name}`,
-          email: member.username,
-          role: 'کاربر',
+        const response = await this.axiosGet('/get_all_team_members');
+        this.userList = response.data.members.map(member => ({
+          name: `${member.user.first_name} ${member.user.last_name}`,
+          email: member.user.username,
+          role: member.semat || 'کاربر',
           version: 'نسخه آزمایشی',
-          avatar: 'https://models.readyplayer.me/681f59760bc631a87ad25172.png',
+          avatar: member.profile_img || 'https://models.readyplayer.me/681f59760bc631a87ad25172.png',
         }));
         this.teamMemberCapacity = response.data.members.length;
       } catch (error) {
-        alert('خطا در بارگذاری اطلاعات اعضای تیم. لطفاً دوباره تلاش کنید.');
+        console.error('Error fetching team members:', error);
+        alert('خطا در بارگذاری اطلاعات اعضای تیم.');
       }
     },
     async fetchUserData() {
       try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get(`${this.baseUrl}/getInfo`, {
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-        });
-        this.userData = response.data;
-        if (this.userData.data.subscription) {
-          this.subscriptionCount = this.userData.data.subscription || 0;
-        } else {
-          this.subscriptionCount = 0;
-        }
+        const response = await this.axiosGet('/get_user_subscriptions');
+        const subscriptions = response.data.subscriptions || [];
+        this.subscriptionCount = subscriptions.reduce((total, sub) => total + sub.user_count, 0);
+        this.subscriptionId = subscriptions[0]?.id || null;
+        this.subscriptionEndTime = subscriptions[0]?.endTime || null; // جدید: تاریخ انقضا
+        const now = new Date();
+        const isExpiredByTime = this.subscriptionEndTime && new Date(this.subscriptionEndTime) < now;
+        const isExpiredByCapacity = this.subscriptionCount <= this.teamMemberCapacity;
+        this.hasActiveSubscription = subscriptions.length > 0 && !isExpiredByTime && !isExpiredByCapacity;
+        this.hasExpiredSubscription = subscriptions.length > 0 && (isExpiredByTime || isExpiredByCapacity);
       } catch (error) {
-        alert('خطا در بارگذاری اطلاعات کاربر. لطفاً دوباره تلاش کنید.');
+        console.error('Error fetching user data:', error);
+        alert('خطا در بارگذاری اطلاعات اشتراک.');
       }
     },
+    async handlePaymentSuccess({ subscriptionId }) {
+      try {
+        this.subscriptionId = subscriptionId;
+        await Promise.all([
+          this.fetchUserData(),
+          this.fetchTeamMemberInfo(),
+          this.fetchTeamData(),
+        ]);
+
+        if (!this.teamId && this.subscriptionId) {
+          await this.createTeam();
+          alert('اشتراک و تیم به درستی ساخته شد.');
+        } else if (this.teamId) {
+          alert('تیم از قبل وجود دارد.');
+        }
+        this.activeTab = 'membership';
+      } catch (error) {
+        console.error('Error handling payment success:', error);
+        alert('خطا در پردازش پرداخت یا ساخت تیم.');
+      }
+    },
+    async createTeam() {
+      const teamData = {
+        name: 'تیم 1',
+        description: 'فعالیت',
+        max_persons: this.subscriptionCount.toString(),
+        subscriptionId: this.subscriptionId,
+      };
+      await this.axiosPost('/add_team', teamData);
+      await this.fetchTeamData();
+    },
     async submitNewUser(newUser) {
-      const remainingCapacity = this.subscriptionCount - this.teamMemberCapacity;
-      if (remainingCapacity <= 0) {
-        alert('ظرفیت تیم پر شده است. لطفاً اشتراک جدیدی خریداری کنید.');
+      if (this.subscriptionCount - this.teamMemberCapacity <= 0) {
+        alert('اشتراک فعالی ندارید , اشتراک تهیه نمایید.');
         this.activeTab = 'buy-subscription';
         return;
       }
       if (!this.teamId) {
-        alert('خطا: اطلاعات تیم یافت نشد. لطفاً دوباره تلاش کنید.');
+        alert('خطا: اطلاعات تیم یافت نشد.');
         return;
       }
       try {
-        const token = localStorage.getItem('token');
-        await axios.post(
-          'http://my.xroomapp.com:8000/add_teamMember/',
-          {
-            ...newUser,
-            teamId: this.teamId,
-          },
-          {
-            headers: {
-              Authorization: `Token ${token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
+        await this.axiosPost('/add_teamMember/', { ...newUser, teamId: this.teamId });
         this.userList.push({
           ...newUser,
           avatar: 'https://models.readyplayer.me/681f59760bc631a87ad25172.png',
@@ -239,226 +200,38 @@ export default {
         });
         this.teamMemberCapacity++;
         await this.fetchTeamMemberInfo();
-        alert('کاربر با موفقیت اضافه شد');
+        alert('کاربر با موفقیت اضافه شد.');
       } catch (error) {
-        alert('خطا در اضافه کردن کاربر. لطفاً دوباره تلاش کنید.');
+        console.error('Error adding user:', error);
+        alert('خطا در اضافه کردن کاربر.');
       }
     },
-    handleBackdropClick(event) {
-      if (event.target === this.$refs.filePreviewDialog) {
-        this.closePreviewDialog();
-      }
+    handleTeamData(data) {
+      console.log('Team data updated:', data);
     },
-    openPreviewDialog(type, index, url) {
-      if (type === 'video') {
-        this.videoOptions.sources[0].src = url;
-        this.$nextTick(() => {
-          this.$refs.filePreviewDialog?.showModal();
-        });
-      }
-      if (!this.$refs.filePreviewDialog) {
-        return;
-      }
-      this.currentPreviewType = type;
-      this.currentPreviewIndex = index;
-      this.previewUrl = url;
-      if (type === 'video') {
-        this.videoOptions.sources[0].src = url;
-        this.videoOptions.poster = this.getVideoThumbnail();
-        this.previewUrl = url;
-      } else {
-        this.previewUrl = url;
-      }
-      this.$nextTick(() => {
-        this.$refs.filePreviewDialog?.showModal();
+    async axiosGet(endpoint) {
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('توکن احراز هویت یافت نشد.');
+      return await axios.get(`${this.baseUrl}${endpoint}`, {
+        headers: { Authorization: `Token ${token}`, 'Content-Type': 'application/json' },
       });
-      if (type === 'image') {
-        this.previewImageUrl = url;
-        this.previewPdfUrl = '';
-      } else if (type === 'pdf') {
-        this.previewPdfUrl = url;
-        this.previewImageUrl = '';
-      }
-      this.$refs.filePreviewDialog.showModal();
     },
-    getVideoThumbnail() {
-      return 'https://cdn-icons-png.flaticon.com/512/2839/2839038.png';
-    },
-    closePreviewDialog() {
-      const dialog = this.$refs.filePreviewDialog;
-      if (dialog && typeof dialog.close === 'function') {
-        dialog.close();
-      }
-      this.previewUrl = '';
-      this.currentPreviewIndex = null;
-      this.currentPreviewType = null;
-    },
-    async downloadFile() {
-      const url =
-        this.currentPreviewType === 'image' ? this.previewImageUrl : this.previewPdfUrl;
-      if (!url) return;
-      try {
-        const response = await fetch(url);
-        const blob = await response.blob();
-        const downloadUrl = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = downloadUrl;
-        if (this.currentPreviewType === 'image') {
-          a.download = `image-${new Date().getTime()}.${url.split('.').pop()}`;
-        } else if (this.currentPreviewType === 'pdf') {
-          a.download = `document-${new Date().getTime()}.pdf`;
-        }
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(downloadUrl);
-        document.body.removeChild(a);
-      } catch (error) {
-        alert('خطا در دانلود فایل');
-      }
-    },
-    async deleteFile() {
-      if (this.currentPreviewIndex === null || !this.currentPreviewType) return;
-      try {
-        const token = localStorage.getItem('token');
-        let deleteUrl = '';
-        let itemId = '';
-        let fileArray = [];
-        switch (this.currentPreviewType) {
-          case 'image':
-            fileArray = this.userData.images;
-            itemId = fileArray[this.currentPreviewIndex].id;
-            deleteUrl = `${this.baseUrl}/deleteImage/${itemId}/`;
-            break;
-          case 'pdf':
-            fileArray = this.userData.pdfs;
-            itemId = fileArray[this.currentPreviewIndex].id;
-            deleteUrl = `${this.baseUrl}/deletePdf/${itemId}/`;
-            break;
-          case 'video':
-            fileArray = this.userData.videos;
-            itemId = fileArray[this.currentPreviewIndex].id;
-            deleteUrl = `${this.baseUrl}/deleteVideo/${itemId}/`;
-            break;
-          case 'glb':
-            fileArray = this.userData.glbs;
-            itemId = fileArray[this.currentPreviewIndex].id;
-            deleteUrl = `${this.baseUrl}/deleteGlb/${itemId}/`;
-            break;
-        }
-        await axios.delete(deleteUrl, {
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-        });
-        this.closePreviewDialog();
-        await this.fetchUserData();
-        alert('فایل با موفقیت حذف شد');
-      } catch (error) {
-        alert('خطا در حذف فایل');
-      }
-    },
-    getFullImageUrl(relativePath) {
-      if (!relativePath) return '';
-      return `${this.baseUrl}${relativePath}`;
-    },
-    formatDate(dateString) {
-      if (!dateString) return '';
-      const date = new Date(dateString);
-      return date.toLocaleDateString('fa-IR');
-    },
-    openDialog(type) {
-      this.currentUploadType = type;
-      switch (type) {
-        case 'image':
-          this.dialogTitle = 'آپلود تصویر جدید';
-          this.fileAccept = 'image/*';
-          break;
-        case 'pdf':
-          this.dialogTitle = 'آپلود فایل PDF';
-          this.fileAccept = '.pdf';
-          break;
-        case 'video':
-          this.dialogTitle = 'آپلود ویدیو';
-          this.fileAccept = 'video/*';
-          break;
-        case 'glb':
-          this.dialogTitle = 'آپلود مدل 3D';
-          this.fileAccept = '.glb';
-          break;
-      }
-      this.$refs.newFileDialog.showModal();
-    },
-    closeDialog() {
-      this.newFileName = '';
-      this.selectedFile = null;
-      this.$refs.newFileDialog.close();
-    },
-    handleFileChange(event) {
-      this.selectedFile = event.target.files[0];
-    },
-    async uploadFile() {
-      if (!this.selectedFile) {
-        return;
-      }
-      this.uploading = true;
-      const formData = new FormData();
-      formData.append('name', this.newFileName || this.selectedFile.name);
-      switch (this.currentUploadType) {
-        case 'image':
-          formData.append('image', this.selectedFile);
-          break;
-        case 'pdf':
-          formData.append('pdf', this.selectedFile);
-          break;
-        case 'video':
-          formData.append('video', this.selectedFile);
-          break;
-        case 'glb':
-          formData.append('glb', this.selectedFile);
-          break;
-      }
-      try {
-        const token = localStorage.getItem('token');
-        let uploadUrl = '';
-        switch (this.currentUploadType) {
-          case 'image':
-            uploadUrl = `${this.baseUrl}/uploadImage/`;
-            break;
-          case 'pdf':
-            uploadUrl = `${this.baseUrl}/uploadPdf/`;
-            break;
-          case 'video':
-            uploadUrl = `${this.baseUrl}/uploadVideo/`;
-            break;
-          case 'glb':
-            uploadUrl = `${this.baseUrl}/uploadGlb/`;
-            break;
-        }
-        await axios.post(uploadUrl, formData, {
-          headers: {
-            Authorization: `Token ${token}`,
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        this.closeDialog();
-        await this.fetchUserData();
-        alert('فایل با موفقیت آپلود شد');
-      } catch (error) {
-        alert('خطا در آپلود فایل');
-      } finally {
-        this.uploading = false;
-      }
+    async axiosPost(endpoint, data) {
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('توکن احراز هویت یافت نشد.');
+      return await axios.post(`${this.baseUrl}${endpoint}`, data, {
+        headers: { Authorization: `Token ${token}`, 'Content-Type': 'application/json' },
+      });
     },
   },
   watch: {
     '$route.query.tab'(newTab) {
-      if (newTab) {
-        this.activeTab = newTab;
-      }
+      if (newTab) this.activeTab = newTab;
     },
   },
 };
 </script>
+
 
 <style scoped>
 

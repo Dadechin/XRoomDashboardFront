@@ -34,7 +34,7 @@
         <h2>فضاها</h2>
         <span>یک اتاق برای این جلسه انتخاب کنید</span>
       </div>
-      <div class="rooms-list" v-if="rooms.length > 0">
+      <div class="rooms-list" v-if="rooms.length">
         <div
           v-for="room in rooms"
           :key="room.id"
@@ -46,8 +46,8 @@
             :src="room.image"
             alt="Room Image"
             class="room-image"
-            width="120px"
-            height="120px"
+            width="120"
+            height="120"
             @error="room.image = 'https://via.placeholder.com/150'"
           />
           <div class="room-details" style="margin-right: 10px;">
@@ -168,12 +168,12 @@
       <div v-else>
         <span>هیچ فضایی یافت نشد.</span>
       </div>
-      <div v-if="temporaryRooms.length > 0">
+      <div v-if="temporaryRooms.length">
         <div class="popUp-title">
           <h2>اتاق‌های موقت</h2>
           <span>اتاق‌های موقت ایجادشده برای این جلسه</span>
         </div>
-        <div class="temporary-rooms-list">
+        <div class="rooms-list">
           <div
             v-for="room in temporaryRooms"
             :key="room.id"
@@ -185,8 +185,8 @@
               :src="room.image"
               alt="Room Image"
               class="room-image"
-              width="120px"
-              height="120px"
+              width="120"
+              height="120"
               @error="room.image = 'https://via.placeholder.com/150'"
             />
             <div class="room-details" style="margin-right: 10px;">
@@ -305,35 +305,8 @@
           </div>
         </div>
       </div>
-      <div class="popUp-title">
-        <h2>ایجاد اتاق موقت</h2>
-        <span>اتاق موقت را فقط برای این جلسه ایجاد کنید</span>
-      </div>
-      <div class="temporary-room-form">
-        <form @submit.prevent="createTemporaryRoom">
-          <div class="form-group">
-            <label for="tempRoomName">نام اتاق</label>
-            <input
-              type="text"
-              id="tempRoomName"
-              v-model="newTempRoom.name"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="tempRoomImage">تصویر اتاق</label>
-            <input type="file" id="tempRoomImage" accept="image/*" @change="handleImageUpload" />
-          </div>
-          <div class="form-group">
-            <label for="tempRoomCapacity">ظرفیت</label>
-            <input v-model.number="newTempRoom.capacity" type="number" id="tempRoomCapacity" required />
-          </div>
-          <div class="form-group">
-            <label for="tempRoomType">نوع</label>
-            <input v-model="newTempRoom.type" id="tempRoomType" required />
-          </div>
-          <button type="submit" class="create-room">ایجاد اتاق</button>
-        </form>
+      <div v-else>
+        <span>هیچ اتاق موقتی یافت نشد.</span>
       </div>
       <div class="form-actions">
         <button type="button" class="cancel-button" @click="cancel">لغو</button>
@@ -346,72 +319,81 @@
 <script>
 import axios from 'axios';
 
+const API_BASE_URL = 'http://my.xroomapp.com:8000';
+const DEFAULT_IMAGE = 'https://via.placeholder.com/150';
+
 export default {
   name: 'RoomSelectionModal',
   props: {
-    isOpen: {
-      type: Boolean,
-      default: false,
-    },
+    isOpen: { type: Boolean, default: false },
   },
   data() {
     return {
       rooms: [],
       temporaryRooms: [],
       selectedRoom: null,
-      newTempRoom: {
-        name: '',
-        capacity: 0,
-        type: '',
-        image: null,
-      },
       error: null,
     };
   },
   created() {
     this.fetchSpaces();
+    this.fetchTemporaryRooms();
   },
   methods: {
     async fetchSpaces() {
       try {
         const token = localStorage.getItem('token');
-        if (!token) {
-          this.error = 'توکن احراز هویت پیدا نشد';
-          console.error('توکن احراز هویت پیدا نشد');
-          return;
-        }
+        if (!token) throw new Error('توکن احراز هویت پیدا نشد');
 
-        const response = await axios.get('http://my.xroomapp.com:8000/get_space', {
-          headers: {
-            Authorization: `Token ${token.trim()}`,
-          },
+        const response = await axios.get(`${API_BASE_URL}/get_space`, {
+          headers: { Authorization: `Token ${token.trim()}` },
         });
 
-        console.log('فضاها:', response.data.spaces);
-        this.rooms = response.data.spaces.map((space) => {
-          const imageUrl = space.assetBundleRoomId?.img
-            ? `http://my.xroomapp.com:8000${space.assetBundleRoomId.img}`
-            : 'https://via.placeholder.com/150';
-          return {
-            id: space.id,
-            image: imageUrl,
-            name: space.name,
-            capacity: space.capacity,
-            type: space.description || 'فضا',
-            isTemporary: false,
-          };
-        });
+        this.rooms = response.data.spaces.map((space) => ({
+          id: space.id,
+          image: space.assetBundleRoomId?.img
+            ? `${API_BASE_URL}${space.assetBundleRoomId.img}`
+            : DEFAULT_IMAGE,
+          name: space.name,
+          capacity: space.capacity,
+          type: space.description || 'فضا',
+          isTemporary: false,
+        }));
       } catch (error) {
-        console.error('خطا در دریافت فضاها:', error);
-        this.error = 'خطا در بارگذاری لیست اتاق‌ها';
-        if (error.response && error.response.status === 403) {
+        if (error.response?.status === 403) {
           alert('لطفاً دوباره وارد شوید');
           window.location.href = '/login';
         }
+        this.error = 'خطا در بارگذاری لیست اتاق‌ها';
+      }
+    },
+    async fetchTemporaryRooms() {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('توکن احراز هویت پیدا نشد');
+
+        const response = await axios.get(`${API_BASE_URL}/get_assigned_assetbundle_rooms`, {
+          headers: { Authorization: `Token ${token.trim()}` },
+        });
+
+        this.temporaryRooms = response.data.assetbundle_rooms.map((room) => ({
+          id: room.id,
+          image: room.img ? `${API_BASE_URL}${room.img}` : DEFAULT_IMAGE,
+          name: room.name,
+          capacity: room.maxPerson,
+          type: room.description || 'اتاق موقت',
+          isTemporary: true,
+        }));
+      } catch (error) {
+        if (error.response?.status === 403) {
+          alert('لطفاً دوباره وارد شوید');
+          window.location.href = '/login';
+        }
+        this.error = 'خطا در بارگذاری لیست اتاق‌های موقت';
       }
     },
     selectRoom(roomId) {
-      this.selectedRoom = roomId;
+      this.selectedRoom = this.selectedRoom === roomId ? null : roomId;
     },
     cancel() {
       this.$emit('close');
@@ -425,26 +407,12 @@ export default {
       const selectedRoomDetails = [...this.rooms, ...this.temporaryRooms].find(
         (room) => room.id === this.selectedRoom
       );
-      this.$emit('submit-room', selectedRoomDetails);
+      this.$emit('submit-room', {
+        ...selectedRoomDetails,
+        id: selectedRoomDetails.isTemporary ? 12 : selectedRoomDetails.id,
+        use_space: !selectedRoomDetails.isTemporary,
+      });
       this.selectedRoom = null;
-    },
-    handleImageUpload(event) {
-      const file = event.target.files[0];
-      if (file) {
-        this.newTempRoom.image = URL.createObjectURL(file);
-      }
-    },
-    createTemporaryRoom() {
-      const newRoom = {
-        id: this.rooms.length + this.temporaryRooms.length + 1,
-        image: this.newTempRoom.image || 'https://via.placeholder.com/150',
-        name: this.newTempRoom.name,
-        capacity: this.newTempRoom.capacity,
-        type: this.newTempRoom.type,
-        isTemporary: true,
-      };
-      this.temporaryRooms.push(newRoom);
-      this.newTempRoom = { name: '', capacity: 0, type: '', image: null };
     },
   },
 };

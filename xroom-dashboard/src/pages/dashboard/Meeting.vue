@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- Description -->
     <div class="section-description">
       <div class="section-title">مدیریت جلسات</div>
       <p class="title-description">
@@ -8,7 +7,6 @@
       </p>
     </div>
 
-    <!-- Meeting Section -->
     <div class="meeting-section">
       <div class="meeting-filters">
         <div class="search-section">
@@ -65,14 +63,13 @@
         </div>
       </div>
 
-      <!-- Meet Discover -->
       <div :class="filteredMeetings.length === 0 ? 'meet-discover' : 'meetings-container'">
         <span class="discover-result" v-if="filteredMeetings.length === 0">
           هیچ جلسه‌ای یافت نشد. با کلیک کردن، یک جلسه جدید ایجاد کنید
         </span>
         <div v-else class="meetings-list">
           <div v-for="meeting in filteredMeetings" :key="meeting.id" class="meeting-item">
-            <img :src="meeting.image" alt="Meeting Image" class="meeting-image" width="120px" height="120px" />
+            <img :src="meeting.image" alt="Meeting Image" class="meeting-image" width="120" height="120" />
             <div class="meeting-details" style="margin-right: 10px;">
               <h3 class="meet-title">{{ meeting.title }}</h3>
               <p class="meet-capacity">
@@ -120,7 +117,6 @@
       </div>
     </div>
 
-    <!-- Create Meeting Modal -->
     <CreateMeetingModal
       :is-open="showModal"
       @create-meeting="createNewMeeting"
@@ -133,11 +129,11 @@
 import CreateMeetingModal from '@/components/CreateMeetingModal.vue';
 import axios from 'axios';
 
+const API_BASE_URL = 'http://my.xroomapp.com:8000';
+
 export default {
-  name: 'DashboardPage',
-  components: {
-    CreateMeetingModal,
-  },
+  name: 'Meetings',
+  components: { CreateMeetingModal },
   data() {
     return {
       searchQuery: '',
@@ -179,15 +175,14 @@ export default {
     filterMeetings() {
       let filtered = this.meetings;
       if (this.searchQuery) {
-        filtered = filtered.filter(
-          (meeting) =>
-            meeting.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-            meeting.type.toLowerCase().includes(this.searchQuery.toLowerCase())
+        filtered = filtered.filter((meeting) =>
+          [meeting.title, meeting.type].some((field) =>
+            field.toLowerCase().includes(this.searchQuery.toLowerCase())
+          )
         );
       }
       if (this.activeFilter === 'future') {
-        const now = new Date();
-        filtered = filtered.filter((meeting) => new Date(meeting.date) > now);
+        filtered = filtered.filter((meeting) => new Date(meeting.date) > new Date());
       }
       this.filteredMeetings = filtered;
     },
@@ -197,58 +192,39 @@ export default {
     },
     async refreshToken() {
       try {
-        const response = await axios.post('http://my.xroomapp.com:8000/refresh_token', {
+        const response = await axios.post(`${API_BASE_URL}/refresh_token`, {
           refresh_token: localStorage.getItem('refresh_token'),
         });
         const newToken = response.data.access_token;
         localStorage.setItem('token', newToken);
         return newToken;
       } catch (error) {
-        console.error('خطا در refresh توکن:', error);
         alert('لطفاً دوباره وارد شوید');
         window.location.href = '/login';
-        return null;
+        throw error;
       }
     },
     async createNewMeeting(meetingData) {
       try {
-        console.log('داده‌های ارسالی به API:', JSON.stringify(meetingData, null, 2));
         let token = localStorage.getItem('token');
-        console.log('توکن اولیه:', token);
-        if (!token) {
-          throw new Error('توکن احراز هویت پیدا نشد');
-        }
+        if (!token) throw new Error('توکن احراز هویت پیدا نشد');
 
-        let response = await axios.post(
-          'http://my.xroomapp.com:8000/add_meeting',
-          meetingData,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Token ${token.trim()}`,
-            },
-          }
-        ).catch(async (error) => {
-          if (error.response && error.response.status === 403) {
-            console.log('تلاش برای refresh توکن...');
+        const config = {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Token ${token.trim()}`,
+          },
+        };
+
+        let response = await axios.post(`${API_BASE_URL}/add_meeting`, meetingData, config).catch(async (error) => {
+          if (error.response?.status === 403) {
             token = await this.refreshToken();
-            if (token) {
-              return await axios.post(
-                'http://my.xroomapp.com:8000/add_meeting',
-                meetingData,
-                {
-                  headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Token ${token.trim()}`,
-                  },
-                }
-              );
-            }
+            return axios.post(`${API_BASE_URL}/add_meeting`, meetingData, {
+              headers: { ...config.headers, Authorization: `Token ${token.trim()}` },
+            });
           }
           throw error;
         });
-
-        console.log('پاسخ API:', response.data);
 
         const newMeeting = {
           id: response.data.meeting.id,
@@ -264,37 +240,14 @@ export default {
         this.showModal = false;
         alert('جلسه با موفقیت ایجاد شد!');
       } catch (error) {
-        console.error('خطا در ارسال درخواست به API:', error);
-        if (error.response) {
-          console.error('جزئیات پاسخ سرور:', error.response.data);
-          alert(`خطایی در ایجاد جلسه رخ داد: ${error.response.data.message || error.message}`);
-        } else {
-          alert(`خطایی در ایجاد جلسه رخ داد: ${error.message}`);
-        }
+        alert(`خطایی در ایجاد جلسه رخ داد: ${error.response?.data?.message || error.message}`);
       }
     },
   },
 };
 </script>
 
-
-
 <style scoped>
-/*     .dashboard-page {
-        margin-right: 360px;
-        padding: 20px;
-        direction: rtl;
-        font-family: IRANSansXFaNum, sans-serif;
-    }
-    .content {
-        background-color: #f8f9fa;
-        border-radius: 20px;
-        padding: 35px 80px;
-        display: flex;
-        flex-direction: column;
-        gap: 32px;
-    }
- */
 
 .section-title {
     font-size: 20px;

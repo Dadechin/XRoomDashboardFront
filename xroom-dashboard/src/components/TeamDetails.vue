@@ -1,9 +1,10 @@
 <template>
   <div class="tab-content">
+    <!-- Team Logo Section -->
     <div class="team-logo">
       <div class="card-title">
         <h2>لوگوی تیم</h2>
-        <p>این لوگو در اتاق‌های شما استفاده خواهد شد. توصیه می‌کنیم از یک تصویر شفاف با نسبت تصویر 2:1 استفاده کنید.</p>
+        <p>این لوگو در اتاق‌های شما نمایش داده می‌شود. توصیه می‌شود از تصویر شفاف با نسبت 2:1 استفاده کنید.</p>
       </div>
       <div class="logo-info">
         <img :src="teamLogo || require('@/assets/img/team-logo.jpg')" alt="team logo" />
@@ -16,34 +17,27 @@
               viewBox="0 0 16 16"
               fill="none"
             >
-              <g clip-path="url(#clip0_312_7133)">
-                <path
-                  d="M2.66602 11.3333V12.6666C2.66602 13.0202 2.80649 13.3593 3.05654 13.6094C3.30659 13.8594 3.64573 13.9999 3.99935 13.9999H11.9993C12.353 13.9999 12.6921 13.8594 12.9422 13.6094C13.1922 13.3593 13.3327 13.0202 13.3327 12.6666V11.3333"
-                  stroke="white"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M4.66602 6.00008L7.99935 2.66675L11.3327 6.00008"
-                  stroke="white"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M8 2.66675V10.6667"
-                  stroke="white"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </g>
-              <defs>
-                <clipPath id="clip0_312_7133">
-                  <rect width="16" height="16" fill="white" />
-                </clipPath>
-              </defs>
+              <path
+                d="M2.66602 11.3333V12.6666C2.66602 13.0202 2.80649 13.3593 3.05654 13.6094C3.30659 13.8594 3.64573 13.9999 3.99935 13.9999H11.9993C12.353 13.9999 12.6921 13.8594 12.9422 13.6094C13.1922 13.3593 13.3327 13.0202 13.3327 12.6666V11.3333"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M4.66602 6.00008L7.99935 2.66675L11.3327 6.00008"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M8 2.66675V10.6667"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
             </svg>
           </span>
           <span>آپلود</span>
@@ -60,7 +54,7 @@
       <div class="logo-sample">
         <div class="logo-sample-title">
           <h2>نمونه</h2>
-          <span>به این ترتیب لوگوی تیم شما در اتاق‌های شما به نظر می‌رسد.</span>
+          <span>نمایش لوگوی تیم شما در اتاق‌ها به این شکل خواهد بود.</span>
         </div>
         <div class="sample-logos">
           <img
@@ -72,6 +66,8 @@
         </div>
       </div>
     </div>
+
+    <!-- Team Info Section -->
     <div class="team-info">
       <div class="card-title">
         <h2>جزئیات تیم</h2>
@@ -85,15 +81,7 @@
             />
           </div>
           <div class="form-group">
-            <label for="company_name">نام شرکت</label>
-            <input
-              id="company_name"
-              type="text"
-              v-model="form.companyName"
-            />
-          </div>
-          <div class="form-group">
-            <label for="type_activity">نوع فعالیت شرکت</label>
+            <label for="type_activity">نوع فعالیت</label>
             <input
               id="type_activity"
               type="text"
@@ -116,7 +104,6 @@ export default {
     return {
       form: {
         teamName: '',
-        companyName: '',
         activityType: '',
         teamId: null,
       },
@@ -131,92 +118,74 @@ export default {
     };
   },
   created() {
-    // دریافت اطلاعات تیم در زمان ایجاد کامپوننت
     this.fetchTeamData();
   },
   methods: {
-    /* دریافت اطلاعات تیم از API */
     async fetchTeamData() {
       try {
         const token = localStorage.getItem('token');
+        if (!token) throw new Error('توکن احراز هویت یافت نشد.');
         const response = await axios.get(`${this.baseUrl}/get_team`, {
-          headers: {
-            Authorization: `Token ${token}`,
-            'Content-Type': 'application/json',
-          },
+          headers: { Authorization: `Token ${token}`, 'Content-Type': 'application/json' },
         });
         const team = response.data.teams[0];
         if (team) {
           this.form.teamName = team.name || '';
           this.form.activityType = team.description || '';
           this.form.teamId = team.id;
+          this.teamLogo = team.logo ? `${this.baseUrl}${team.logo}` : null;
         } else {
           alert('هیچ اطلاعاتی برای تیم یافت نشد.');
         }
-      } catch (error) {
-        alert('خطا در بارگذاری اطلاعات تیم. لطفاً دوباره تلاش کنید.');
+      } catch {
+        alert('خطا در بارگذاری اطلاعات تیم.');
       }
     },
-
     handleLogoUpload(event) {
-      const file = event.target.files[0];
-      if (file) {
-        this.teamLogo = URL.createObjectURL(file);
-        this.uploadedLogoFile = file;
+      this.uploadedLogoFile = event.target.files[0];
+      if (this.uploadedLogoFile) {
+        this.teamLogo = URL.createObjectURL(this.uploadedLogoFile);
       }
     },
-
-    /* ارسال فرم برای به‌روزرسانی اطلاعات تیم  */
     async submitForm() {
-      const hasFormData = this.form.teamName || this.form.companyName || this.form.activityType;
-      const hasLogo = !!this.uploadedLogoFile;
-
-      if (!hasFormData && !hasLogo) {
-        alert('لطفاً حداقل یک فیلد یا لوگو را وارد کنید.');
+      if (!this.form.teamName && !this.form.activityType && !this.uploadedLogoFile) {
+        alert('لطفاً حداقل یک فیلد یا لوگو وارد کنید.');
         return;
       }
-
-      const formData = new FormData();
-      if (this.form.teamName) formData.append('name', this.form.teamName);
-      if (this.form.companyName) formData.append('company_name', this.form.companyName);
-      if (this.form.activityType) formData.append('description', this.form.activityType);
-      if (this.uploadedLogoFile) formData.append('logo', this.uploadedLogoFile);
-
       try {
+        const formData = new FormData();
+        if (this.form.teamName) formData.append('name', this.form.teamName);
+        if (this.form.activityType) formData.append('description', this.form.activityType);
+        if (this.uploadedLogoFile) formData.append('logo', this.uploadedLogoFile);
         const token = localStorage.getItem('token');
+        if (!token) throw new Error('توکن احراز هویت یافت نشد.');
         await axios.patch(`${this.baseUrl}/update_team/${this.form.teamId}/`, formData, {
-          headers: {
-            Authorization: `Token ${token}`,
-            'Content-Type': 'multipart/form-data',
-          },
+          headers: { Authorization: `Token ${token}`, 'Content-Type': 'multipart/form-data' },
         });
-        this.$emit('update:teamData', {
+        this.$emit('update:team-data', {
           teamName: this.form.teamName,
-          companyName: this.form.companyName,
           activityType: this.form.activityType,
           teamLogo: this.uploadedLogoFile,
         });
-        alert('اطلاعات تیم با موفقیت به‌روزرسانی شد');
-
-        // ریست فرم و لوگو
-        this.form.teamName = '';
-        this.form.companyName = '';
-        this.form.activityType = '';
-        this.teamLogo = null;
-        this.uploadedLogoFile = null;
-        const fileInput = this.$refs.fileUpload;
-        if (fileInput) {
-          fileInput.value = '';
-        }
+        alert('اطلاعات تیم با موفقیت به‌روزرسانی شد.');
+        this.resetForm();
         await this.fetchTeamData();
-      } catch (error) {
-        alert('خطا در به‌روزرسانی اطلاعات تیم. لطفاً دوباره تلاش کنید.');
+      } catch {
+        alert('خطا در به‌روزرسانی اطلاعات تیم.');
+      }
+    },
+    resetForm() {
+      this.form.teamName = '';
+      this.form.activityType = '';
+      this.teamLogo = null;
+      this.uploadedLogoFile = null;
+      if (this.$refs.fileUpload) {
+        this.$refs.fileUpload.value = '';
       }
     },
   },
 };
 </script>
-
 
 <style scoped>
 .tab-content {
