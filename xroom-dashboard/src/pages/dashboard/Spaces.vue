@@ -21,10 +21,16 @@
       <!-- Spaces -->
       <div v-if="filteredSpaces.length > 0 " style="z-index: 0;">
         <swiper
-          :slidesPerView="3.6"
-          :spaceBetween="30"
+          :slidesPerView="1.7"
+          :spaceBetween="20"
+          :freeMode="true"
           :pagination="{ clickable: false }"
           :modules="modules"
+          :breakpoints="{
+            768: { slidesPerView: 3.3, spaceBetween: 15 },
+            1024: { slidesPerView: 2.8, spaceBetween: 15 },
+            1280: { slidesPerView: 4.1, spaceBetween: 25 },
+          }"
           class="mySwiper"
         >
           <swiper-slide v-for="(space, index) in filteredSpaces" :key="index" class="card">
@@ -64,7 +70,7 @@
 import CreateSpaceModal from '@/components/CreateSpaceModal.vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/css';
-import { Pagination } from 'swiper/modules';
+import { FreeMode, Pagination } from 'swiper/modules';
 import axios from 'axios';
 
 export default {
@@ -76,7 +82,7 @@ export default {
   },
   data() {
     return {
-      modules: [Pagination],
+      modules: [FreeMode, Pagination],
       isCreateSpaceModalVisible: false,
       sharingFilters: [
         { label: 'همه', value: 'all' },
@@ -162,47 +168,30 @@ export default {
 };
 </script>
 
-<style scoped>
-/* Add your CSS styling here */
-</style>
 
-<style scoped>
-/* .dashboard-page {
-  margin-right: 360px;
-  padding: 20px;
-  direction: rtl;
-  font-family: IRANSansXFaNum, sans-serif;
-}
-.content {
-  background-color: #f8f9fa;
-  border-radius: 20px;
-  padding: 35px 80px;
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-} */
+<style>
+/* Base styles applied across all screen sizes */
 .section-title {
-    font-size: 20px;
-    font-weight: 600;
-    color: #2d3748;
-    margin-top: 20px;
-    margin-bottom: 10px;
+  font-weight: 700;
+  color: #101010;
+  font-size: 19px;
+  line-height: 26.6px;
 }
 
 .section-description {
-    margin-bottom: 3rem;
-    margin-top: 1rem;
-    font-size: 20px;
-    font-weight: 600;
-    color: #2d3748;
   margin: 1rem 0 3rem;
+  font-size: 20px;
+  font-weight: 600;
+  color: #2d3748;
 }
 
 .section-description p {
-    line-height: 190%;
-    color: #4F5A69;
-    font-size: 16px;
-    margin-top: 1rem;
+  line-height: 190%;
+  color: #4f5a69;
+  font-size: 15px;
+  margin-top: 1rem;
+  font-weight: 500;
+  text-align: justify;
 }
 
 .filter-section {
@@ -255,42 +244,37 @@ export default {
 
 .add-space {
   display: block;
-  padding: 12px 24px 12px 24px;
   background-color: #3A57E8;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 500;
   color: #FFFFFF;
+  border-radius: 8px;
   border: none;
   cursor: pointer;
   width: max-content;
   margin: auto;
+  font-weight: 500;
 }
 
 .mySwiper {
-  margin-top: 2.5rem;
+  margin: 2.5rem 0;
 }
 
 .card {
-  max-width: 250px !important;
-  width: 100% !important;
-  height: 335px;
+  height: auto;
   border: 1px solid #B8C0CB;
   border-radius: 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   cursor: pointer;
+  padding: 4px;
 }
 
 .card img {
-  max-width: 235px;
   width: 100%;
-  max-height: 205px;
-  height: 100%;
+  height: 10rem;
   border-radius: 14px;
   border: none;
-  margin-top: 0.4rem;
+  object-fit: cover;
 }
 
 .card-texts {
@@ -301,16 +285,19 @@ export default {
   gap: 1rem;
 }
 
-.space-name {
-  font-size: 17px;
+.card-texts h2 {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow-x: clip;
+  width: 170px;
   font-weight: 600;
-  color: #444D5A;
+  color: #101010;
 }
 
 .space-capacity {
   display: flex;
   align-items: center;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
   color: #718096;
 }
@@ -318,9 +305,13 @@ export default {
 .space-type {
   display: flex;
   align-items: center;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
   color: #3A57E8;
+  text-overflow: ellipsis;
+  overflow-x: clip;
+  white-space: nowrap;
+  width: 170px;
 }
 
 .no-spaces-message {
@@ -331,4 +322,92 @@ export default {
   margin-bottom: 12rem;
   text-align: center;
 }
+
+/* Media Queries for responsive adjustments */
+@media (max-width: 600px) {
+  .card {
+    max-width: 250px;
+    height: 17.5rem;
+  }
+
+  .card-texts h2 {
+    font-size: 16px;
+  }
+
+  .add-space {
+    padding : 8px 18px ;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 1024px) {
+  .card-texts h2 {
+    font-size: 17px;
+    font-weight: 500;
+  }
+
+  .card {
+    height: 17.5rem;
+  }
+
+  .add-space {
+    padding : 8px 18px ;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1280px) {
+  .section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #101010;
+    margin: 20px 0 10px;
+  }
+
+  .add-space {
+    padding: 10px 20px;
+    font-size: 15px;
+  }
+
+  .card-texts h2 {
+    font-size: 18px;
+  }
+
+  .card {
+    height: 17.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .section-title {
+    font-size: 21px;
+  }
+
+  .section-description p {
+    font-size: 17.5px;
+  }
+
+  .add-space {
+    padding: 12px 24px;
+    font-size: 16px;
+  }
+
+  .card {
+    max-width: 250px;
+    height: 20rem;
+  }
+
+  .card img {
+    width: 100%;
+    height: 12rem;
+  }
+
+  .card-texts h2 {
+    font-size: 21px;
+  }
+
+  .space-capacity,
+  .space-type {
+    font-size: 16px;
+  }
+}
+
 </style>

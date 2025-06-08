@@ -111,6 +111,11 @@
           :space-between="10"
           :loop="true"
           :pagination="{ clickable: true }"
+          :breakpoints="{
+            768: { slidesPerView: 3.3, spaceBetween: 15 },
+            1024: { slidesPerView: 2.1, spaceBetween: 15 },
+            1280: { slidesPerView: 4.1, spaceBetween: 25 },
+          }"
           :modules="modules"
           class="swiper-meetings-list"
         >
@@ -219,6 +224,14 @@ export default {
           image: require('@/assets/img/img.jpg'),
           type: 'فنی',
           maxCapacity: 12,
+        },
+        {
+          id: 4,
+          title: 'جلسه تیم طرای',
+          date: '2025-06-01T09:00:00',
+          image: require('@/assets/img/img.jpg'),
+          type: 'طراحی',
+          maxCapacity: 24,
         },
       ],
       filteredMeetings: [],
@@ -345,6 +358,7 @@ export default {
   margin-top: 1rem;
   padding: 1px;
   padding-left: 0.7px;
+  padding-top: 1.4px;
   border-radius: 10px;
   background: linear-gradient(to right, #001940, #4364f7);
   position: relative;
@@ -403,6 +417,7 @@ export default {
   font-size: 15px;
   font-weight: 500;
   color: #101010;
+  line-height: 190%;
 }
 
 .create-meet {
@@ -446,6 +461,10 @@ export default {
 .meet-title {
   font-weight: 500;
   color: #101010;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow-x: clip;
+  width: 90px;
 }
 
 .meet-capacity {
@@ -475,6 +494,10 @@ export default {
 
 .swiper-meetings-list {
   display: none;
+}
+
+.filter-section {
+  padding : 0;
 }
 
 /* Mobile devices (max-width: 600px) */
@@ -593,13 +616,18 @@ export default {
   }
 
   .filter-section {
-    max-width: 15%;
+    max-width: 20%;
     width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 0;
   }
 
   .filter-buttons {
     margin-top: 1rem;
+    width: 100%;
     display: flex;
+    justify-content: space-between;
   }
 
   .active-filter {
@@ -625,7 +653,7 @@ export default {
   .meetings-list {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 0.5rem;
+    gap: 1rem;
     margin-bottom: 2rem;
   }
 
@@ -731,12 +759,18 @@ export default {
   }
 
   .filter-section {
-    max-width: 15%;
+    max-width: 20%;
     width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 0;
   }
 
   .filter-buttons {
     margin-top: 1rem;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
   }
 
   .active-filter {
@@ -754,20 +788,36 @@ export default {
   }
 
   .create-meet {
-    padding: 12px 24px;
-    font-size: 16px;
+    white-space: nowrap;
+    padding: 8px 20px;
+    font-size: 14px;
+    width: -moz-max-content;
     width: max-content;
   }
 
   .meetings-list {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
+    display: flex;
     margin-bottom: 2rem;
   }
 
+  .swiper-meetings-list {
+    width: 100%;
+    margin-bottom: 1.5rem;
+    display: block !important;
+  }
+
+  .swiper-meeting-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    border: 1px solid #b8c0cb;
+    border-radius: 12px;
+    padding: 4px;
+    text-align: right;
+  }
+
   .meeting-item {
-    padding: 8px;
+    display: none; 
   }
 
   .meet-title {
@@ -796,6 +846,9 @@ export default {
   .filter-section {
     max-width: 15%;
     width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 0;
   }
 
   .filter-buttons {

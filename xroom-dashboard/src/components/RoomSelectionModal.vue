@@ -666,6 +666,7 @@ export default {
 
 .room-image {
   border-radius: 10px;
+  object-fit :cover;
 }
 
 </style>
