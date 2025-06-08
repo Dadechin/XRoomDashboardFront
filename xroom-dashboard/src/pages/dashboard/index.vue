@@ -795,5 +795,13 @@ export default {
   .white-button {
     padding: 8px 16px;
   }
+
+  .section-title {
+    font-size: 21px;
+  }
+
+  .section-description {
+    font-size: 17.5px;
+  }
 }
 </style>

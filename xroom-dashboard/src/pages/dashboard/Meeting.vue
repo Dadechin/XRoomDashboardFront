@@ -48,16 +48,16 @@
           <span style="font-size: 17px; font-weight: 600;">فیلتر</span>
           <div class="filter-buttons">
             <button
-              :class="{ 'active-filter': activeFilter === 'future', 'disable-filter': activeFilter !== 'future' }"
-              @click="setFilter('future')"
-            >
-              آینده
-            </button>
-            <button
               :class="{ 'active-filter': activeFilter === 'all', 'disable-filter': activeFilter !== 'all' }"
               @click="setFilter('all')"
             >
               همه
+            </button>
+            <button
+              :class="{ 'active-filter': activeFilter === 'future', 'disable-filter': activeFilter !== 'future' }"
+              @click="setFilter('future')"
+            >
+              آینده
             </button>
           </div>
         </div>
@@ -106,7 +106,55 @@
               </p>
             </div>
           </div>
+          <swiper
+          :slides-per-view="1.4"
+          :space-between="10"
+          :loop="true"
+          :pagination="{ clickable: true }"
+          :modules="modules"
+          class="swiper-meetings-list"
+        >
+          <swiper-slide  v-for="meeting in filteredMeetings" :key="meeting.id" class="swiper-meeting-item">
+            <img :src="meeting.image" alt="Meeting Image" class="meeting-image" width="120" height="120" />
+            <div class="meeting-details" style="margin-right: 10px;">
+              <h3 class="meet-title">{{ meeting.title }}</h3>
+              <p class="meet-capacity">
+                <span style="margin-left: 4px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
+                    <g clip-path="url(#clip0_622_1334)">
+                      <path d="M3.33203 5.16667C3.33203 5.87391 3.61298 6.55219 4.11308 7.05228C4.61318 7.55238 5.29145 7.83333 5.9987 7.83333C6.70594 7.83333 7.38422 7.55238 7.88432 7.05228C8.38441 6.55219 8.66536 5.87391 8.66536 5.16667C8.66536 4.45942 8.38441 3.78115 7.88432 3.28105C7.38422 2.78095 6.70594 2.5 5.9987 2.5C5.29145 2.5 4.61318 2.78095 4.11308 3.28105C3.61298 3.78115 3.33203 4.45942 3.33203 5.16667Z" stroke="#718096" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M2 14.5V13.1667C2 12.4594 2.28095 11.7811 2.78105 11.281C3.28115 10.781 3.95942 10.5 4.66667 10.5H7.33333C8.04058 10.5 8.71885 10.781 9.21895 11.281C9.71905 11.7811 10 12.4594 10 13.1667V14.5" stroke="#718096" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M10.668 2.58667C11.2416 2.73354 11.75 3.06714 12.1131 3.53488C12.4761 4.00262 12.6732 5.17 12.6732 5.17C12.6732 5.76212 12.4761 6.33739 12.1131 6.80513C11.75 7.27287 11.2416 7.60647 10.668 7.75334" stroke="#718096" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M14 14.5V13.1666C13.9966 12.5781 13.7986 12.0072 13.4368 11.5429C13.0751 11.0786 12.5699 10.7471 12 10.6" stroke="#718096" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </g>
+                    <defs>
+                      <clipPath id="clip0_622_1334">
+                        <rect width="16" height="16" fill="white" transform="translate(0 0.5)"/>
+                      </clipPath>
+                    </defs>
+                  </svg>
+                </span>
+                حداکثر: {{ meeting.maxCapacity }} کاربر
+              </p>
+              <p class="meet-type">
+                <span style="margin-left: 4px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
+                    <path d="M4 15.1667V3.16671C4 2.81309 4.14048 2.47395 4.39052 2.2239C4.64057 1.97385 4.97971 1.83337 5.33333 1.83337H10.6667C11.0203 1.83337 11.3594 1.97385 11.6095 2.2239C11.8595 2.47395 12 2.81309 12 3.16671V15.1667H4Z" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M3.9987 8.5H2.66536C2.31174 8.5 1.9726 8.64048 1.72256 8.89052C1.47251 9.14057 1.33203 9.47971 1.33203 9.83333V13.8333C1.33203 14.187 1.47251 14.5261 1.72256 14.7761C1.9726 15.0262 2.31174 15.1667 2.66536 15.1667H3.9987" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 6.5H13.3333C13.687 6.5 14.0261 6.64048 14.2761 6.89052C14.5262 7.14057 14.6667 7.47971 14.6667 7.83333V13.8333C14.6667 14.187 14.5262 14.5261 14.2761 14.7761C14.0261 15.0262 13.687 15.1667 13.3333 15.1667H12" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M6.66797 4.5H9.33464" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M6.66797 7.16663H9.33464" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M6.66797 9.83337H9.33464" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M6.66797 12.5H9.33464" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+                {{ meeting.type }}
+              </p>
+            </div>
+          </swiper-slide>
+        </swiper>
         </div>
+
         <button
           class="create-meet"
           @click="showModal = true"
@@ -127,18 +175,26 @@
 
 <script>
 import CreateMeetingModal from '@/components/CreateMeetingModal.vue';
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import 'swiper/css';
+import { Pagination } from 'swiper/modules';
 import axios from 'axios';
 
 const API_BASE_URL = 'http://my.xroomapp.com:8000';
 
 export default {
   name: 'Meetings',
-  components: { CreateMeetingModal },
+  components: { 
+    Swiper,
+    SwiperSlide,
+    CreateMeetingModal
+   },
   data() {
     return {
       searchQuery: '',
       activeFilter: 'future',
       showModal: false,
+      modules: [Pagination],
       meetings: [
         {
           id: 1,
@@ -249,207 +305,550 @@ export default {
 
 <style scoped>
 
+/* Base styles for all screen sizes */
 .section-title {
-    font-size: 20px;
-    font-weight: 600;
-    color: #2d3748;
-    margin-top: 20px;
-    margin-bottom: 10px;
+  font-weight: 700;
+  color: #101010;
+  font-size: 19px;
+  line-height: 26.6px;
 }
 
 .section-description {
-    margin-bottom: 3rem;
-    margin-top: 1rem;
-    font-size: 20px;
-    font-weight: 600;
-    color: #2d3748;
   margin: 1rem 0 3rem;
+  font-size: 20px;
+  font-weight: 600;
+  color: #2d3748;
 }
 
 .section-description p {
-    line-height: 190%;
-    color: #4F5A69;
-    font-size: 16px;
-    margin-top: 1rem;
+  line-height: 190%;
+  color: #4f5a69;
+  font-size: 15px;
+  margin-top: 1rem;
+  font-weight: 500;
+  text-align: justify;
 }
 
-    .meeting-section {
-        margin-top: 1rem;
-        border-radius: 10px;
-    }
+.meeting-section {
+  margin-top: 1rem;
+  border-radius: 10px;
+}
 
-    .meeting-filters {
-        display: flex;
-        align-items: center;
-        margin-bottom: 2.5rem;
-        padding: 24px 16px;
-        border-radius: 10px;
-        background-color: #FFFFFF;
-    }
+.meeting-filters {
+  margin-bottom: 2.5rem;
+  padding: 24px 16px;
+  border-radius: 10px;
+  background-color: #ffffff;
+}
 
-    .search-section {
-        max-width: 85%;
-        width: 100%;
-        margin-left: 1.5rem;
-    }
+.search-wrapper {
+  margin-top: 1rem;
+  padding: 1px;
+  padding-left: 0.7px;
+  border-radius: 10px;
+  background: linear-gradient(to right, #001940, #4364f7);
+  position: relative;
+}
 
-    .filter-section {
-        max-width: 15%;
-        width: 100%;
-    }
+.search-input {
+  width: 99.9%;
+  height: 43px;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  box-sizing: border-box;
+  background-color: white;
+  display: block;
+  margin: 0 auto;
+}
 
-    .search-wrapper {
-        margin-top: 1rem;
-        padding: 1px;
-        padding-left: 0.7px;
-        border-radius: 10px;
-        background: linear-gradient(to right, #001940, #4364F7);
-        position: relative;
-    }
+.search-input::placeholder {
+  color: #7f8da1;
+  font-size: 14px;
+  font-weight: 500;
+}
 
-    .search-input {
-        width: 99.9%;
-        height: 43px;
-        padding: 10px;
-        border: none;
-        border-radius: 8px;
-        font-size: 16px;
-        box-sizing: border-box;
-        background-color: white;
-        display: block;
-        margin: 0 auto;
-    }
+.search-input:focus {
+  outline: none;
+}
 
-    .search-input::placeholder {
-        color: #7F8DA1;
-        font-size: 14px;
-        font-weight: 500;
-    }
+.search-button {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #555;
+  height: -webkit-fill-available;
+}
 
-    .search-input:focus {
-        outline: none;
-    }
+.meet-discover {
+  margin-top: 3rem;
+  padding-bottom: 10rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-    .search-button {
-        position: absolute;
-        top: 50%;
-        left: 10px;
-        transform: translateY(-50%);
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-size: 18px;
-        color: #555;
-        height: -webkit-fill-available;
-    }
+.meetings-container {
+  display: flex;
+  flex-direction: column;
+}
 
-    .filter-buttons {
-        margin-top: 1rem;
-    }
+.discover-result {
+  font-size: 15px;
+  font-weight: 500;
+  color: #101010;
+}
 
-    .active-filter {
-        background-color: #3A57E8;
-        color: #FFFFFF;
-        font-size: 15px;
-        font-weight: 500;
-        border-radius: 8px;
-        border: none;
-        padding: 7px 12px;
-        cursor: pointer;
-        margin-left: 1rem;
-    }
+.create-meet {
+  background-color: #3a57e8;
+  border-radius: 8px;
+  font-weight: 500;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+}
 
-    .disable-filter {
-        color: #3A57E8;
-        background-color: #FFFFFF;
-        font-size: 15px;
-        font-weight: 500;
-        border-radius: 8px;
-        border: none;
-        padding: 7px 10px;
-        cursor: pointer;
-        margin-left: 1rem;
-    }
+.active-filter {
+  background-color: #3a57e8;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
 
-    .meet-discover {
-        margin-top: 3rem;
-        padding-bottom: 10rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+.disable-filter {
+  color: #3a57e8;
+  background-color: #ffffff;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
 
-    .meetings-container {
-        display: flex;
-        flex-direction: column;
+.meeting-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  border: 1px solid #b8c0cb;
+  border-radius: 12px;
+  text-align: right;
+}
 
-    }
+.meet-title {
+  font-weight: 500;
+  color: #101010;
+}
 
+.meet-capacity {
+  font-weight: 500;
+  color: #718096;
+  margin: 1.2rem 0;
+  display: flex;
+  align-items: center;
+}
 
-    .discover-result {
-        font-size: 15px;
-        font-weight: 500;
-        color: #101010;
-        margin-left: 5rem;
-    }
+.meet-capacity svg,
+.meet-type svg {
+  height: 14px !important;
+  width: 14px !important;
+}
 
-    .create-meet {
-        padding: 12px 24px 12px 24px;
-        background-color: #3A57E8;
-        border-radius: 8px;
-        font-size: 16px;
-        font-weight: 500;
-        color: #FFFFFF;
-        border: none;
-        cursor: pointer;
-        width: max-content;
-      
-    }
+.meet-type {
+  font-weight: 500;
+  color: #3a57e8;
+  display: flex;
+  align-items: center;
+}
 
-    .meetings-list {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 2rem;
-        margin-bottom: 2rem;
-    }
+.meeting-image {
+  border-radius: 10px;
+}
 
-    .meeting-item {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        border: 1px solid #B8C0CB;
-        border-radius: 12px;
-        padding: 8px;
-        text-align: right;
-    }
+.swiper-meetings-list {
+  display: none;
+}
 
-    .meet-title {
-        font-size: 16px;
-        font-weight: 500;
-        color: #101010;
-    }
+/* Mobile devices (max-width: 600px) */
+@media (max-width: 600px) {
+  .meeting-filters {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
 
-    .meet-capacity {
-        font-size: 14px;
-        font-weight: 500;
-        color: #718096;
-        margin: 1.2rem 0;
-        display: flex;
-        align-items: center;
-    }
+  .search-section,
+  .filter-section {
+    max-width: 100%;
+    width: 100%;
+  }
 
-    .meet-type {
-        font-size: 14px;
-        font-weight: 500;
-        color: #3A57E8;
-        display: flex;
-        align-items: center;
-    }
+  .search-section {
+    margin-left: 1.5rem;
+  }
 
-    .meeting-image {
-      border-radius: 10px;
-    }
+  .filter-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1rem;
+  }
 
+  .filter-buttons {
+    margin-top: 0;
+    width: 40%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 
+  .active-filter {
+    font-size: 14px;
+    padding: 5px 15px;
+    border-radius: 5px;
+  }
+
+  .disable-filter {
+    padding: 0;
+  }
+
+  .meet-discover {
+    flex-direction: column;
+  }
+
+  .discover-result {
+    margin: 0 auto 1.5rem;
+    text-align: center;
+    max-width: 70%;
+  }
+
+  .create-meet {
+    padding: 7px 16px;
+    font-size: 15px;
+  }
+
+  .meetings-container {
+    padding-bottom: 2rem;
+  }
+
+  .swiper-meetings-list {
+    width: 100%;
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+
+  .meeting-item {
+    display: none;
+  }
+
+  .swiper-meeting-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    border: 1px solid #b8c0cb;
+    border-radius: 12px;
+    padding: 4px;
+    text-align: right;
+  }
+
+  .meet-title {
+    font-size: 15px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow-x: clip;
+    width: 95px;
+    text-align: justify;
+  }
+
+  .meet-capacity,
+  .meet-type {
+    font-size: 12px;
+  }
+
+  .meeting-image {
+    height: 7rem;
+    object-fit: cover;
+  }
+}
+
+/* Small tablets (min-width: 600px and max-width: 780px) */
+@media (min-width: 600px) and (max-width: 780px) {
+  .meeting-filters {
+    display: flex;
+    align-items: center;
+  }
+
+  .search-section {
+    max-width: 85%;
+    width: 100%;
+    margin-left: 1.5rem;
+  }
+
+  .filter-section {
+    max-width: 15%;
+    width: 100%;
+  }
+
+  .filter-buttons {
+    margin-top: 1rem;
+    display: flex;
+  }
+
+  .active-filter {
+    padding: 7px 12px;
+    margin-left: 1rem;
+  }
+
+  .disable-filter {
+    padding: 7px 10px;
+    margin-left: 1rem;
+  }
+
+  .discover-result {
+    margin-left: 5rem;
+  }
+
+  .create-meet {
+    padding: 8px 18px;
+    font-size: 16px;
+    width: max-content;
+  }
+
+  .meetings-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .meeting-item {
+    padding: 4px;
+  }
+
+  .meet-title {
+    font-size: 15px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow-x: clip;
+    width: 90px;
+    text-align: justify;
+  }
+
+  .meet-capacity,
+  .meet-type {
+    font-size: 12px;
+  }
+
+  .meeting-image {
+    height: 7rem;
+    width: 7.5rem;
+    object-fit: cover;
+  }
+}
+
+/* Tablets (min-width: 780px and max-width: 1024px) */
+@media (min-width: 780px) and (max-width: 1024px) {
+  .meeting-filters {
+    display: flex;
+    align-items: center;
+  }
+
+  .search-section {
+    max-width: 85%;
+    width: 100%;
+    margin-left: 1.5rem;
+  }
+
+  .filter-section {
+    max-width: 15%;
+    width: 100%;
+  }
+
+  .filter-buttons {
+    margin-top: 1rem;
+  }
+
+  .active-filter {
+    padding: 7px 12px;
+    margin-left: 1rem;
+  }
+
+  .disable-filter {
+    padding: 7px 10px;
+    margin-left: 1rem;
+  }
+
+  .discover-result {
+    margin-left: 5rem;
+  }
+
+  .create-meet {
+    padding: 12px 24px;
+    font-size: 16px;
+    width: max-content;
+  }
+
+  .meetings-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .meeting-item {
+    padding: 8px;
+  }
+
+  .meet-title {
+    font-size: 16px;
+  }
+
+  .meet-capacity,
+  .meet-type {
+    font-size: 14px;
+  }
+}
+
+/* Laptops (min-width: 1024px and max-width: 1280px) */
+@media (min-width: 1024px) and (max-width: 1280px) {
+  .meeting-filters {
+    display: flex;
+    align-items: center;
+  }
+
+  .search-section {
+    max-width: 85%;
+    width: 100%;
+    margin-left: 1.5rem;
+  }
+
+  .filter-section {
+    max-width: 15%;
+    width: 100%;
+  }
+
+  .filter-buttons {
+    margin-top: 1rem;
+  }
+
+  .active-filter {
+    padding: 7px 12px;
+    margin-left: 1rem;
+  }
+
+  .disable-filter {
+    padding: 7px 10px;
+    margin-left: 1rem;
+  }
+
+  .discover-result {
+    margin-left: 5rem;
+  }
+
+  .create-meet {
+    padding: 12px 24px;
+    font-size: 16px;
+    width: max-content;
+  }
+
+  .meetings-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .meeting-item {
+    padding: 8px;
+  }
+
+  .meet-title {
+    font-size: 16px;
+  }
+
+  .meet-capacity,
+  .meet-type {
+    font-size: 14px;
+  }
+}
+
+/* Desktops (min-width: 1280px) */
+@media (min-width: 1280px) {
+  .meeting-filters {
+    display: flex;
+    align-items: center;
+  }
+
+  .search-section {
+    max-width: 85%;
+    width: 100%;
+    margin-left: 1.5rem;
+  }
+
+  .filter-section {
+    max-width: 15%;
+    width: 100%;
+  }
+
+  .filter-buttons {
+    margin-top: 1rem;
+  }
+
+  .active-filter {
+    padding: 7px 12px;
+    margin-left: 1rem;
+  }
+
+  .disable-filter {
+    padding: 7px 10px;
+    margin-left: 1rem;
+  }
+
+  .discover-result {
+    margin-left: 5rem;
+  }
+
+  .create-meet {
+    padding: 12px 24px;
+    font-size: 16px;
+    width: max-content;
+  }
+
+  .meetings-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .meeting-item {
+    padding: 8px;
+  }
+
+  .meet-title {
+    font-size: 16px;
+  }
+
+  .meet-capacity,
+  .meet-type {
+    font-size: 14px;
+  }
+
+  .section-title {
+    font-size: 21px;
+  }
+
+  .section-description p {
+    font-size: 17.5px;
+  }
+}
 
 </style>
