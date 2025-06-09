@@ -416,6 +416,8 @@ export default {
         endHour: 18,
         endMinute: 0,
         selectedRoom: null,
+        space: null,
+        asset_bundle: null,
         use_space: false,
       },
       participants: [],
@@ -431,8 +433,9 @@ export default {
       return JSON.parse(localStorage.getItem('customer') || '{}');
     },
     fullName() {
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      return user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : 'کاربر مهمان';
+      return this.customer.first_name && this.customer.last_name
+        ? `${this.customer.first_name} ${this.customer.last_name}`
+        : 'کاربر مهمان';
     },
     userPhone() {
       return this.customer.mobile_number || 'شماره تلفن موجود نیست';
@@ -514,6 +517,8 @@ export default {
     },
     handleRoomSelection(room) {
       this.form.selectedRoom = room;
+      this.form.space = room.space;
+      this.form.asset_bundle = room.asset_bundle;
       this.form.use_space = room.use_space;
       this.isRoomSelectionOpen = false;
     },
@@ -573,6 +578,8 @@ export default {
         endHour: 18,
         endMinute: 0,
         selectedRoom: null,
+        space: null,
+        asset_bundle: null,
         use_space: false,
       };
       this.participants = [];
@@ -593,7 +600,7 @@ export default {
         this.error = 'لطفاً نام جلسه و تاریخ را وارد کنید.';
         return;
       }
-      if (!this.form.selectedRoom) {
+      if (!this.form.selectedRoom || this.form.space === null || this.form.asset_bundle === null) {
         this.error = 'لطفاً یک اتاق برای جلسه انتخاب کنید.';
         return;
       }
@@ -612,16 +619,18 @@ export default {
         .clone()
         .set({ hour: this.form.startHour, minute: this.form.startMinute, second: 0 })
         .toISOString();
+
+      const meetingData = {
+        name: this.form.title,
+        description: this.form.description,
+        date_time: startDateTime,
+        space: this.form.space,
+        asset_bundle: this.form.asset_bundle,
+        use_space: this.form.use_space,
+        user_ids: [this.userId, ...this.participants.map((p) => p.id)],
+      };
+
       try {
-        const meetingData = {
-          name: this.form.title,
-          description: this.form.description,
-          date_time: startDateTime,
-          space: this.form.selectedRoom.id,
-          asset_bundle: 1,
-          use_space: this.form.use_space,
-          user_ids: [this.userId, ...this.participants.map((p) => p.id)],
-        };
         this.$emit('create-meeting', meetingData);
         this.closeModalByButton();
       } catch (error) {

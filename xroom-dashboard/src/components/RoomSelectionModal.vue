@@ -1,3 +1,4 @@
+<!-- RoomSelectionModal.vue -->
 <template>
   <div v-if="isOpen" class="modal-overlay" @click="cancel">
     <div class="modal-content" @click.stop>
@@ -343,7 +344,7 @@ export default {
     async fetchSpaces() {
       try {
         const token = localStorage.getItem('token');
-        if (!token) throw new Error('توکن احراز هویت پیدا نشد');
+        if (!token) throw new Error();
 
         const response = await axios.get(`${API_BASE_URL}/get_space`, {
           headers: { Authorization: `Token ${token.trim()}` },
@@ -351,6 +352,7 @@ export default {
 
         this.rooms = response.data.spaces.map((space) => ({
           id: space.id,
+          assetBundleRoomId: space.assetBundleRoomId?.id,
           image: space.assetBundleRoomId?.img
             ? `${API_BASE_URL}${space.assetBundleRoomId.img}`
             : DEFAULT_IMAGE,
@@ -361,7 +363,6 @@ export default {
         }));
       } catch (error) {
         if (error.response?.status === 403) {
-          alert('لطفاً دوباره وارد شوید');
           window.location.href = '/login';
         }
         this.error = 'خطا در بارگذاری لیست اتاق‌ها';
@@ -370,7 +371,7 @@ export default {
     async fetchTemporaryRooms() {
       try {
         const token = localStorage.getItem('token');
-        if (!token) throw new Error('توکن احراز هویت پیدا نشد');
+        if (!token) throw new Error();
 
         const response = await axios.get(`${API_BASE_URL}/get_assigned_assetbundle_rooms`, {
           headers: { Authorization: `Token ${token.trim()}` },
@@ -386,7 +387,6 @@ export default {
         }));
       } catch (error) {
         if (error.response?.status === 403) {
-          alert('لطفاً دوباره وارد شوید');
           window.location.href = '/login';
         }
         this.error = 'خطا در بارگذاری لیست اتاق‌های موقت';
@@ -401,23 +401,41 @@ export default {
     },
     submitRoom() {
       if (!this.selectedRoom) {
-        alert('لطفاً یک اتاق انتخاب کنید.');
         return;
       }
       const selectedRoomDetails = [...this.rooms, ...this.temporaryRooms].find(
         (room) => room.id === this.selectedRoom
       );
-      this.$emit('submit-room', {
-        ...selectedRoomDetails,
-        id: selectedRoomDetails.isTemporary ? 12 : selectedRoomDetails.id,
-        use_space: !selectedRoomDetails.isTemporary,
-      });
+      if (!selectedRoomDetails) {
+        return;
+      }
+
+      let roomData;
+      if (selectedRoomDetails.isTemporary) {
+        roomData = {
+          ...selectedRoomDetails,
+          space: 18,
+          asset_bundle: selectedRoomDetails.id,
+          use_space: false,
+        };
+      } else {
+        if (!selectedRoomDetails.assetBundleRoomId) {
+          return;
+        }
+        roomData = {
+          ...selectedRoomDetails,
+          space: selectedRoomDetails.id,
+          asset_bundle: selectedRoomDetails.assetBundleRoomId,
+          use_space: true,
+        };
+      }
+
+      this.$emit('submit-room', roomData);
       this.selectedRoom = null;
     },
   },
 };
 </script>
-
 
 <style scoped>
 .modal-overlay {

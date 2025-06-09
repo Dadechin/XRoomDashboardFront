@@ -109,6 +109,8 @@ export default {
   gap: 1rem;
 }
 
+
+
 .platform-card {
   position: relative;
   width: 100%;

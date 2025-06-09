@@ -107,6 +107,7 @@
             </div>
           </div>
           <swiper
+          ref="swiper"
           :slides-per-view="1.4"
           :space-between="10"
           :loop="true"
@@ -119,7 +120,7 @@
           :modules="modules"
           class="swiper-meetings-list"
         >
-          <swiper-slide  v-for="meeting in filteredMeetings" :key="meeting.id" class="swiper-meeting-item">
+          <swiper-slide v-for="meeting in filteredMeetings" :key="meeting.id" class="swiper-meeting-item">
             <img :src="meeting.image" alt="Meeting Image" class="meeting-image" width="120" height="120" />
             <div class="meeting-details" style="margin-right: 10px;">
               <h3 class="meet-title">{{ meeting.title }}</h3>
@@ -178,6 +179,7 @@
   </div>
 </template>
 
+
 <script>
 import CreateMeetingModal from '@/components/CreateMeetingModal.vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
@@ -189,60 +191,85 @@ const API_BASE_URL = 'http://my.xroomapp.com:8000';
 
 export default {
   name: 'Meetings',
-  components: { 
+  components: {
     Swiper,
     SwiperSlide,
-    CreateMeetingModal
-   },
+    CreateMeetingModal,
+  },
   data() {
     return {
       searchQuery: '',
       activeFilter: 'future',
       showModal: false,
       modules: [Pagination],
-      meetings: [
-        {
-          id: 1,
-          title: 'Interview room',
-          date: '2025-05-25T10:00:00',
-          image: require('@/assets/img/img.jpg'),
-          type: 'فضا تیم',
-          maxCapacity: 33,
-        },
-        {
-          id: 2,
-          title: 'جلسه بررسی پیشرفت',
-          date: '2025-05-18T14:00:00',
-          image: require('@/assets/img/img.jpg'),
-          type: 'مدیریتی',
-          maxCapacity: 8,
-        },
-        {
-          id: 3,
-          title: 'جلسه تیم فنی',
-          date: '2025-06-01T09:00:00',
-          image: require('@/assets/img/img.jpg'),
-          type: 'فنی',
-          maxCapacity: 12,
-        },
-        {
-          id: 4,
-          title: 'جلسه تیم طرای',
-          date: '2025-06-01T09:00:00',
-          image: require('@/assets/img/img.jpg'),
-          type: 'طراحی',
-          maxCapacity: 24,
-        },
-      ],
+      meetings: [],
       filteredMeetings: [],
     };
   },
   created() {
-    this.filterMeetings();
+    this.fetchMeetings();
   },
   methods: {
+    refreshSwiper() {
+      if (this.$refs.swiper && this.$refs.swiper.swiper) {
+        this.$refs.swiper.swiper.update();
+      }
+    },
+    async fetchMeetings() {
+      try {
+        let token = localStorage.getItem('token');
+        if (!token) throw new Error('توکن احراز هویت پیدا نشد');
+
+        const config = {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Token ${token.trim()}`,
+          },
+        };
+
+        const response = await axios.get(`${API_BASE_URL}/get_user_meetings`, config).catch(async (error) => {
+          if (error.response?.status === 403) {
+            token = await this.refreshToken();
+            return axios.get(`${API_BASE_URL}/get_user_meetings`, {
+              headers: { ...config.headers, Authorization: `Token ${token.trim()}` },
+            });
+          }
+          throw error;
+        });
+
+        this.meetings = response.data.meetings.map((meeting) => {
+          const isSpaceUsed = meeting.use_space;
+          const imagePath = isSpaceUsed
+            ? meeting.space_data?.assetBundleRoomId?.img
+            : meeting.asset_bundle_data?.img;
+
+          return {
+            id: meeting.id,
+            title: meeting.name,
+            date: meeting.date_time,
+            image: imagePath
+              ? imagePath.startsWith('http')
+                ? imagePath
+                : `${API_BASE_URL}${imagePath}`
+              : 'https://via.placeholder.com/150',
+            type: isSpaceUsed
+              ? meeting.space_data?.name || 'جلسه'
+              : meeting.asset_bundle_data?.name || 'جلسه',
+            maxCapacity: isSpaceUsed
+              ? meeting.space_data?.capacity || 10
+              : meeting.asset_bundle_data?.maxPerson || 10,
+          };
+        });
+
+        this.filterMeetings();
+        this.refreshSwiper();
+      } catch (error) {
+        alert(`خطایی در دریافت جلسات رخ داد: ${error.response?.data?.message || error.message}`);
+      }
+    },
     filterMeetings() {
       let filtered = this.meetings;
+
       if (this.searchQuery) {
         filtered = filtered.filter((meeting) =>
           [meeting.title, meeting.type].some((field) =>
@@ -250,9 +277,11 @@ export default {
           )
         );
       }
+
       if (this.activeFilter === 'future') {
         filtered = filtered.filter((meeting) => new Date(meeting.date) > new Date());
       }
+
       this.filteredMeetings = filtered;
     },
     setFilter(filter) {
@@ -285,7 +314,7 @@ export default {
           },
         };
 
-        let response = await axios.post(`${API_BASE_URL}/add_meeting`, meetingData, config).catch(async (error) => {
+        await axios.post(`${API_BASE_URL}/add_meeting`, meetingData, config).catch(async (error) => {
           if (error.response?.status === 403) {
             token = await this.refreshToken();
             return axios.post(`${API_BASE_URL}/add_meeting`, meetingData, {
@@ -295,17 +324,8 @@ export default {
           throw error;
         });
 
-        const newMeeting = {
-          id: response.data.meeting.id,
-          title: response.data.meeting.name,
-          date: response.data.meeting.date_time,
-          image: 'https://via.placeholder.com/150',
-          type: 'جلسه',
-          maxCapacity: 10,
-        };
-
-        this.meetings.push(newMeeting);
-        this.filterMeetings();
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        await this.fetchMeetings();
         this.showModal = false;
         alert('جلسه با موفقیت ایجاد شد!');
       } catch (error) {
@@ -354,18 +374,28 @@ export default {
   background-color: #ffffff;
 }
 
+
 .search-wrapper {
   margin-top: 1rem;
-  padding: 1px;
-  padding-left: 0.7px;
-  padding-top: 1.4px;
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.search-wrapper::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  right: -1px;
+  bottom: -1px;
   border-radius: 10px;
   background: linear-gradient(to right, #001940, #4364f7);
-  position: relative;
+  z-index: 0;
 }
 
 .search-input {
-  width: 99.9%;
+  width: 100%;
   height: 43px;
   padding: 10px;
   border: none;
@@ -374,7 +404,13 @@ export default {
   box-sizing: border-box;
   background-color: white;
   display: block;
-  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.search-button {
+  position: relative;
+  z-index: 1; /* Ensures the button stays above the pseudo-element */
 }
 
 .search-input::placeholder {
@@ -490,6 +526,7 @@ export default {
 
 .meeting-image {
   border-radius: 10px;
+  object-fit: cover;
 }
 
 .swiper-meetings-list {

@@ -20,6 +20,7 @@
   </div>
 </template>
 
+
 <script>
 import AppHeader from '@/components/Header.vue';
 import SidebarMenu from '@/components/SidebarMenu.vue';
@@ -46,9 +47,19 @@ export default {
     toggleSidebar() {
       this.isSidebarOpen = !this.isSidebarOpen;
     }
+  },
+  mounted() {
+    const content = document.querySelector('.content');
+    if (content) {
+      content.addEventListener('scroll', () => {
+        document.body.scrollTop = content.scrollTop;
+        document.documentElement.scrollTop = content.scrollTop;
+      });
+    }
   }
 };
 </script>
+
 
 <style scoped>
 /* Reset default margins and set base font */
@@ -57,12 +68,15 @@ body {
   padding: 0;
   font-family: 'Yekan', 'Arial', sans-serif;
   background-color: #f4f7fa;
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 100%;
 }
 
 /* App title styling */
 .app-title {
   color: #fff;
-  font-size: 2rem; /* 32px, using rem for scalability */
+  font-size: 2rem;
   font-weight: 700;
   margin: 0;
 }
@@ -71,13 +85,15 @@ body {
 #app {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+    min-height: 100vh;
+  overflow-y: auto;
+  
 }
 
 /* Router view content */
 router-view {
   flex-grow: 1;
-  padding: 1.25rem; /* 20px, using rem for consistency */
+  padding: 1.25rem;
 }
 
 </style>
@@ -90,7 +106,7 @@ router-view {
   src: url('@/assets/fonts/IRANSansXFaNum-Medium.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
-  font-display: swap; /* Improves font loading performance */
+  font-display: swap;
 }
 
 /* Global Font Application */
@@ -106,6 +122,14 @@ router-view {
   flex-direction: column;
   gap: 32px;
   padding: 35px 80px;
+  height: 100vh;
+  overflow-y: scroll;
+  box-sizing: border-box;
+}
+
+.content::-webkit-scrollbar {
+  width: 0;
+  display: none;
 }
 
 /* Responsive Styles */
