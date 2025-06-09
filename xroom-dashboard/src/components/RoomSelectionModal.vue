@@ -1,4 +1,3 @@
-<!-- RoomSelectionModal.vue -->
 <template>
   <div v-if="isOpen" class="modal-overlay" @click="cancel">
     <div class="modal-content" @click.stop>
@@ -40,7 +39,7 @@
           v-for="room in rooms"
           :key="room.id"
           class="room-item"
-          :class="{ selected: selectedRoom === room.id }"
+          :class="{ selected: selectedRoom == room.id }"
           @click="selectRoom(room.id)"
         >
           <img
@@ -327,6 +326,7 @@ export default {
   name: 'RoomSelectionModal',
   props: {
     isOpen: { type: Boolean, default: false },
+    selectedRoomId: { type: [Number, String, null], default: null },
   },
   data() {
     return {
@@ -335,6 +335,16 @@ export default {
       selectedRoom: null,
       error: null,
     };
+  },
+  watch: {
+    isOpen(newVal) {
+      if (newVal) {
+        this.selectedRoom = this.selectedRoomId;
+      }
+    },
+    selectedRoomId(newVal) {
+      this.selectedRoom = newVal;
+    },
   },
   created() {
     this.fetchSpaces();
@@ -361,6 +371,8 @@ export default {
           type: space.description || 'فضا',
           isTemporary: false,
         }));
+
+        this.selectedRoom = this.selectedRoomId;
       } catch (error) {
         if (error.response?.status === 403) {
           window.location.href = '/login';
@@ -385,6 +397,8 @@ export default {
           type: room.description || 'اتاق موقت',
           isTemporary: true,
         }));
+
+        this.selectedRoom = this.selectedRoomId;
       } catch (error) {
         if (error.response?.status === 403) {
           window.location.href = '/login';
@@ -397,16 +411,18 @@ export default {
     },
     cancel() {
       this.$emit('close');
-      this.selectedRoom = null;
+      this.selectedRoom = this.selectedRoomId;
     },
     submitRoom() {
       if (!this.selectedRoom) {
+        this.error = 'لطفاً یک اتاق انتخاب کنید';
         return;
       }
       const selectedRoomDetails = [...this.rooms, ...this.temporaryRooms].find(
-        (room) => room.id === this.selectedRoom
+        (room) => room.id == this.selectedRoom
       );
       if (!selectedRoomDetails) {
+        this.error = 'اتاق انتخاب‌شده یافت نشد';
         return;
       }
 
@@ -417,9 +433,11 @@ export default {
           space: 18,
           asset_bundle: selectedRoomDetails.id,
           use_space: false,
+          image: selectedRoomDetails.image || 'https://via.placeholder.com/150',
         };
       } else {
         if (!selectedRoomDetails.assetBundleRoomId) {
+          this.error = 'اتاق انتخاب‌شده اطلاعات معتبری ندارد';
           return;
         }
         roomData = {
@@ -427,16 +445,16 @@ export default {
           space: selectedRoomDetails.id,
           asset_bundle: selectedRoomDetails.assetBundleRoomId,
           use_space: true,
+          image: selectedRoomDetails.image || 'https://via.placeholder.com/150',
         };
       }
 
       this.$emit('submit-room', roomData);
-      this.selectedRoom = null;
+      this.selectedRoom = this.selectedRoomId;
     },
   },
 };
 </script>
-
 <style scoped>
 .modal-overlay {
   position: fixed;

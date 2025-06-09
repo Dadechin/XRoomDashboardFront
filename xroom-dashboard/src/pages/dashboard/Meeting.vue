@@ -70,7 +70,7 @@
         <div v-else class="meetings-list">
           <div v-for="meeting in filteredMeetings" :key="meeting.id" class="meeting-item">
             <img :src="meeting.image" alt="Meeting Image" class="meeting-image" width="120" height="120" />
-            <div class="meeting-details" style="margin-right: 10px;">
+            <div class="meeting-details" style="width:100%;margin-right: 10px;">
               <h3 class="meet-title">{{ meeting.title }}</h3>
               <p class="meet-capacity">
                 <span style="margin-left: 4px;">
@@ -90,75 +90,115 @@
                 </span>
                 حداکثر: {{ meeting.maxCapacity }} کاربر
               </p>
-              <p class="meet-type">
-                <span style="margin-left: 4px;">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
-                    <path d="M4 15.1667V3.16671C4 2.81309 4.14048 2.47395 4.39052 2.2239C4.64057 1.97385 4.97971 1.83337 5.33333 1.83337H10.6667C11.0203 1.83337 11.3594 1.97385 11.6095 2.2239C11.8595 2.47395 12 2.81309 12 3.16671V15.1667H4Z" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M3.9987 8.5H2.66536C2.31174 8.5 1.9726 8.64048 1.72256 8.89052C1.47251 9.14057 1.33203 9.47971 1.33203 9.83333V13.8333C1.33203 14.187 1.47251 14.5261 1.72256 14.7761C1.9726 15.0262 2.31174 15.1667 2.66536 15.1667H3.9987" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M12 6.5H13.3333C13.687 6.5 14.0261 6.64048 14.2761 6.89052C14.5262 7.14057 14.6667 7.47971 14.6667 7.83333V13.8333C14.6667 14.187 14.5262 14.5261 14.2761 14.7761C14.0261 15.0262 13.687 15.1667 13.3333 15.1667H12" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M6.66797 4.5H9.33464" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M6.66797 7.16663H9.33464" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M6.66797 9.83337H9.33464" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M6.66797 12.5H9.33464" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+              <div class="card-footer">
+                <p class="meet-type">
+                  <span style="margin-left: 4px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
+                      <path d="M4 15.1667V3.16671C4 2.81309 4.14048 2.47395 4.39052 2.2239C4.64057 1.97385 4.97971 1.83337 5.33333 1.83337H10.6667C11.0203 1.83337 11.3594 1.97385 11.6095 2.2239C11.8595 2.47395 12 2.81309 12 3.16671V15.1667H4Z" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M3.9987 8.5H2.66536C2.31174 8.5 1.9726 8.64048 1.72256 8.89052C1.47251 9.14057 1.33203 9.47971 1.33203 9.83333V13.8333C1.33203 14.187 1.47251 14.5261 1.72256 14.7761C1.9726 15.0262 2.31174 15.1667 2.66536 15.1667H3.9987" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M12 6.5H13.3333C13.687 6.5 14.0261 6.64048 14.2761 6.89052C14.5262 7.14057 14.6667 7.47971 14.6667 7.83333V13.8333C14.6667 14.187 14.5262 14.5261 14.2761 14.7761C14.0261 15.0262 13.687 15.1667 13.3333 15.1667H12" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M6.66797 4.5H9.33464" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M6.66797 7.16663H9.33464" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M6.66797 9.83337H9.33464" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M6.66797 12.5H9.33464" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </span>
+                  {{ meeting.type }}
+                </p>
+                <button class="info-button" @click="openMeetingInfo(meeting)">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#3A57E8"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="16" x2="12" y2="12" />
+                    <line x1="12" y1="8" x2="12.01" y2="8" />
                   </svg>
-                </span>
-                {{ meeting.type }}
-              </p>
+                </button>
+              </div>
             </div>
+
           </div>
           <swiper
-          ref="swiper"
-          :slides-per-view="1.4"
-          :space-between="10"
-          :loop="true"
-          :pagination="{ clickable: true }"
-          :breakpoints="{
-            768: { slidesPerView: 3.3, spaceBetween: 15 },
-            1024: { slidesPerView: 2.1, spaceBetween: 15 },
-            1280: { slidesPerView: 4.1, spaceBetween: 25 },
-          }"
-          :modules="modules"
-          class="swiper-meetings-list"
-        >
-          <swiper-slide v-for="meeting in filteredMeetings" :key="meeting.id" class="swiper-meeting-item">
-            <img :src="meeting.image" alt="Meeting Image" class="meeting-image" width="120" height="120" />
-            <div class="meeting-details" style="margin-right: 10px;">
-              <h3 class="meet-title">{{ meeting.title }}</h3>
-              <p class="meet-capacity">
-                <span style="margin-left: 4px;">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
-                    <g clip-path="url(#clip0_622_1334)">
-                      <path d="M3.33203 5.16667C3.33203 5.87391 3.61298 6.55219 4.11308 7.05228C4.61318 7.55238 5.29145 7.83333 5.9987 7.83333C6.70594 7.83333 7.38422 7.55238 7.88432 7.05228C8.38441 6.55219 8.66536 5.87391 8.66536 5.16667C8.66536 4.45942 8.38441 3.78115 7.88432 3.28105C7.38422 2.78095 6.70594 2.5 5.9987 2.5C5.29145 2.5 4.61318 2.78095 4.11308 3.28105C3.61298 3.78115 3.33203 4.45942 3.33203 5.16667Z" stroke="#718096" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                      <path d="M2 14.5V13.1667C2 12.4594 2.28095 11.7811 2.78105 11.281C3.28115 10.781 3.95942 10.5 4.66667 10.5H7.33333C8.04058 10.5 8.71885 10.781 9.21895 11.281C9.71905 11.7811 10 12.4594 10 13.1667V14.5" stroke="#718096" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                      <path d="M10.668 2.58667C11.2416 2.73354 11.75 3.06714 12.1131 3.53488C12.4761 4.00262 12.6732 5.17 12.6732 5.17C12.6732 5.76212 12.4761 6.33739 12.1131 6.80513C11.75 7.27287 11.2416 7.60647 10.668 7.75334" stroke="#718096" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                      <path d="M14 14.5V13.1666C13.9966 12.5781 13.7986 12.0072 13.4368 11.5429C13.0751 11.0786 12.5699 10.7471 12 10.6" stroke="#718096" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    </g>
-                    <defs>
-                      <clipPath id="clip0_622_1334">
-                        <rect width="16" height="16" fill="white" transform="translate(0 0.5)"/>
-                      </clipPath>
-                    </defs>
-                  </svg>
-                </span>
-                حداکثر: {{ meeting.maxCapacity }} کاربر
-              </p>
-              <p class="meet-type">
-                <span style="margin-left: 4px;">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
-                    <path d="M4 15.1667V3.16671C4 2.81309 4.14048 2.47395 4.39052 2.2239C4.64057 1.97385 4.97971 1.83337 5.33333 1.83337H10.6667C11.0203 1.83337 11.3594 1.97385 11.6095 2.2239C11.8595 2.47395 12 2.81309 12 3.16671V15.1667H4Z" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M3.9987 8.5H2.66536C2.31174 8.5 1.9726 8.64048 1.72256 8.89052C1.47251 9.14057 1.33203 9.47971 1.33203 9.83333V13.8333C1.33203 14.187 1.47251 14.5261 1.72256 14.7761C1.9726 15.0262 2.31174 15.1667 2.66536 15.1667H3.9987" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M12 6.5H13.3333C13.687 6.5 14.0261 6.64048 14.2761 6.89052C14.5262 7.14057 14.6667 7.47971 14.6667 7.83333V13.8333C14.6667 14.187 14.5262 14.5261 14.2761 14.7761C14.0261 15.0262 13.687 15.1667 13.3333 15.1667H12" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M6.66797 4.5H9.33464" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M6.66797 7.16663H9.33464" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M6.66797 9.83337H9.33464" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M6.66797 12.5H9.33464" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </span>
-                {{ meeting.type }}
-              </p>
-            </div>
-          </swiper-slide>
-        </swiper>
+            ref="swiper"
+            :key="filteredMeetings.length + activeFilter + JSON.stringify(filteredMeetings)"
+            :slides-per-view="1.4"
+            :space-between="10"
+            :loop="true"
+            :pagination="{ clickable: true }"
+            :breakpoints="{
+              768: { slidesPerView: 3.3, spaceBetween: 15 },
+              1024: { slidesPerView: 2.1, spaceBetween: 15 },
+              1280: { slidesPerView: 4.1, spaceBetween: 25 },
+            }"
+            :modules="modules"
+            class="swiper-meetings-list"
+          >
+            <swiper-slide v-for="meeting in filteredMeetings" :key="meeting.id" class="swiper-meeting-item">
+              <img :src="meeting.image" alt="Meeting Image" class="meeting-image" width="120" height="120" />
+              <div class="meeting-details" style="width:100%;margin-right: 10px;">
+                <h3 class="meet-title">{{ meeting.title }}</h3>
+                <p class="meet-capacity">
+                  <span style="margin-left: 4px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
+                      <g clip-path="url(#clip0_622_1334)">
+                        <path d="M3.33203 5.16667C3.33203 5.87391 3.61298 6.55219 4.11308 7.05228C4.61318 7.55238 5.29145 7.83333 5.9987 7.83333C6.70594 7.83333 7.38422 7.55238 7.88432 7.05228C8.38441 6.55219 8.66536 5.87391 8.66536 5.16667C8.66536 4.45942 8.38441 3.78115 7.88432 3.28105C7.38422 2.78095 6.70594 2.5 5.9987 2.5C5.29145 2.5 4.61318 2.78095 4.11308 3.28105C3.61298 3.78115 3.33203 4.45942 3.33203 5.16667Z" stroke="#718096" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 14.5V13.1667C2 12.4594 2.28095 11.7811 2.78105 11.281C3.28115 10.781 3.95942 10.5 4.66667 10.5H7.33333C8.04058 10.5 8.71885 10.781 9.21895 11.281C9.71905 11.7811 10 12.4594 10 13.1667V14.5" stroke="#718096" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M10.668 2.58667C11.2416 2.73354 11.75 3.06714 12.1131 3.53488C12.4761 4.00262 12.6732 5.17 12.6732 5.17C12.6732 5.76212 12.4761 6.33739 12.1131 6.80513C11.75 7.27287 11.2416 7.60647 10.668 7.75334" stroke="#718096" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M14 14.5V13.1666C13.9966 12.5781 13.7986 12.0072 13.4368 11.5429C13.0751 11.0786 12.5699 10.7471 12 10.6" stroke="#718096" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      </g>
+                      <defs>
+                        <clipPath id="clip0_622_1334">
+                          <rect width="16" height="16" fill="white" transform="translate(0 0.5)"/>
+                        </clipPath>
+                      </defs>
+                    </svg>
+                  </span>
+                  حداکثر: {{ meeting.maxCapacity }} کاربر
+                </p>
+                <div class="card-footer">
+                  <p class="meet-type">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
+                      <path d="M4 15.1667V3.16671C4 2.81309 4.14048 2.47395 4.39052 2.2239C4.64057 1.97385 4.97971 1.83337 5.33333 1.83337H10.6667C11.0203 1.83337 11.3594 1.97385 11.6095 2.2239C11.8595 2.47395 12 2.81309 12 3.16671V15.1667H4Z" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M3.9987 8.5H2.66536C2.31174 8.5 1.9726 8.64048 1.72256 8.89052C1.47251 9.14057 1.33203 9.47971 1.33203 9.83333V13.8333C1.33203 14.187 1.47251 14.5261 1.72256 14.7761C1.9726 15.0262 2.31174 15.1667 2.66536 15.1667H3.9987" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M12 6.5H13.3333C13.687 6.5 14.0261 6.64048 14.2761 6.89052C14.5262 7.14057 14.6667 7.47971 14.6667 7.83333V13.8333C14.6667 14.187 14.5262 14.5261 14.2761 14.7761C14.0261 15.0262 13.687 15.1667 13.3333 15.1667H12" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M6.66797 4.5H9.33464" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M6.66797 7.16663H9.33464" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M6.66797 9.83337H9.33464" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M6.66797 12.5H9.33464" stroke="#3A57E8" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span style="margin-right: 4px;white-space: nowrap;text-overflow: ellipsis;overflow-x: clip;width: 50px;">
+                      {{ meeting.type }}
+                    </span>
+                  </p>
+                  <button class="info-button" @click="openMeetingInfo(meeting)">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#3A57E8"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="12" y1="16" x2="12" y2="12" />
+                      <line x1="12" y1="8" x2="12.01" y2="8" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </swiper-slide>
+          </swiper>
         </div>
 
         <button
@@ -176,12 +216,18 @@
       @create-meeting="createNewMeeting"
       @close="showModal = false"
     />
+    <MeetingInfoModal
+      :is-open="showInfoModal"
+      :meeting="selectedMeeting"
+      @close="showInfoModal = false"
+      @update-meeting="updateMeeting"
+    />
   </div>
 </template>
 
-
 <script>
 import CreateMeetingModal from '@/components/CreateMeetingModal.vue';
+import MeetingInfoModal from '@/components/MeetingInfoModal.vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/css';
 import { Pagination } from 'swiper/modules';
@@ -195,12 +241,15 @@ export default {
     Swiper,
     SwiperSlide,
     CreateMeetingModal,
+    MeetingInfoModal,
   },
   data() {
     return {
       searchQuery: '',
       activeFilter: 'future',
       showModal: false,
+      showInfoModal: false,
+      selectedMeeting: null,
       modules: [Pagination],
       meetings: [],
       filteredMeetings: [],
@@ -210,9 +259,37 @@ export default {
     this.fetchMeetings();
   },
   methods: {
+    async updateMeeting(updatedMeeting) {
+      try {
+        this.meetings = this.meetings.map((meeting) =>
+          meeting.id === updatedMeeting.id
+            ? {
+                ...meeting,
+                title: updatedMeeting.title,
+                date: updatedMeeting.date,
+                image: updatedMeeting.image || meeting.image || 'https://via.placeholder.com/150',
+                type: updatedMeeting.type,
+                maxCapacity: updatedMeeting.maxCapacity,
+              }
+            : meeting
+        );
+        this.filterMeetings();
+        this.showInfoModal = false;
+        this.$nextTick(() => {
+          this.refreshSwiper();
+        });
+      } catch (error) {
+        alert(`خطا در به‌روزرسانی جلسات: ${error.message}`);
+      }
+    },
+    openMeetingInfo(meeting) {
+      this.selectedMeeting = meeting;
+      this.showInfoModal = true;
+    },
     refreshSwiper() {
       if (this.$refs.swiper && this.$refs.swiper.swiper) {
         this.$refs.swiper.swiper.update();
+        this.$refs.swiper.swiper.slideTo(0);
       }
     },
     async fetchMeetings() {
@@ -379,7 +456,7 @@ export default {
   margin-top: 1rem;
   position: relative;
   display: inline-block;
-  width: 100%;
+  width: 95%;
 }
 
 .search-wrapper::before {
@@ -537,8 +614,26 @@ export default {
   padding : 0;
 }
 
+.card-footer {
+  display : flex;
+  align-items : center;
+  justify-content: space-between;
+}
+
+.info-button {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+
 /* Mobile devices (max-width: 600px) */
 @media (max-width: 600px) {
+
+/*   .info-button {
+    height: 18px;
+  } */
+
   .meeting-filters {
     display: flex;
     flex-direction: column;
@@ -624,7 +719,7 @@ export default {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow-x: clip;
-    width: 95px;
+    width: 130px;
     text-align: justify;
   }
 
@@ -703,8 +798,22 @@ export default {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow-x: clip;
-    width: 90px;
+    width: 120px;
     text-align: justify;
+  }
+
+
+  .meeting-details {
+    width: 60% !important;
+  }
+
+  .info-button svg {
+    height: 18px !important;
+    width: 18px !important;
+  }
+
+  .info-button {
+    height: 18px;
   }
 
   .meet-capacity,
@@ -832,6 +941,20 @@ export default {
     width: max-content;
   }
 
+
+
+  .meet-title{
+    width: 150px !important;
+  }
+
+  .meet-type span {
+    width : 120px !important;
+  }
+
+  .info-button {
+    height: 18px;
+  }
+
   .meetings-list {
     display: flex;
     margin-bottom: 2rem;
@@ -923,13 +1046,18 @@ export default {
     padding: 8px;
   }
 
+  .meeting-details {
+    width: 60% !important;
+  }
+
   .meet-title {
-    font-size: 16px;
+    font-size: 17px;
+    width : 200px;
   }
 
   .meet-capacity,
   .meet-type {
-    font-size: 14px;
+    font-size: 15.5px;
   }
 
   .section-title {

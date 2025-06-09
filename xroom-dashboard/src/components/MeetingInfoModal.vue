@@ -2,7 +2,7 @@
   <div v-if="isOpen && !isRoomSelectionOpen" class="modal-overlay" @click="closeModal">
     <div class="modal-content" ref="modalContent" @click.stop>
       <div class="popUp-header">
-        <h2>ایجاد جلسه جدید</h2>
+        <h2>{{ isEditing ? 'ویرایش جلسه' : 'جزئیات جلسه' }}</h2>
         <button @click="closeModalByButton">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -32,17 +32,28 @@
       </div>
       <div class="popUp-title">
         <h2>جزئیات جلسه</h2>
-        <span>برای ایجاد جلسه جدید فرم زیر را تکمیل نمایید.</span>
+        <span>{{ isEditing ? 'جزئیات جلسه را ویرایش کنید.' : 'جزئیات جلسه را مشاهده کنید.' }}</span>
       </div>
       <div class="popUp-objects">
         <form @submit.prevent="handleSubmit">
           <div class="form-group">
             <label for="meetingTitle">نام جلسه</label>
-            <input type="text" id="meetingTitle" v-model="form.title" required />
+            <input
+              type="text"
+              id="meetingTitle"
+              v-model="form.title"
+              :disabled="!isEditing"
+              required
+            />
           </div>
           <div class="form-group">
             <label for="meet-description">شرح جلسه</label>
-            <textarea name="meet-description" id="meet-description" v-model="form.description"></textarea>
+            <textarea
+              name="meet-description"
+              id="meet-description"
+              v-model="form.description"
+              :disabled="!isEditing"
+            ></textarea>
           </div>
           <div class="form-group">
             <label for="meetingDate">روز</label>
@@ -87,6 +98,7 @@
                 input-class="form-control"
                 id="meetingDate"
                 style="border-radius: 0 8px 8px 0; text-align: center; position: relative;"
+                :disabled="!isEditing"
                 required
               />
             </div>
@@ -97,7 +109,7 @@
               <div class="time-input-group">
                 <p style="margin-left: 1rem;">شروع</p>
                 <div class="input-div">
-                  <button type="button" @click="incrementTime('startMinute')">
+                  <button type="button" @click="incrementTime('startMinute')" :disabled="!isEditing">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="24"
@@ -119,9 +131,10 @@
                     v-model.number="form.startMinute"
                     min="0"
                     max="59"
+                    :disabled="!isEditing"
                     required
                   />
-                  <button type="button" @click="decrementTime('startMinute')">
+                  <button type="button" @click="decrementTime('startMinute')" :disabled="!isEditing">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="24"
@@ -141,7 +154,7 @@
                 </div>
                 <span>:</span>
                 <div class="input-div">
-                  <button type="button" @click="incrementTime('startHour')">
+                  <button type="button" @click="incrementTime('startHour')" :disabled="!isEditing">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="24"
@@ -163,9 +176,10 @@
                     v-model.number="form.startHour"
                     min="0"
                     max="23"
+                    :disabled="!isEditing"
                     required
                   />
-                  <button type="button" @click="decrementTime('startHour')">
+                  <button type="button" @click="decrementTime('startHour')" :disabled="!isEditing">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="24"
@@ -185,7 +199,7 @@
                 </div>
                 <p style="margin-left: 1rem; margin-right: 2.5rem;">پایان</p>
                 <div class="input-div">
-                  <button type="button" @click="incrementTime('endMinute')">
+                  <button type="button" @click="incrementTime('endMinute')" :disabled="!isEditing">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="24"
@@ -207,9 +221,10 @@
                     v-model.number="form.endMinute"
                     min="0"
                     max="59"
+                    :disabled="!isEditing"
                     required
                   />
-                  <button type="button" @click="decrementTime('endMinute')">
+                  <button type="button" @click="decrementTime('endMinute')" :disabled="!isEditing">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="24"
@@ -229,7 +244,7 @@
                 </div>
                 <span>:</span>
                 <div class="input-div">
-                  <button type="button" @click="incrementTime('endHour')">
+                  <button type="button" @click="incrementTime('endHour')" :disabled="!isEditing">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="24"
@@ -251,9 +266,10 @@
                     v-model.number="form.endHour"
                     min="0"
                     max="23"
+                    :disabled="!isEditing"
                     required
                   />
-                  <button type="button" @click="decrementTime('endHour')">
+                  <button type="button" @click="decrementTime('endHour')" :disabled="!isEditing">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="24"
@@ -278,15 +294,17 @@
             <label style="font-size: 19px; font-weight: 600;">اتاق جلسه</label>
             <div class="rooms-selecter">
               <span>{{ form.selectedRoom ? '1 اتاق انتخاب شده' : '0 اتاق انتخاب شده' }}</span>
-              <button type="button" @click="openRoomSelection">انتخاب اتاق جلسه</button>
+              <button type="button" @click="openRoomSelection" :disabled="!isEditing">
+                انتخاب اتاق جلسه
+              </button>
             </div>
           </div>
           <div class="participants-objects">
-            <h2>شرکت کنندگان</h2>
-            <p><span style="color: #101010; font-weight: 600;">کاربران</span> یا <span style="color: #101010; font-weight: 600;">مهمانان تیم</span> را از لیست زیر انتخاب کنید.</p>
-            <span class="participants-guide">
-              می‌توانید به مجری اجازه بدهید تا ابزارهایی برای مدیریت این جلسه و همچنین ابزارهایی برای مدیریت مجوزها در طول جلسه به او بدهد.
-            </span>
+            <h2>شرکت‌کنندگان</h2>
+            <p>
+              <span style="color: #101010; font-weight: 600;">کاربران</span> یا
+              <span style="color: #101010; font-weight: 600;">مهمانان تیم</span> دعوت‌شده به جلسه.
+            </p>
           </div>
           <div class="presenter">
             <div style="display: flex; align-items: center; height: 100%;">
@@ -311,17 +329,35 @@
               </div>
             </div>
             <p class="presenter-role">{{ participant.role }}</p>
-            <button @click="removeParticipant(participant.id)">
-              <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 32 32" fill="none">
-                <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" fill="white"/>
-                <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" stroke="#E2DEE9"/>
-                <path d="M20.5 12L12.5 20" stroke="#101010" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M12.5 12L20.5 20" stroke="#101010" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <button v-if="isEditing" @click="removeParticipant(participant.id)">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="35"
+                height="35"
+                viewBox="0 0 32 32"
+                fill="none"
+              >
+                <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" fill="white" />
+                <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" stroke="#E2DEE9" />
+                <path
+                  d="M20.5 12L12.5 20"
+                  stroke="#101010"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M12.5 12L20.5 20"
+                  stroke="#101010"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
               </svg>
             </button>
           </div>
-          <div class="form-group">
-            <label for="participantInput">اضافه کردن شرکت کننده</label>
+          <div v-if="isEditing" class="form-group">
+            <label for="participantInput">اضافه کردن شرکت‌کننده</label>
             <div class="participant-input">
               <div class="custom-input" @click="toggleDropdown" ref="customInput">
                 <span v-if="!selectedParticipantId">یک عضو تیم انتخاب کنید</span>
@@ -374,12 +410,28 @@
           </div>
         </form>
         <span class="last-span">
-          شرکت کنندگان را اضافه کنید برای شرکت کنندگانی که به این جلسه اضافه شده اند پیامکی حاوی کد جلسه، عنوان، توضیحات و زمان ارسال می‌شود.
+          شرکت‌کنندگان دعوت‌شده به این جلسه. برای شرکت‌کنندگانی که اضافه شده‌اند، پیامکی حاوی کد
+          جلسه، عنوان، توضیحات و زمان ارسال می‌شود.
         </span>
       </div>
       <div class="form-actions">
-        <button type="button" class="cancel-button" @click="closeModalByButton">بازگشت</button>
-        <button type="button" class="submit-button" @click="handleSubmit">ایجاد جلسه</button>
+        <button type="button" class="cancel-button" @click="closeModalByButton">بستن</button>
+        <button
+          v-if="!isEditing"
+          type="button"
+          class="submit-button"
+          @click="isEditing = true"
+        >
+          ویرایش
+        </button>
+        <button
+          v-if="isEditing"
+          type="button"
+          class="submit-button"
+          @click="handleSubmit"
+        >
+          ذخیره تغییرات
+        </button>
       </div>
     </div>
   </div>
@@ -400,21 +452,23 @@ import axios from 'axios';
 const API_BASE_URL = 'http://my.xroomapp.com:8000';
 
 export default {
-  name: 'CreateMeetingModal',
+  name: 'MeetingInfoModal',
   components: { VuePersianDatetimePicker, RoomSelectionModal },
   props: {
     isOpen: { type: Boolean, default: false },
+    meeting: { type: Object, default: null },
   },
   data() {
     return {
       defaultProfileIcon: 'https://models.readyplayer.me/681f59760bc631a87ad25172.png',
+      isEditing: false,
       form: {
         title: '',
         description: '',
-        date: moment().format('jYYYY/jMM/jDD'),
+        date: '',
         startHour: 12,
         startMinute: 0,
-        endHour: 18,
+        endHour: 13,
         endMinute: 0,
         selectedRoom: null,
         space: null,
@@ -453,32 +507,20 @@ export default {
   },
   watch: {
     isOpen(newVal) {
+      if (newVal && this.meeting) {
+        this.loadMeetingData();
+        this.fetchTeamMembers();
+      }
       document.body.style.overflow = newVal && !this.isRoomSelectionOpen ? 'hidden' : '';
+    },
+    meeting(newVal) {
       if (newVal) {
-        this.$nextTick(() => {
-          if (this.$refs.modalContent) {
-            this.$refs.modalContent.addEventListener('click', this.closeDropdownOnClick);
-          }
-        });
-      } else {
-        if (this.$refs.modalContent) {
-          this.$refs.modalContent.removeEventListener('click', this.closeDropdownOnClick);
-        }
+        this.loadMeetingData();
       }
     },
     isRoomSelectionOpen(newVal) {
       document.body.style.overflow = newVal ? 'hidden' : '';
     },
-  },
-  mounted() {
-    if (this.$refs.modalContent) {
-      this.$refs.modalContent.addEventListener('click', this.closeDropdownOnClick);
-    }
-  },
-  beforeUnmount() {
-    if (this.$refs.modalContent) {
-      this.$refs.modalContent.removeEventListener('click', this.closeDropdownOnClick);
-    }
   },
   methods: {
     async fetchTeamMembers() {
@@ -499,6 +541,64 @@ export default {
         this.error = 'خطا در بارگذاری لیست اعضای تیم';
       }
     },
+    async loadMeetingData() {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('توکن احراز هویت پیدا نشد');
+        const response = await axios.get(`${API_BASE_URL}/get_user_meetings`, {
+          headers: { Authorization: `Token ${token.trim()}` },
+        });
+        const meeting = response.data.meetings.find((m) => m.id === this.meeting.id);
+        if (!meeting) throw new Error('جلسه یافت نشد');
+        const dateTime = moment(meeting.date_time);
+        const isSpaceUsed = meeting.use_space;
+        const roomData = isSpaceUsed ? meeting.space_data : meeting.asset_bundle_data;
+        let imageUrl = 'https://via.placeholder.com/150';
+        if (isSpaceUsed && meeting.space_data?.assetBundleRoomId?.img) {
+          imageUrl = meeting.space_data.assetBundleRoomId.img.startsWith('http')
+            ? meeting.space_data.assetBundleRoomId.img
+            : `${API_BASE_URL}${meeting.space_data.assetBundleRoomId.img}`;
+        } else if (!isSpaceUsed && meeting.asset_bundle_data?.img) {
+          imageUrl = meeting.asset_bundle_data.img.startsWith('http')
+            ? meeting.asset_bundle_data.img
+            : `${API_BASE_URL}${meeting.asset_bundle_data.img}`;
+        }
+        this.form = {
+          title: meeting.name,
+          description: meeting.description || '',
+          date: dateTime.format('jYYYY/jMM/jDD'),
+          startHour: dateTime.hour(),
+          startMinute: dateTime.minute(),
+          endHour: dateTime.hour() + 1,
+          endMinute: dateTime.minute(),
+          selectedRoom: {
+            id: isSpaceUsed ? meeting.space : meeting.asset_bundle,
+            name: roomData?.name || 'اتاق',
+            type: roomData?.description || 'اتاق',
+            capacity: isSpaceUsed ? meeting.space_data?.capacity : meeting.asset_bundle_data?.maxPerson || 10,
+            image: imageUrl,
+          },
+          space: meeting.space,
+          asset_bundle: meeting.asset_bundle,
+          use_space: isSpaceUsed,
+        };
+        this.participants = [];
+        this.participants = meeting.invited_users
+          .filter((user) => user.id !== this.userId)
+          .map((user) => ({
+            id: user.id,
+            name: user.customer.first_name
+              ? `${user.customer.first_name} ${user.customer.last_name}`
+              : user.username,
+            phone: user.customer.mobile_number,
+            role: user.customer.semat || 'بدون سمت',
+            profile_img: user.customer.profile_img || this.defaultProfileIcon,
+          }));
+        this.isEditing = false;
+      } catch (error) {
+        this.error = `خطا در بارگذاری اطلاعات جلسه: ${error.message}`;
+      }
+    },
     toggleDropdown(event) {
       this.isDropdownOpen = !this.isDropdownOpen;
       event.stopPropagation();
@@ -509,7 +609,11 @@ export default {
       this.addParticipant();
     },
     closeDropdownOnClick(event) {
-      if (this.isDropdownOpen && this.$refs.customInput && !this.$refs.customInput.contains(event.target)) {
+      if (
+        this.isDropdownOpen &&
+        this.$refs.customInput &&
+        !this.$refs.customInput.contains(event.target)
+      ) {
         this.isDropdownOpen = false;
       }
     },
@@ -517,7 +621,13 @@ export default {
       this.isRoomSelectionOpen = true;
     },
     handleRoomSelection(room) {
-      this.form.selectedRoom = room;
+      this.form.selectedRoom = {
+        id: room.id,
+        name: room.name || 'اتاق',
+        type: room.type || 'اتاق',
+        capacity: room.capacity || 10,
+        image: room.image || 'https://via.placeholder.com/150',
+      };
       this.form.space = room.space;
       this.form.asset_bundle = room.asset_bundle;
       this.form.use_space = room.use_space;
@@ -558,6 +668,7 @@ export default {
     },
     removeParticipant(id) {
       this.participants = this.participants.filter((p) => p.id !== id);
+      this.error = null;
     },
     closeModal(event) {
       if (event && event.target.classList.contains('modal-overlay')) {
@@ -569,7 +680,6 @@ export default {
       this.$emit('close');
       this.resetForm();
     },
-    
     resetForm() {
       this.form = {
         title: '',
@@ -577,7 +687,7 @@ export default {
         date: moment().format('jYYYY/jMM/jDD'),
         startHour: 12,
         startMinute: 0,
-        endHour: 18,
+        endHour: 13,
         endMinute: 0,
         selectedRoom: null,
         space: null,
@@ -587,6 +697,7 @@ export default {
       this.participants = [];
       this.selectedParticipantId = '';
       this.isDropdownOpen = false;
+      this.isEditing = false;
       this.error = null;
       this.isRoomSelectionOpen = false;
     },
@@ -621,8 +732,8 @@ export default {
         .clone()
         .set({ hour: this.form.startHour, minute: this.form.startMinute, second: 0 })
         .toISOString();
-
       const meetingData = {
+        meeting_id: this.meeting.id,
         name: this.form.title,
         description: this.form.description,
         date_time: startDateTime,
@@ -631,22 +742,34 @@ export default {
         use_space: this.form.use_space,
         user_ids: [this.userId, ...this.participants.map((p) => p.id)],
       };
-
       try {
-        this.$emit('create-meeting', meetingData);
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('توکن احراز هویت پیدا نشد');
+        await axios.post(`${API_BASE_URL}/edit_meeting`, meetingData, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Token ${token.trim()}`,
+          },
+        });
+        this.$emit('update-meeting', {
+          id: this.meeting.id,
+          title: meetingData.name,
+          description: meetingData.description,
+          date: startDateTime,
+          image: this.form.selectedRoom.image || 'https://via.placeholder.com/150',
+          type: this.form.selectedRoom.name || 'جلسه',
+          maxCapacity: this.form.selectedRoom.capacity || 10,
+          invited_users: this.participants,
+        });
         this.closeModalByButton();
+        alert('جلسه با موفقیت ویرایش شد!');
       } catch (error) {
-        this.error = `خطا در آماده‌سازی داده‌ها: ${error.message}`;
+        this.error = `خطا در ویرایش جلسه: ${error.response?.data?.message || error.message}`;
       }
     },
   },
-  created() {
-    this.fetchTeamMembers();
-  },
 };
 </script>
-
-
 <style scoped>
 .participant-input {
   position: relative;
@@ -776,6 +899,7 @@ export default {
   justify-content: center;
 }
 
+/*  */
 
 .modal-overlay {
   position: fixed;
