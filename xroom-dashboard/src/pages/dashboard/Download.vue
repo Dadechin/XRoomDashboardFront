@@ -1,7 +1,6 @@
 <template>
         <div>
             <!-- Top Header -->
-            <AppHeader pageTitle="دانلود  ها" />
 
             <!-- Description -->
             <div class="section-description">
@@ -74,127 +73,107 @@ export default {
 
 <style scoped>
 
-/*   .dashboard-page {
-    margin-right: 360px;
-    padding: 20px;
-    direction: rtl;
-    font-family: IRANSansXFaNum, sans-serif;
-  }
-  .content {
-    background-color: #f8f9fa;
-    border-radius: 20px;
-    padding: 35px 80px;
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
-  }
- */
+/* Base styles applied across all screen sizes */
 .section-title {
-    font-size: 20px;
-    font-weight: 600;
-    color: #2d3748;
-    margin-top: 20px;
-    margin-bottom: 10px;
+  font-weight: 700;
+  color: #101010;
+  font-size: 19px;
+  line-height: 26.6px;
 }
 
 .section-description {
-    margin-bottom: 3rem;
-    margin-top: 1rem;
-    font-size: 20px;
-    font-weight: 600;
-    color: #2d3748;
   margin: 1rem 0 3rem;
+  font-size: 20px;
+  font-weight: 600;
+  color: #2d3748;
 }
 
 .section-description p {
-    line-height: 190%;
-    color: #4F5A69;
-    font-size: 16px;
-    margin-top: 1rem;
+  line-height: 190%;
+  color: #4f5a69;
+  font-size: 15px;
+  margin-top: 1rem;
+  font-weight: 500;
+  text-align: justify;
 }
 
-  .chose-device {
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-  }
+.chose-device {
+  margin: 1.5rem 0;
+}
 
-  .cards {
-    display: flex;
-    justify-content: right;
-    align-items: center;
-    margin-top: 2.5rem;
-  }
-
-  .card-border {
-  background: linear-gradient(to right, #001940, #4364F7);
-  padding: 2px 1px;
-  border-radius: 20px;
-  width: 287px;
-  height: 442px;
-  margin-left: 2.5rem;
+.cards {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1.5rem;
+  gap: 1rem;
 }
 
 .platform-card {
   position: relative;
-  width: 287px;
-  height: 442px;
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  min-height: 320px;
   border-radius: 20px;
   background: white;
-  z-index: 0;
   overflow: hidden;
-  margin-left: 2.5rem;
+  margin: 0;
+  isolation: isolate;
 }
 
 .platform-card::before {
   content: "";
   position: absolute;
   inset: 0;
-  padding: 2.5px;
+  padding: 2px;
   border-radius: 20px;
-  background: linear-gradient(to right, #001940, #4364F7);
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
+  background: linear-gradient(to right, #001940, #4364f7);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   z-index: -1;
 }
 
+.card-objects {
+  text-align: center;
+  padding: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  min-height: 320px;
+  gap: 1rem;
+}
 
-  .card-objects {
-    text-align: center;
-    padding: 2.5rem 0px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    height: 100%;
-  }
-  .card-title {
-    font-size: 24px;
-    font-weight: 500;
-  }
+.card-title {
+  font-size: 20px;
+  font-weight: 500;
+}
 
-  .card-subtitle {
-    font-size: 17px;
-    font-weight: 500;
-    color : #718096;
-    max-width: 220px;
-  }
+.card-subtitle {
+  font-size: 15px;
+  font-weight: 500;
+  color: #718096;
+  max-width: 80%;
+  line-height: 190%;
+}
 
 .active-button {
   position: relative;
-  width: 207px;
+  width: 80%;
+  max-width: 207px;
   height: 46px;
   border-radius: 8px;
   background: white;
-  z-index: 0;
-  overflow: hidden;
   color: black;
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 500;
-  padding-top: 5%;
-  transition: background 0.8s ease, color 0.6s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.8s ease, color 0.3s ease-in-out;
 }
 
 .active-button::before {
@@ -203,35 +182,162 @@ export default {
   inset: 0;
   padding: 1px;
   border-radius: 8px;
-  background: linear-gradient(to right, #001940, #4364F7);
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
+  background: linear-gradient(to right, #001940, #4364f7);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-  z-index: -1;
+  z-index: 0;
 }
 
 .active-button:hover {
-  background: linear-gradient(to right, #001940, #4364F7);
   color: #fff;
+  background: linear-gradient(to right, #001940, #4364f7);
 }
 
 .disabled-button {
-    width: 207px;
-    height: 46px;
-    color: #111;
-    background-color: #E6E6E6;
-    border-radius: 8px;
-    font-size: 17px;
-    font-weight: 500;
-    padding-top: 5%;
+  width: 80%;
+  max-width: 207px;
+  height: 46px;
+  color: #111;
+  background-color: #e6e6e6;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .instructions-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4f5a69;
+  display: block;
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+/* Media Query for Tablets (600px < width ≤ 1024px) */
+@media (min-width: 600px) and (max-width: 1024px) {
+  .section-description {
+    font-size: 20px;
+    margin-bottom: 3rem;
+  }
+
+  .section-description p {
+    font-size: 16px;
+  }
+
+  .cards {
+    flex-direction: row;
+    justify-content: center;
+    gap: 2rem;
+  }
+
+  .platform-card {
+    width: 287px;
+    height: 442px;
+    min-height: auto;
+  }
+
+  .platform-card::before {
+    padding: 2.5px;
+  }
+
+  .card-title {
+    font-size: 24px;
+  }
+
+  .card-subtitle {
+    font-size: 17px;
+    max-width: 220px;
+  }
+
+  .active-button,
+  .disabled-button {
+    font-size: 17px;
+  }
+
+  .instructions-text {
     font-size: 15px;
+  }
+}
+
+/* Media Query for Small Desktops (1024px <س width ≤ 1280px) */
+@media (min-width: 1024px) and (max-width: 1280px) {
+  .section-title {
+    font-size: 20px;
     font-weight: 600;
-    color: #4F5A69;
+    color: #101010;
+    margin: 20px 0 10px;
+  }
+
+  .cards {
+    flex-direction: row;
+    justify-content: center;
+    gap: 2rem;
+  }
+
+  .platform-card {
+    width: 287px;
+    height: 442px;
+    margin-left: 0;
+  }
+
+  .platform-card::before {
+    padding: 2.5px;
+  }
+
+  .card-title {
+    font-size: 24px;
+  }
+
+  .card-subtitle {
+    font-size: 17px;
+    max-width: 220px;
+  }
+
+  .active-button,
+  .disabled-button {
+    font-size: 17px;
+  }
+}
+
+/* Media Query for Large Desktops (width > 1280px) */
+@media (min-width: 1280px) {
+  .section-title {
+    font-size: 21px;
+  }
+  
+  .cards {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 2rem;
+  }
+
+  .platform-card {
+    width: 287px;
+    height: 442px;
+    margin-left: 0;
+  }
+
+  .platform-card::before {
+    padding: 2.5px;
+  }
+
+  .card-title {
+    font-size: 24px;
+  }
+
+  .card-subtitle {
+    font-size: 17px;
+    max-width: 220px;
+  }
+
+  .active-button,
+  .disabled-button {
+    font-size: 17px;
+  }
 }
 
 </style>
