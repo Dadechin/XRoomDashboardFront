@@ -86,6 +86,73 @@
                 </div>
               </div>
             </div>
+
+          </div>
+          <div v-else class="no-files-message">
+            <button class="new-file" @click="openDialog(section.type)">
+              فایلی وجود ندارد , برای آپلود فایل جدید کلیک کنید
+              <span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 16 16" fill="none">
+                  <g clip-path="url(#clip0_312_7133)">
+                    <path d="M2.66602 11.3333V12.6666C2.66602 13.0202 2.80649 13.3593 3.05654 13.6094C3.30659 13.8594 3.64573 13.9999 3.99935 13.9999H11.9993C12.353 13.9999 12.6921 13.8594 12.9422 13.6094C13.1922 13.3593 13.3327 13.0202 13.3327 12.6666V11.3333" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M4.66602 6.00008L7.99935 2.66675L11.3327 6.00008" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M8 2.66675V10.6667" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                  </g>
+                  <defs>
+                    <clipPath id="clip0_312_7133">
+                      <rect width="16" height="16" fill="white"></rect>
+                    </clipPath>
+                  </defs>
+                </svg>
+              </span>
+            </button>
+          </div>
+        </div>
+        <div  v-for="section in filteredFileSections" :key="section.type" class="swiper-file-section">
+          <div class="section-title">{{ section.title }}</div>
+          <div v-if="filteredFiles(section.type).length > 0" style="display: flex; align-items: center; gap: 1.5rem 0.9rem; flex-wrap: wrap;">
+          <swiper
+            :slides-per-view="1.8"
+            :space-between="20"
+            :freeMode="true"
+            :pagination="{ clickable: true }"
+            :breakpoints="{
+              600: { slidesPerView: 3.8, spaceBetween: 15 },
+              900: { slidesPerView: 3.4, spaceBetween: 15 },
+            }"
+            :modules="modules"
+            class="swiper-file-list">
+              <swiper-slide class="swiper-file-card"
+                  v-for="(file, index) in filteredFiles(section.type)"
+                  :key="`${section.type}-${index}`"
+                  @click="openPreviewDialog(section.type, index, getFullFileUrl(file[section.type]), file.id)">
+                  <img
+                    :src="getFilePreviewImage(section.type, file)"
+                    :class="[
+                      {
+                        'file-image': section.type === 'image',
+                        'file-image file-pdf': section.type === 'pdf',
+                        'file-image file-video': section.type === 'video',
+                        'file-image file-glb': section.type === 'glb',
+                        'file-image file-other': section.type === 'other'
+                      }
+                    ]"
+                  />
+                  <div class="file-card-info">
+                    <div class="file-title">{{ file.name }}</div>
+                    <div class="file-meta">
+                      <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 20 20" fill="none">
+                          <path d="M2.5 10C2.5 11.4834 2.93987 12.9334 3.76398 14.1668C4.58809 15.4001 5.75943 16.3614 7.12987 16.9291C8.50032 17.4968 10.0083 17.6453 11.4632 17.3559C12.918 17.0665 14.2544 16.3522 15.3033 15.3033C16.3522 14.2544 17.0665 12.918 17.3559 11.4632C17.6453 10.0083 17.4968 8.50032 16.9291 7.12987C16.3614 5.75943 15.4001 4.58809 14.1668 3.76398C12.9334 2.93987 11.4834 2.5 10 2.5C7.90329 2.50789 5.89081 3.32602 4.38333 4.78333L2.5 6.66667" stroke="#101010" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path d="M2.5 2.5V6.66667H6.66667" stroke="#101010" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path d="M10 5.83325V9.99992L13.3333 11.6666" stroke="#101010" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </span>
+                      <span class="file-date">{{ formatDate(file.created_at) }}</span>
+                    </div>
+                  </div>
+              </swiper-slide>
+          </swiper>
           </div>
           <div v-else class="no-files-message">
             <button class="new-file" @click="openDialog(section.type)">
@@ -141,15 +208,21 @@ import '@google/model-viewer';
 import axios from 'axios';
 import NewFileDialog from '@/components/NewFileDialog.vue';
 import FilePreviewDialog from '@/components/FilePreviewDialog.vue';
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import 'swiper/css';
+import { FreeMode, Pagination } from 'swiper/modules';
 
 export default {
   name: 'DashboardPage',
   components: {
     NewFileDialog,
     FilePreviewDialog,
+    Swiper,
+    SwiperSlide,
   },
   data() {
     return {
+      modules: [FreeMode, Pagination],
       userData: {
         customer: {},
         user: {
@@ -397,53 +470,60 @@ export default {
 
 
 <style scoped>
-/* General Styles */
+.section-title {
+  font-weight: 700;
+  color: #101010;
+  font-size: 19px;
+  line-height: 26.6px;
+}
+
+.section-description {
+  margin-bottom: 3rem;
+}
+
+.section-description p {
+  line-height: 190%;
+  color: #4f5a69;
+  font-size: 15px;
+  margin-top: 1rem;
+  font-weight: 500;
+  text-align: justify;
+}
+
+.swiper-file-section {
+  display: none;
+}
+
+.file-section {
+  display: block;
+  margin-bottom: 3rem;
+}
+
 .file-manager {
   direction: rtl;
   font-family: system-ui, -apple-system, sans-serif;
 }
 
-/* Section Description */
-.section-description {
-  margin-bottom: 3rem;
-}
-
-.section-description .section-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #2d3748;
-  margin-bottom: 1rem;
-}
-
-.section-description p {
-  font-size: 1rem;
-  line-height: 1.9;
-  color: #4f5a69;
-}
-
-/* File Manager Layout */
 .file-manager-layout {
   display: flex;
   gap: 3rem;
 }
 
 .file-sidebar {
-  background-color: #ffffff;
+  background: #fff;
   border-radius: 12px;
-  padding: 2rem;
-  width: 25%;
+  width: 100%;
   height: fit-content;
 }
 
 .filter-buttons {
   display: flex;
-  flex-direction: column;
   gap: 1.5rem;
 }
 
 .new-file {
-  background-color: #3a57e8;
-  color: #ffffff;
+  background: #3a57e8;
+  color: #fff;
   border: none;
   border-radius: 10px;
   padding: 0.5rem 1.5rem;
@@ -455,18 +535,12 @@ export default {
   cursor: pointer;
 }
 
-.new-file svg {
-  width: 22px;
-  height: 22px;
-}
-
 .filter-btn {
   background: none;
   border: none;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 1.125rem;
   cursor: pointer;
   padding: 0.5rem 0;
 }
@@ -492,23 +566,15 @@ export default {
 }
 
 .recent-filter-border {
-  border-bottom: 1px solid #e2dee9;
-  padding-bottom: 1.5rem;
+  border-bottom: 0;
+  padding-bottom: 0;
 }
 
 .file-grid {
-  width: 75%;
-}
-
-.file-section {
-  margin-bottom: 3rem;
-}
-
-.file-section .section-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #2d3748;
-  margin-bottom: 1.5rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
 }
 
 .file-grid-content {
@@ -517,19 +583,26 @@ export default {
   gap: 1rem;
 }
 
-.file-card {
+.file-card,
+.swiper-file-card {
   width: calc(33.333% - 0.67rem);
   border: 1px solid #b8c0cb;
   border-radius: 16px;
-  background-color: #ffffff;
+  background: #fff;
   padding: 0.5rem 0.5rem 1rem;
   cursor: pointer;
 }
 
+.swiper-file-card {
+  border-radius: 12px;
+  padding: 6px;
+  height: 16rem;
+}
+
 .file-image {
   width: 100%;
-  height: 190px;
-  border-radius: 15px;
+  height: 145px;
+  border-radius: 8px;
   object-fit: cover;
 }
 
@@ -538,6 +611,9 @@ export default {
 .file-glb,
 .file-other {
   object-fit: contain;
+  width: 70%;
+  display: block;
+  margin: auto;
 }
 
 .file-card-info {
@@ -545,11 +621,13 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  justify-content: space-between;
+  height: 30%;
 }
 
 .file-title {
-  color: #444d5a;
-  font-size: 1.25rem;
+  color: #101010;
+  font-size: 16px;
   font-weight: 600;
 }
 
@@ -560,18 +638,18 @@ export default {
 }
 
 .file-meta svg {
-  width: 22px;
-  height: 22px;
+  width: 16px;
+  height: 16px;
 }
 
 .file-date {
   color: #7f8da1;
-  font-size: 1rem;
+  font-size: 14px;
 }
 
 .no-files-message {
   text-align: center;
-  color: #888888;
+  color: #888;
   font-size: 1.2rem;
   margin-top: 1rem;
   display: flex;
@@ -581,8 +659,8 @@ export default {
 }
 
 .upload-btn {
-  background-color: #3a57e8;
-  color: #ffffff;
+  background: #3a57e8;
+  color: #fff;
   border: none;
   border-radius: 10px;
   padding: 0.5rem 1.5rem;
@@ -594,8 +672,137 @@ export default {
   cursor: pointer;
 }
 
-.upload-btn svg {
+.upload-btn svg,
+.new-file svg {
   width: 22px;
   height: 22px;
 }
+
+@media (max-width: 1023px) {
+  .swiper-file-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .file-section {
+    display: none;
+  }
+
+  .swiper-file-list {
+    width: 100%;
+  }
+
+  .file-manager-layout {
+    flex-direction: column;
+  }
+
+  .file-sidebar {
+    padding: 1rem;
+  }
+
+  .filter-buttons {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .new-file {
+    width: 100%;
+  }
+
+  .new-file svg {
+    width: 20px;
+  }
+
+  .filter-btn {
+    font-size: 15px;
+  }
+
+  .file-grid {
+    padding-bottom: 5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .file-manager-layout {
+    flex-direction: row;
+  }
+
+  .file-sidebar {
+    padding: 2rem;
+    width: 25%;
+  }
+
+  .filter-buttons {
+    flex-direction: column;
+  }
+
+  .file-grid {
+    width: 75%;
+  }
+
+  .file-card {
+    border-radius: 16px;
+    padding: 0.5rem 0.5rem 1rem;
+  }
+
+  .file-image {
+    height: 190px;
+    border-radius: 15px;
+  }
+
+  .file-pdf,
+  .file-video,
+  .file-glb,
+  .file-other {
+    width: 100%;
+  }
+
+  .file-card-info {
+    height: auto;
+  }
+
+  .file-title {
+    color: #444d5a;
+    font-size: 1.25rem;
+  }
+
+  .file-meta svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .file-date {
+    font-size: 1rem;
+  }
+
+  .recent-filter-border {
+    border-bottom: 1px solid #e2dee9;
+    padding-bottom: 1.5rem;
+  }
+
+  .filter-btn {
+    font-size: 1.125rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .section-title {
+    font-size: 21px;
+  }
+
+  .section-description p {
+    font-size: 17.5px;
+  }
+
+  .file-section {
+    display: block;
+    margin-bottom: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
 </style>
