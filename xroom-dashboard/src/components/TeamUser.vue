@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="padding-bottom: 2.5rem;">
     <!-- License Info -->
     <div class="card license-card">
       <span>لایسنس‌های قابل استفاده: {{ remainingCapacity }}</span>
@@ -34,119 +34,253 @@
       </div>
     </div>
 
-    <!-- User List -->
+    <!-- User List with Swiper -->
     <div class="user-cards">
-      <div v-for="(user, index) in userList" :key="index" class="user-card">
-        <div class="user-card-header">
-          <img :src="user.avatar" class="user-avatar" alt="avatar" />
-          <div class="user-info-box">
-            <div class="user-info-tags">
-              <div class="user-name">{{ user.name }}</div>
-              <div class="user-email">{{ user.email }}</div>
+      <swiper
+        v-if="isMobile"
+        :slidesPerView="1.2"
+        :spaceBetween="15"
+        :freeMode="true"
+        :pagination="{ clickable: false }"
+        :modules="modules"
+        :breakpoints="{
+          768: { slidesPerView: 2.3, spaceBetween: 15 },
+          1024: { slidesPerView: 1.6, spaceBetween: 15 },
+          1280: { slidesPerView: 1.1, spaceBetween: 25 },
+        }"
+        class="swiper-container"
+      >
+        <swiper-slide v-for="(user, index) in userList" :key="index">
+          <div class="user-card">
+            <div class="user-card-header">
+              <div style="display: flex;align-items: center;gap: 8px;">
+                <img :src="user.avatar" class="user-avatar" alt="avatar" />
+                <div class="user-info-tags">
+                  <div class="user-name">{{ user.name }}</div>
+                  <div class="user-email">{{ user.email }}</div>
+                </div>
+              </div>
+              <div class="user-info-box">
+                <div class="user-activity">
+                  <div class="user-role">{{ user.role }}</div>
+                  <div class="user-version">{{ user.version }}</div>
+                </div>
+              </div>
             </div>
-            <div class="user-activity">
-              <div class="user-role">{{ user.role }}</div>
-              <div class="user-version">{{ user.version }}</div>
+            <div class="user-footer">
+              <span>اکانت XRoom</span>
+              <div class="user-actions">
+                <button>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="25"
+                    height="25"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                  >
+                    <path
+                      d="M16.666 5.83325H9.16602"
+                      stroke="white"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M11.666 14.1667H4.16602"
+                      stroke="white"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M14.166 16.6667C15.5467 16.6667 16.666 15.5475 16.666 14.1667C16.666 12.786 15.5467 11.6667 14.166 11.6667C12.7853 11.6667 11.666 12.786 11.666 14.1667C11.666 15.5475 12.7853 16.6667 14.166 16.6667Z"
+                      stroke="white"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M5.83398 8.33325C7.2147 8.33325 8.33398 7.21396 8.33398 5.83325C8.33398 4.45254 7.2147 3.33325 5.83398 3.33325C4.45327 3.33325 3.33398 4.45254 3.33398 5.83325C3.33398 7.21396 4.45327 8.33325 5.83398 8.33325Z"
+                      stroke="white"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </button>
+                <button>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="25"
+                    height="25"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                  >
+                    <path
+                      d="M2.5 5H17.5"
+                      stroke="white"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M15.8327 5V16.6667C15.8327 17.5 14.9993 18.3333 14.166 18.3333H5.83268C4.99935 18.3333 4.16602 17.5 4.16602 16.6667V5"
+                      stroke="white"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M6.66602 5.00008V3.33341C6.66602 2.50008 7.49935 1.66675 8.33268 1.66675H11.666C12.4993 1.66675 13.3327 2.50008 13.3327 3.33341V5.00008"
+                      stroke="white"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M8.33398 9.16675V14.1667"
+                      stroke="white"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M11.666 9.16675V14.1667"
+                      stroke="white"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </swiper-slide>
+      </swiper>
+      
+      <div v-else class="user-cards-grid">
+        <div v-for="(user, index) in userList" :key="index" class="user-card">
+          <div class="user-card-header">
+            <img :src="user.avatar" class="user-avatar" alt="avatar" />
+            <div class="user-info-box">
+              <div class="user-info-tags">
+                <div class="user-name">{{ user.name }}</div>
+                <div class="user-email">{{ user.email }}</div>
+              </div>
+              <div class="user-activity">
+                <div class="user-role">{{ user.role }}</div>
+                <div class="user-version">{{ user.version }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="user-footer">
+            <span>اکانت XRoom</span>
+            <div class="user-actions">
+              <button>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="25"
+                  height="25"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                >
+                  <path
+                    d="M16.666 5.83325H9.16602"
+                    stroke="white"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M11.666 14.1667H4.16602"
+                    stroke="white"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M14.166 16.6667C15.5467 16.6667 16.666 15.5475 16.666 14.1667C16.666 12.786 15.5467 11.6667 14.166 11.6667C12.7853 11.6667 11.666 12.786 11.666 14.1667C11.666 15.5475 12.7853 16.6667 14.166 16.6667Z"
+                    stroke="white"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M5.83398 8.33325C7.2147 8.33325 8.33398 7.21396 8.33398 5.83325C8.33398 4.45254 7.2147 3.33325 5.83398 3.33325C4.45327 3.33325 3.33398 4.45254 3.33398 5.83325C3.33398 7.21396 4.45327 8.33325 5.83398 8.33325Z"
+                    stroke="white"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
+              <button>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="25"
+                  height="25"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                >
+                  <path
+                    d="M2.5 5H17.5"
+                    stroke="white"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M15.8327 5V16.6667C15.8327 17.5 14.9993 18.3333 14.166 18.3333H5.83268C4.99935 18.3333 4.16602 17.5 4.16602 16.6667V5"
+                    stroke="white"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M6.66602 5.00008V3.33341C6.66602 2.50008 7.49935 1.66675 8.33268 1.66675H11.666C12.4993 1.66675 13.3327 2.50008 13.3327 3.33341V5.00008"
+                    stroke="white"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M8.33398 9.16675V14.1667"
+                    stroke="white"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M11.666 9.16675V14.1667"
+                    stroke="white"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
             </div>
           </div>
         </div>
-        <div class="user-footer">
-          <span>اکانت XRoom</span>
-          <div class="user-actions">
-            <button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="25"
-                height="25"
-                viewBox="0 0 20 20"
-                fill="none"
-              >
-                <path
-                  d="M16.666 5.83325H9.16602"
-                  stroke="white"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M11.666 14.1667H4.16602"
-                  stroke="white"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M14.166 16.6667C15.5467 16.6667 16.666 15.5475 16.666 14.1667C16.666 12.786 15.5467 11.6667 14.166 11.6667C12.7853 11.6667 11.666 12.786 11.666 14.1667C11.666 15.5475 12.7853 16.6667 14.166 16.6667Z"
-                  stroke="white"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M5.83398 8.33325C7.2147 8.33325 8.33398 7.21396 8.33398 5.83325C8.33398 4.45254 7.2147 3.33325 5.83398 3.33325C4.45327 3.33325 3.33398 4.45254 3.33398 5.83325C3.33398 7.21396 4.45327 8.33325 5.83398 8.33325Z"
-                  stroke="white"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </button>
-            <button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="25"
-                height="25"
-                viewBox="0 0 20 20"
-                fill="none"
-              >
-                <path
-                  d="M2.5 5H17.5"
-                  stroke="white"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M15.8327 5V16.6667C15.8327 17.5 14.9993 18.3333 14.166 18.3333H5.83268C4.99935 18.3333 4.16602 17.5 4.16602 16.6667V5"
-                  stroke="white"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M6.66602 5.00008V3.33341C6.66602 2.50008 7.49935 1.66675 8.33268 1.66675H11.666C12.4993 1.66675 13.3327 2.50008 13.3327 3.33341V5.00008"
-                  stroke="white"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M8.33398 9.16675V14.1667"
-                  stroke="white"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M11.666 9.16675V14.1667"
-                  stroke="white"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </button>
+        <!-- Add User Card -->
+          <div class="user-card add-card" @click="openAddUserModal">
+            <span class="add-text">
+              <span style="font-size: 23px; margin-left: 0.5rem;">+</span>
+              اضافه کردن کاربر جدید
+            </span>
           </div>
-        </div>
       </div>
       <!-- Add User Card -->
-      <div class="user-card add-card" @click="openAddUserModal">
+      <div class="user-card add-card swiper-add-user" @click="openAddUserModal">
         <span class="add-text">
           <span style="font-size: 23px; margin-left: 0.5rem;">+</span>
           اضافه کردن کاربر جدید
         </span>
       </div>
     </div>
+
+
 
     <!-- Add User Modal -->
     <AddUserModal
@@ -157,12 +291,16 @@
   </div>
 </template>
 
+
 <script>
 import AddUserModal from '@/components/AddUserModal.vue';
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import 'swiper/css';
+import { FreeMode, Pagination } from 'swiper/modules';
 
 export default {
   name: 'TeamUser',
-  components: { AddUserModal },
+  components: { AddUserModal, Swiper, SwiperSlide },
   props: {
     userList: { type: Array, default: () => [] },
     teamMemberCapacity: { type: Number, default: 0 },
@@ -171,7 +309,9 @@ export default {
   },
   data() {
     return {
+      modules: [FreeMode, Pagination],
       isAddUserModalVisible: false,
+      isMobile: window.innerWidth <= 1024,
     };
   },
   computed: {
@@ -198,12 +338,23 @@ export default {
     goToBuySubscription() {
       this.$emit('change-tab', 'buy-subscription');
     },
+    handleResize() {
+      this.isMobile = window.innerWidth <= 1024;
+    },
   },
+  mounted() {
+    window.addEventListener('resize', this.handleResize);
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.handleResize);
+  },
+
 };
 </script>
 
+
 <style scoped>
-/* User Info Section */
+/* Base Styles */
 .user-info {
   display: flex;
   align-items: center;
@@ -219,7 +370,7 @@ export default {
 .user-email {
   font-size: 14px;
   font-weight: 500;
-  color: #4F5A69;
+  color: #4f5a69;
 }
 
 .user-info-tags,
@@ -233,21 +384,14 @@ export default {
   padding-left: 2rem;
 }
 
-/* User Cards Section */
 .user-cards {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
   margin-top: 2.5rem;
-  justify-content: space-between;
 }
 
 .user-card {
   background: #fff;
-  border-radius: 16px;
+  border-radius: 8px;
   box-shadow: 0 1px 4px 0 #00000029;
-  width: 48%;
-  height: 158px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -259,6 +403,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   gap: 16px;
+  padding: 10px;
 }
 
 .user-info-box {
@@ -300,8 +445,6 @@ export default {
   color: #3a57e8;
   font-weight: 500;
   font-size: 20px;
-  width: 48%;
-  height: 158px;
   cursor: pointer;
 }
 
@@ -320,7 +463,7 @@ export default {
 }
 
 .license-card {
-  max-width: 1600px;
+  max-width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -330,7 +473,6 @@ export default {
   font-size: 17px;
 }
 
-/* User Footer Section */
 .user-footer {
   background: #3a57e8;
   color: #fff;
@@ -353,16 +495,255 @@ export default {
   cursor: pointer;
 }
 
-/* User Avatar */
 .user-avatar {
   width: 70px;
-  height: 86px;
+  height: 7rem;
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
   align-self: flex-end;
-  margin-top: 10px;
+  margin-top: 0;
 }
 
+/* Swiper Styles */
+.swiper-container {
+  width: 100%;
+  padding-bottom: 20px;
+}
+
+.swiper-slide {
+  display: flex;
+  justify-content: center;
+}
+
+
+.swiper-add-user {
+  display : none;
+}
+
+/* Mobile Styles (max-width: 600px) */
+@media (max-width: 600px) {
+
+  .swiper-add-user {
+    display : block;
+  }
+
+  .user-card {
+    width: 100%;
+    height: auto;
+  }
+
+  .add-card {
+    width: 100%;
+    height: 100px;
+    display: flex;
+  }
+
+  .license-card {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .user-info-box {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .user-activity {
+    padding-left: 0;
+  }
+
+  .user-avatar {
+    margin-top: 0;
+    width: 50px;
+    height: 80px;
+    object-fit: cover;
+  }
+
+  .user-name {
+    font-size: 14px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #101010;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow-x: clip;
+    width: 90px;
+  }
+
+  .user-email {
+    font-size: 12px;
+  }
+
+  .user-role {
+    font-size: 15px;
+  }
+
+  .user-footer span {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .user-info-tags, .user-activity {
+    gap: 1rem;
+  }
+
+  .user-actions svg {
+    width: 18px !important; 
+    height: 18px !important; 
+  }
+
+  .user-version , .user-role{ 
+    font-size: 14px;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    overflow-x: clip;
+    white-space: nowrap;
+    width: 80px;
+  }
+
+  .license-card span {
+    font-size: 14px;
+  }
+
+  .buy-subscription {
+    font-size : 14px;
+    gap : 6px;
+  }
+
+  .buy-subscription svg {
+  
+    height: 18px;
+    width: 18px;
+
+  }
+
+  .add-text {
+    font-size: 18px;
+  }
+}
+
+/* Tablet Styles (min-width: 600px and max-width: 1024px) */
+@media (min-width: 600px) and (max-width: 1025px) {
+
+  .swiper-add-user {
+    display : block;
+  }
+
+  .user-card {
+    width: 100%;
+    height: auto;
+  }
+
+  .add-card {
+    width: 100%;
+    height: 100px;
+    display: flex;
+  }
+
+  .license-card {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .user-info-box {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .user-activity {
+    padding-left: 0;
+  }
+
+  .user-avatar {
+    margin-top: 0;
+    width: 50px;
+    height: 80px;
+    object-fit: cover;
+  }
+
+  .user-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: #101010;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow-x: clip;
+    width: 90px;
+  }
+
+  .user-email {
+    font-size: 13px;
+  }
+
+  .user-role {
+    font-size: 15px;
+  }
+
+  .user-footer span {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .user-info-tags, .user-activity {
+    gap: 1rem;
+  }
+
+  .user-actions svg {
+    width: 18px !important; 
+    height: 18px !important; 
+  }
+
+  .user-version , .user-role{ 
+    font-size: 15px;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    overflow-x: clip;
+    white-space: nowrap;
+    width: 80px;
+  }
+
+  .license-card span {
+    font-size: 15x;
+  }
+
+  .buy-subscription {
+    font-size : 15px;
+    gap : 6px;
+  }
+
+  .buy-subscription svg {
+  
+    height: 18px;
+    width: 18px;
+
+  }
+
+  .add-text {
+    font-size: 18px;
+  }
+}
+
+/* Desktop Styles (min-width: 1024px) */
+@media (min-width: 1025px) {
+  .user-cards-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: space-between;
+  }
+
+  .user-card {
+    width: 48%;
+    height: auto;
+  }
+
+  .add-card {
+    width: 48%;
+    height: auto;
+  }
+}
 
 </style>

@@ -8,15 +8,17 @@
           <AppHeader @toggle-sidebar="toggleSidebar" :pageTitle="$route.meta.title" />
           <router-view></router-view>
         </div>
+        <Footer />
       </div>
     </template>
 
     <!-- Sample Layout for SignUp, etc. -->
     <template v-else>
       <router-view></router-view>
+      <Footer />
     </template>
 
-    <Footer />
+
   </div>
 </template>
 
@@ -48,15 +50,6 @@ export default {
       this.isSidebarOpen = !this.isSidebarOpen;
     }
   },
-  mounted() {
-    const content = document.querySelector('.content');
-    if (content) {
-      content.addEventListener('scroll', () => {
-        document.body.scrollTop = content.scrollTop;
-        document.documentElement.scrollTop = content.scrollTop;
-      });
-    }
-  }
 };
 </script>
 
@@ -122,14 +115,18 @@ router-view {
   flex-direction: column;
   gap: 32px;
   padding: 35px 80px;
+
+}
+
+.dashboard-page::-webkit-scrollbar {
+  width: 0;
+  display: none;
+}
+
+.dashboard-page {
   height: 100vh;
   overflow-y: scroll;
   box-sizing: border-box;
-}
-
-.content::-webkit-scrollbar {
-  width: 0;
-  display: none;
 }
 
 /* Responsive Styles */
@@ -187,7 +184,9 @@ router-view {
 
 @media (min-width: 1280px) and (max-width : 1440px){
   .dashboard-page {
-    margin-right: 20rem;
+    position: fixed;
+    width: 80%;
+    right: 20%;
     padding: 20px;
     direction: rtl;
   }
@@ -197,9 +196,11 @@ router-view {
   }
 }
 
-@media (min-width: 1440px){
+@media (min-width: 1440px) and (max-width : 1500px){
   .dashboard-page {
-    margin-right: 20rem;
+    position: fixed;
+    width: 80%;
+    right: 20%;
     padding: 20px;
     direction: rtl;
   }
@@ -208,4 +209,15 @@ router-view {
     padding: 35px 80px !important;
   }
 }
+
+@media (min-width: 1500px){
+  .dashboard-page {
+    position: fixed;
+    width: 80%;
+    right: 20%;
+    padding: 20px;
+    direction: rtl;
+  }
+}
+
 </style>

@@ -478,7 +478,7 @@ export default {
 }
 
 .section-description {
-  margin-bottom: 3rem;
+  margin: 1rem 0 3rem !important;
 }
 
 .section-description p {

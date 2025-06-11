@@ -236,68 +236,94 @@ export default {
 <style scoped>
 
 .section-title {
-    font-size: 20px;
-    font-weight: 600;
-    color: #2d3748;
-    margin-top: 20px;
-    margin-bottom: 10px;
+  font-weight: 700;
+  color: #101010;
+  font-size: 19px;
+  line-height: 26.6px;
 }
 
 .section-description {
-    margin-bottom: 3rem;
-    margin-top: 1rem;
-    font-size: 20px;
-    font-weight: 600;
-    color: #2d3748;
-    margin: 1rem 0 3rem;
+  margin: 1rem 0 3rem;
+  font-size: 20px;
+  font-weight: 600;
+  color: #2d3748;
 }
 
 .section-description p {
-    line-height: 190%;
-    color: #4F5A69;
-    font-size: 16px;
-    margin-top: 1rem;
+  line-height: 190%;
+  color: #4f5a69;
+  font-size: 15px;
+  margin-top: 1rem;
+  font-weight: 500;
+  text-align: justify;
 }
 
-/* .dashboard-page {
-  margin-right: 360px;
-  padding: 20px;
-  direction: rtl;
-  font-family: IRANSansXFaNum, sans-serif;
-}
-
-.content {
-  background-color: #f8f9fa;
-  border-radius: 20px;
-  padding: 35px 80px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
- */
 .tab-buttons {
   display: flex;
   gap: 25px;
   margin-top: 2rem;
   margin-bottom: 2rem;
+  justify-content: space-between;
+  padding : 8px;
 }
 
 .tab-btn {
   background: none;
   border: none;
   color: gray;
-  font-size: 17px;
+  font-size: 16px;
   padding: 8px 16px;
   cursor: pointer;
   border-bottom: 2px solid transparent;
   transition: all 0.2s ease-in-out;
-  padding-right: 0;
+  padding-right: 0px;
+  padding-left: 0;
 }
 
 .tab-btn.active {
   color: #3a57e8;
   border-bottom: 2px solid #3a57e8;
-  font-size: 20px;
+  font-size: 16px;
+}
+
+@media (min-width: 600px) and (max-width: 1024px) {
+  .tab-buttons {
+    justify-content: flex-start;
+  }
+}
+
+
+@media (min-width: 1024px) and (max-width: 1280px) {
+  .section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #101010;
+    margin: 20px 0 10px;
+  }
+}
+
+
+@media (min-width: 1280px) {
+  .section-title {
+    font-size: 21px;
+  }
+
+  .section-description p {
+    font-size: 17.5px;
+  }
+  .tab-btn {
+    font-size: 18px;
+    padding: 8px 16px;
+  }
+
+  .tab-btn.active {
+    font-size: 21px;
+  }
+
+  .tab-buttons {
+    padding: 0;
+    justify-content: flex-start;
+  }
 }
 
 

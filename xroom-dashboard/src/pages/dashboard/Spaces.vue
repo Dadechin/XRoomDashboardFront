@@ -169,7 +169,7 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 /* Base styles applied across all screen sizes */
 .section-title {
   font-weight: 700;
