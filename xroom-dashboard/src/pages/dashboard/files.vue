@@ -478,11 +478,11 @@ export default {
 }
 
 .section-description {
-  margin: 1rem 0 3rem !important;
+  margin: 1rem 0 3rem;
 }
 
 .section-description p {
-  line-height: 190%;
+  line-height: 1.9;
   color: #4f5a69;
   font-size: 15px;
   margin-top: 1rem;
@@ -526,11 +526,11 @@ export default {
   color: #fff;
   border: none;
   border-radius: 10px;
-  padding: 0.5rem 1.5rem;
+  padding: .5rem 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: .5rem;
   font-size: 1.125rem;
   cursor: pointer;
 }
@@ -540,9 +540,9 @@ export default {
   border: none;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: .5rem;
   cursor: pointer;
-  padding: 0.5rem 0;
+  padding: .5rem 0;
 }
 
 .active-btn {
@@ -583,13 +583,12 @@ export default {
   gap: 1rem;
 }
 
-.file-card,
-.swiper-file-card {
-  width: calc(33.333% - 0.67rem);
+.file-card, .swiper-file-card {
+  width: calc(33.333% - .67rem);
   border: 1px solid #b8c0cb;
   border-radius: 16px;
   background: #fff;
-  padding: 0.5rem 0.5rem 1rem;
+  padding: .5rem .5rem 1rem;
   cursor: pointer;
 }
 
@@ -606,10 +605,7 @@ export default {
   object-fit: cover;
 }
 
-.file-pdf,
-.file-video,
-.file-glb,
-.file-other {
+.file-pdf, .file-video, .file-glb, .file-other {
   object-fit: contain;
   width: 70%;
   display: block;
@@ -634,7 +630,7 @@ export default {
 .file-meta {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: .5rem;
 }
 
 .file-meta svg {
@@ -663,22 +659,21 @@ export default {
   color: #fff;
   border: none;
   border-radius: 10px;
-  padding: 0.5rem 1.5rem;
+  padding: .5rem 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: .5rem;
   font-size: 1.125rem;
   cursor: pointer;
 }
 
-.upload-btn svg,
-.new-file svg {
+.upload-btn svg, .new-file svg {
   width: 22px;
   height: 22px;
 }
 
-@media (min-width: 1024px) and (max-width: 1280px) {
+@media (max-width: 1280px) {
   .swiper-file-section {
     display: flex;
     flex-direction: column;
@@ -724,7 +719,7 @@ export default {
   }
 }
 
-/* @media (min-width: 1024px) {
+@media (min-width: 1280px) {
   .file-manager-layout {
     flex-direction: row;
   }
@@ -744,7 +739,7 @@ export default {
 
   .file-card {
     border-radius: 16px;
-    padding: 0.5rem 0.5rem 1rem;
+    padding: .5rem .5rem 1rem;
   }
 
   .file-image {
@@ -752,10 +747,7 @@ export default {
     border-radius: 15px;
   }
 
-  .file-pdf,
-  .file-video,
-  .file-glb,
-  .file-other {
+  .file-pdf, .file-video, .file-glb, .file-other {
     width: 100%;
   }
 
@@ -784,24 +776,6 @@ export default {
 
   .filter-btn {
     font-size: 1.125rem;
-  }
-} */
-
-@media (min-width: 1280px) {
-  .section-title {
-    font-size: 21px;
-  }
-
-  .section-description p {
-    font-size: 17.5px;
-  }
-
-  .file-section {
-    display: block;
-    margin-bottom: 3rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
   }
 }
 
