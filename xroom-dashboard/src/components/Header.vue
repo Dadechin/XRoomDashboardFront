@@ -182,6 +182,7 @@ export default {
   align-items: center;
   gap: 8px;
   position: relative;
+  cursor: pointer;
 }
 
 .user-icon {

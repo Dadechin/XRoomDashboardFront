@@ -251,7 +251,7 @@ export default {
 .profile-container {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 0.5rem;
 }
 
 .group {
@@ -346,7 +346,7 @@ export default {
 @media (max-width: 520px) {
   .sidebar {
     width: 250px;
-    padding: 1rem 1rem 1rem 0.5rem;
+    padding: 1rem 0.5rem;
     transition: transform 0.3s ease-in-out;
     transform: translateX(100%);
   }
@@ -361,7 +361,16 @@ export default {
   }
 
   .group {
+
     width: 100%;
+  }
+
+  .profile-link {
+    margin-right: -30px;
+  }
+
+  .frame {
+    padding-right: 0.5rem;
   }
 
   .clip-path-group-wrapper {
@@ -379,7 +388,7 @@ export default {
 @media (min-width: 520px) and (max-width: 780px) {
   .sidebar {
     width: 22rem;
-    padding: 1rem 1rem 1rem 0.5rem;
+    padding: 1rem 0.5rem 1rem 0.5rem;
     transform: translateX(100%);
   }
 
@@ -394,6 +403,14 @@ export default {
 
   .group {
     width: 100%;
+  }
+
+  .profile-link {
+    margin-right: -30px;
+  }
+
+  .frame {
+    padding-right: 0.5rem;
   }
   
   .clip-path-group-wrapper {
@@ -478,24 +495,41 @@ export default {
 
   .group {
     width: 228px;
-    margin-bottom: 75px;
+    margin-bottom: 30px;
   }
 
   .profile {
-    margin-left: 20px;
+    width: 120px;
+    height: 120px;
+    margin-left: 0;
   }
 
   .profile-container {
     padding: 10px 0;
     position: relative;
+    gap: 0;
   }
 
   .text-wrapper-2 {
     font-size: 16px;
   }
 
+  .logo-xroom {
+    margin-top: 2.5rem;
+  }
+
   .text-wrapper-3 {
     font-size: 19px;
+  }
+
+  .clip-path-group{
+    width: 150px;
+    height: 40px;
+  }
+
+  .clip-path-group-wrapper {
+    width: 150px;
+    height: 40px;
   }
 }
 </style>
