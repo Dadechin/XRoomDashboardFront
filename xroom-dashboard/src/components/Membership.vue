@@ -196,7 +196,6 @@ export default {
 
 
 <style scoped>
-
 .access-container {
   direction: rtl;
   font-family: IRANSansXFaNum, sans-serif;
@@ -259,8 +258,9 @@ export default {
 
 .info-cards {
   display: flex;
+  justify-content: space-between;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 1.5rem 0;
 }
 
 .info-card {
@@ -273,7 +273,8 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 20rem;
+  height: 18rem;
+  gap: 1rem;
 }
 
 .card-content h4 {
@@ -364,5 +365,236 @@ export default {
   padding: 8px 16px;
   border-radius: 8px;
   cursor: pointer;
+}
+
+/* Responsive Design */
+
+/* Mobile (max-width: 600px) */
+@media (max-width: 600px) {
+  .access-container {
+    padding: 10px;
+  }
+
+  .access-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 15px;
+    margin-bottom: 16px;
+  }
+
+  .header-content {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .header-text {
+    margin-right: 0;
+    margin-top: 0;
+  }
+
+  .header-text h3 {
+    font-size: 16px;
+    margin-bottom: 1rem;
+  }
+
+  .header-text p {
+    font-size: 12px;
+  }
+
+  .lock-icon {
+    width: 50px;
+    height: 50px;
+  }
+
+  .primary-button {
+    width: 100%;
+    justify-content: center;
+    padding: 10px;
+    font-size: 12px;
+    margin-top: 15px;
+  }
+
+  .info-cards {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .info-card {
+    max-width: 100%;
+    height: auto;
+    padding: 15px;
+    gap: 1rem;
+  }
+
+  .card-content h4 {
+    font-size: 16px;
+    margin-bottom: 1rem;
+  }
+
+  .billing-address,
+  .memberships,
+  .payment-method,
+  .subscription-all,
+  .subscription-remainder,
+  .subscription-added,
+  .invalid-subscription {
+    font-size: 14px;
+  }
+
+  .billing-phoneNum span,
+  .billing-email span,
+  .subscription-all span,
+  .subscription-remainder span,
+  .subscription-added span {
+    font-size: 13px;
+  }
+
+  .secondary-button,
+  .disable-button {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+
+  .loading,
+  .error {
+    font-size: 14px;
+  }
+}
+
+/* Tablet (min-width: 600px - max-width: 1024px) */
+@media (min-width: 600px) and (max-width: 1024px) {
+  .access-container {
+    padding: 15px;
+  }
+
+  .access-header {
+    flex-direction: row;
+    padding: 15px;
+  }
+
+  .header-text h3 {
+    font-size: 18px;
+  }
+
+  .header-text p {
+    font-size: 13px;
+  }
+
+  .lock-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .primary-button {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+
+  .info-cards {
+    gap: 15px;
+  }
+
+  .info-card {
+    max-width: 48%;
+    height: auto;
+    padding: 15px;
+    gap: 1rem;
+  }
+
+  .card-content h4 {
+    font-size: 17px;
+  }
+
+  .billing-address,
+  .memberships,
+  .payment-method,
+  .subscription-all,
+  .subscription-remainder,
+  .subscription-added,
+  .invalid-subscription {
+    font-size: 15px;
+  }
+
+  .billing-phoneNum span,
+  .billing-email span,
+  .subscription-all span,
+  .subscription-remainder span,
+  .subscription-added span {
+    font-size: 14px;
+  }
+
+  .secondary-button,
+  .disable-button {
+    font-size: 14px;
+    padding: 8px 14px;
+  }
+}
+
+/* Small Desktop (min-width: 1024px - max-width: 1280px) */
+@media (min-width: 1024px) and (max-width: 1280px) {
+  .access-container {
+    padding: 15px;
+  }
+
+  .access-header {
+    padding: 18px;
+  }
+
+  .header-text h3 {
+    font-size: 19px;
+  }
+
+  .header-text p {
+    font-size: 13px;
+  }
+
+  .lock-icon {
+    width: 70px;
+    height: 70px;
+  }
+
+  .primary-button {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+
+  .info-cards {
+    gap: 18px;
+  }
+
+  .info-card {
+    max-width: 48%;
+    padding: 18px;
+    gap: 1rem;
+  }
+
+  .card-content h4 {
+    font-size: 17px;
+  }
+
+  .billing-address,
+  .memberships,
+  .payment-method,
+  .subscription-all,
+  .subscription-remainder,
+  .subscription-added,
+  .invalid-subscription {
+    font-size: 15px;
+  }
+
+  .billing-phoneNum span,
+  .billing-email span,
+  .subscription-all span,
+  .subscription-remainder span,
+  .subscription-added span {
+    font-size: 14px;
+  }
+}
+
+/* Large Desktop (min-width: 1280px) */
+@media (min-width: 1280px) {
+  /* No changes needed as the original styles are optimized for this size */
 }
 </style>
