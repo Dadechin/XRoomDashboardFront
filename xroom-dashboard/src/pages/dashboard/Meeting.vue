@@ -69,8 +69,8 @@
         </span>
         <div v-else class="meetings-list">
           <div v-for="meeting in filteredMeetings" :key="meeting.id" class="meeting-item">
-            <img :src="meeting.image" alt="Meeting Image" class="meeting-image" width="120" height="120" />
-            <div class="meeting-details" style="width:100%;margin-right: 10px;">
+            <img :src="meeting.image" alt="Meeting Image" class="meeting-image" width="48%" height="120" />
+            <div class="meeting-details" style="width : 48%;">
               <h3 class="meet-title">{{ meeting.title }}</h3>
               <p class="meet-capacity">
                 <span style="margin-left: 4px;">
@@ -131,7 +131,7 @@
             :key="filteredMeetings.length + activeFilter + JSON.stringify(filteredMeetings)"
             :slides-per-view="1.4"
             :space-between="10"
-            :loop="true"
+            :freeMode="true"
             :pagination="{ clickable: true }"
             :breakpoints="{
               768: { slidesPerView: 3.3, spaceBetween: 15 },
@@ -142,8 +142,8 @@
             class="swiper-meetings-list"
           >
             <swiper-slide v-for="meeting in filteredMeetings" :key="meeting.id" class="swiper-meeting-item">
-              <img :src="meeting.image" alt="Meeting Image" class="meeting-image" width="120" height="120" />
-              <div class="meeting-details" style="width:100%;margin-right: 10px;">
+              <img :src="meeting.image" alt="Meeting Image" class="meeting-image" width="48%" height="120" />
+              <div class="meeting-details" style="width: 48%;padding-left: 4px;">
                 <h3 class="meet-title">{{ meeting.title }}</h3>
                 <p class="meet-capacity">
                   <span style="margin-left: 4px;">
@@ -230,7 +230,7 @@ import CreateMeetingModal from '@/components/CreateMeetingModal.vue';
 import MeetingInfoModal from '@/components/MeetingInfoModal.vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/css';
-import { Pagination } from 'swiper/modules';
+import { FreeMode, Pagination } from 'swiper/modules';
 import axios from 'axios';
 
 const API_BASE_URL = 'http://my.xroomapp.com:8000';
@@ -250,7 +250,7 @@ export default {
       showModal: false,
       showInfoModal: false,
       selectedMeeting: null,
-      modules: [Pagination],
+      modules: [FreeMode, Pagination],
       meetings: [],
       filteredMeetings: [],
     };
@@ -566,6 +566,7 @@ export default {
   width: 100%;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   border: 1px solid #b8c0cb;
   border-radius: 12px;
   text-align: right;
@@ -708,6 +709,7 @@ export default {
     width: 100%;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     border: 1px solid #b8c0cb;
     border-radius: 12px;
     padding: 4px;
@@ -944,11 +946,11 @@ export default {
 
 
   .meet-title{
-    width: 150px !important;
+    width: 115px !important;
   }
 
   .meet-type span {
-    width : 120px !important;
+    width : 75px !important;
   }
 
   .info-button {
@@ -970,6 +972,7 @@ export default {
     width: 100%;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     border: 1px solid #b8c0cb;
     border-radius: 12px;
     padding: 4px;
@@ -998,6 +1001,8 @@ export default {
   }
 
   .search-section {
+    display: flex;
+    flex-direction: column;
     max-width: 85%;
     width: 100%;
     margin-left: 1.5rem;
@@ -1043,16 +1048,13 @@ export default {
   }
 
   .meeting-item {
-    padding: 8px;
+    padding: 4px;
   }
 
-  .meeting-details {
-    width: 60% !important;
-  }
 
   .meet-title {
     font-size: 17px;
-    width : 200px;
+    width : 140px;
   }
 
   .meet-capacity,

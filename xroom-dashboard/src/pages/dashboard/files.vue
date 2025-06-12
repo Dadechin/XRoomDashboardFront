@@ -678,7 +678,7 @@ export default {
   height: 22px;
 }
 
-@media (max-width: 1023px) {
+@media (min-width: 1024px) and (max-width: 1280px) {
   .swiper-file-section {
     display: flex;
     flex-direction: column;
@@ -724,7 +724,7 @@ export default {
   }
 }
 
-@media (min-width: 1024px) {
+/* @media (min-width: 1024px) {
   .file-manager-layout {
     flex-direction: row;
   }
@@ -785,7 +785,7 @@ export default {
   .filter-btn {
     font-size: 1.125rem;
   }
-}
+} */
 
 @media (min-width: 1280px) {
   .section-title {

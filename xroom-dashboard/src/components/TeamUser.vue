@@ -339,7 +339,7 @@ export default {
       this.$emit('change-tab', 'buy-subscription');
     },
     handleResize() {
-      this.isMobile = window.innerWidth <= 1024;
+      this.isMobile = window.innerWidth <= 1280;
     },
   },
   mounted() {
@@ -726,8 +726,112 @@ export default {
   }
 }
 
-/* Desktop Styles (min-width: 1024px) */
-@media (min-width: 1025px) {
+/* LapTop Styles (min-width: 1025px and max-width: 1280px) */
+@media (min-width: 1025px) and (max-width: 1280px) {
+
+  .swiper-add-user {
+    display : block;
+  }
+
+  .user-card {
+    width: 100%;
+    height: auto;
+  }
+
+  .add-card {
+    width: 100%;
+    height: 100px;
+    display: flex;
+  }
+
+  .license-card {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .user-info-box {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .user-activity {
+    padding-left: 0;
+  }
+
+  .user-avatar {
+    margin-top: 0;
+    width: 50px;
+    height: 80px;
+    object-fit: cover;
+  }
+
+  .user-name {
+    font-size: 14px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #101010;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow-x: clip;
+    width: 90px;
+  }
+
+  .user-email {
+    font-size: 12px;
+  }
+
+  .user-role {
+    font-size: 15px;
+  }
+
+  .user-footer span {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .user-info-tags, .user-activity {
+    gap: 1rem;
+  }
+
+  .user-actions svg {
+    width: 18px !important; 
+    height: 18px !important; 
+  }
+
+  .user-version , .user-role{ 
+    font-size: 14px;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    overflow-x: clip;
+    white-space: nowrap;
+    width: 80px;
+  }
+
+  .license-card span {
+    font-size: 14px;
+  }
+
+  .buy-subscription {
+    font-size : 14px;
+    gap : 6px;
+  }
+
+  .buy-subscription svg {
+  
+    height: 18px;
+    width: 18px;
+
+  }
+
+  .add-text {
+    font-size: 18px;
+  }
+}
+
+
+/* Desktop Styles (min-width: 1280px) */
+@media (min-width: 1280px) {
   .user-cards-grid {
     display: flex;
     flex-wrap: wrap;
