@@ -21,16 +21,14 @@
     </div>
 
     <!-- Plan Cards -->
-    <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
-      <div v-for="(plan, key) in plans" :key="key" class="plan-card">
-        <div class="card-inner">
-          <h4>{{ plan.name }}</h4>
-          <div class="card-price-title">
-            <p>{{ (plan.price * memberCount).toLocaleString() }} تومان</p>
-            <small>برای {{ memberCount }} کاربر، در {{ plan.name.toLowerCase() }}</small>
-          </div>
-          <button class="primary-button" @click="selectPlan(key)">انتخاب طرح اشتراک</button>
+    <div class="plan-card-container">
+      <div v-for="(plan, key) in plans" :key="key" class="plan-card">          
+        <h4>{{ plan.name }}</h4>
+        <div class="card-price-title">
+          <p>{{ (plan.price * memberCount).toLocaleString() }} تومان</p>
+          <small>برای {{ memberCount }} کاربر، در {{ plan.name.toLowerCase() }}</small>
         </div>
+        <button class="primary-button" @click="selectPlan(key)">انتخاب طرح اشتراک</button>
       </div>
     </div>
 
@@ -146,91 +144,373 @@ export default {
 .buy-subscription-container {
   direction: rtl;
   font-family: IRANSansXFaNum, sans-serif;
+  padding: 1rem;
 }
 
-.plan-card {
-   background-color: white;
-    border-radius: 16px;
-    padding: 1px 1px 2px 1px;
-    width: 32%;
-    text-align: center;
-    height: 25rem;
-    background: linear-gradient(to right, #001940, #4364F7);
-}
-
-.card-inner {
-    background-color: white;
-    border-radius: 14px;
-    height: 100%;
-    padding: 18px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding-top: 4rem;
-}
-
-.plan-card h4 {
-  font-size: 25px;
-  color: #101010;
-  margin-bottom: 10px;
-}
-
-
-.primary-button {
-  background-color: #3a57e8;
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  font-size: 14px;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-.primary-button:hover {
-  background-color: #2e45c8;
-}
-
+/* Base styles applied across all screen sizes */
 .subscription-title {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 2rem;
 }
 
 .subscription-title h3 {
-    color: #101010;
-    font-weight: 600;
-    font-size: 20px;
+  color: #101010;
+  font-weight: 600;
+  font-size: 19px;
+  line-height: 26.6px;
+  margin-bottom: 1rem;
+  text-align: center;
 }
 
 .subscription-title span {
-    color: #4F5A69;
-    line-height: 190%;
-    font-size: 16px;
+  color: #4f5a69;
+  line-height: 190%;
+  font-size: 15px;
+  font-weight: 500;
+  text-align: right;
+  max-width: 100%;
+}
+
+.user-count {
+  text-align: start;
+  margin: 2rem 0;
+}
+
+.user-count label {
+  font-size: 15px;
+  font-weight: 500;
+  color: #101010;
+  margin-left: 10px;
 }
 
 .user-count select {
-padding: 8px 12px;
-border-radius: 8px;
-border-left: 16px solid transparent !important;
-box-shadow: #00000029 0px 1px 4px 0px;
-border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.16);
+  font-size: 15px;
+  font-weight: 500;
+  width: 150px;
 }
 
 .user-count select:focus {
-outline: none;
+  outline: none;
 }
 
-.card-price-title p{
-    color: #101010;
-    font-size: 20px;
-    line-height: 140%;
-    margin-bottom: 8px;
+.plan-card {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  min-height: 350px;
+  border-radius: 20px;
+  background: white;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  margin: 0 auto 1rem;
+}
+
+.plan-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  border-radius: 20px;
+  background: linear-gradient(to right, #001940, #4364f7);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: -1;
+}
+
+.plan-card h4 {
+  font-size: 20px;
+  font-weight: 500;
+  color: #101010;
+  margin-bottom: 1rem;
+}
+
+.card-price-title p {
+  color: #101010;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 140%;
+  margin-bottom: 8px;
 }
 
 .card-price-title small {
-    color: #8D99AB;
+  color: #718096;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 190%;
+}
+
+.primary-button {
+  position: relative;
+  width: 100%;
+  height: 46px;
+  border-radius: 8px;
+  background: white;
+  color: black;
+  font-size: 15px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.8s ease, color 0.3s ease-in-out;
+  border: none;
+  cursor: pointer;
+}
+
+.primary-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: 8px;
+  background: linear-gradient(to right, #001940, #4364f7);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: 0;
+}
+
+.primary-button:hover {
+  color: #fff;
+  background: linear-gradient(to right, #001940, #4364f7);
+}
+
+.invoice-box {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  max-width: 400px;
+  margin-right: auto;
+  margin-left: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.invoice-box h4 {
+  font-size: 20px;
+  font-weight: 500;
+  color: #101010;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.invoice-box div {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 15px;
+  color: #4f5a69;
+}
+
+.invoice-box div:last-of-type {
+  font-weight: bold;
+  font-size: 16px;
+  color: #101010;
+  margin-bottom: 1.5rem;
+}
+
+/* Media Query for Tablets (600px < width ≤ 1024px) */
+@media (min-width: 600px) and (max-width: 1024px) {
+  .subscription-title h3 {
+    font-size: 20px;
+  }
+
+  .subscription-title span {
+    font-size: 16px;
+    max-width: 90%;
+  }
+
+  .user-count label {
+    font-size: 16px;
+  }
+
+  .user-count select {
+    font-size: 16px;
+    width: 180px;
+  }
+
+  .plan-card {
+    width: 45%;
+    height: 300px;
+    min-height: auto;
+  }
+
+  .plan-card::before {
+    padding: 1.5px;
+  }
+
+  .plan-card h4 {
+    font-size: 24px;
+  }
+
+  .card-price-title p {
+    font-size: 22px;
+  }
+
+  .card-price-title small {
+    font-size: 16px;
+  }
+
+  .primary-button {
+    font-size: 16px;
+    max-width: 220px;
+  }
+
+  .invoice-box {
+    max-width: 500px;
+  }
+
+  .invoice-box h4 {
+    font-size: 22px;
+  }
+
+  .invoice-box div {
+    font-size: 16px;
+  }
+
+  .invoice-box div:last-of-type {
     font-size: 17px;
-    line-height: 140%;
-    margin-top: 10px;
+  }
+
+  .plan-card-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+}
+
+/* Media Query for Small Desktops (1024px < width ≤ 1280px) */
+@media (min-width: 1024px) and (max-width: 1280px) {
+  .subscription-title h3 {
+    font-size: 20px;
+    margin-bottom: 1rem;
+  }
+
+  .subscription-title span {
+    font-size: 16px;
+    max-width: 90%;
+  }
+
+  .user-count label {
+    font-size: 16px;
+  }
+
+  .user-count select {
+    font-size: 16px;
+    width: 180px;
+  }
+
+  .plan-card {
+    width: 48%;
+    height: 300px;
+    min-height: auto;
+  }
+
+
+  .plan-card h4 {
+    font-size: 24px;
+  }
+
+  .card-price-title p {
+    font-size: 22px;
+  }
+
+  .card-price-title small {
+    font-size: 16px;
+  }
+
+  .primary-button {
+    font-size: 16px;
+    max-width: 220px;
+  }
+
+  .invoice-box {
+    max-width: 500px;
+  }
+
+  .plan-card-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+}
+
+/* Media Query for Large Desktops (width > 1280px) */
+@media (min-width: 1280px) {
+  .subscription-title h3 {
+    font-size: 21px;
+  }
+
+  .subscription-title span {
+    font-size: 17px;
+    max-width: 90%;
+  }
+
+  .user-count label {
+    font-size: 17px;
+  }
+
+  .user-count select {
+    font-size: 17px;
+    width: 200px;
+  }
+
+  .plan-card {
+    width: 287px;
+    height: 400px;
+    min-height: auto;
+  }
+
+  .plan-card::before {
+    padding: 2px;
+  }
+
+  .plan-card h4 {
+    font-size: 24px;
+  }
+
+  .card-price-title p {
+    font-size: 24px;
+  }
+
+  .card-price-title small {
+    font-size: 17px;
+  }
+
+  .primary-button {
+    font-size: 17px;
+    max-width: 220px;
+  }
+
+  .invoice-box {
+    max-width: 500px;
+  }
+
+  .plan-card-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
 }
 </style>
