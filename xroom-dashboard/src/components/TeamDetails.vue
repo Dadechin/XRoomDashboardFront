@@ -196,8 +196,7 @@ export default {
 
 .team-logo,
 .team-info {
-  width: 49%;
-  background-color: #ffffff;
+  background: #ffffff;
   border: none;
   border-radius: 16px;
   padding: 1.5rem;
@@ -321,5 +320,194 @@ export default {
   text-align: center;
   float: left;
   margin-top: 0.5rem;
+}
+
+/* Mobile (max-width: 600px) */
+@media (max-width: 600px) {
+  .tab-content {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .team-logo {
+    gap: 1rem;
+  }
+
+  .team-logo,
+  .team-info {
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .card-title h2,
+  .logo-sample-title h2 {
+    font-size: 16px;
+  }
+
+  .card-title p,
+  .logo-sample-title span {
+    font-size: 14px;
+    max-width: 100%;
+  }
+
+  .logo-info {
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .logo-info img {
+    height: 100px;
+    max-width: 100px;
+  }
+
+  .logo-info label {
+    font-size: 16px;
+    padding: 8px 20px;
+  }
+
+  .sample-logos {
+    justify-content: center;
+  }
+
+  .sample-logos img {
+    height: 90px;
+    width: 30%;
+    object-fit: cover;
+  }
+
+  .form-group label {
+    font-size: 14px;
+    width: 100%;
+  }
+
+  .form-group input {
+    font-size: 14px;
+    padding: 6px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    font-size: 16px;
+    height: 40px;
+  }
+}
+
+/* Tablet (min-width: 600px - max-width: 1024px) */
+@media (min-width: 600px) and (max-width: 1024px) {
+  .tab-content {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .team-logo,
+  .team-info {
+    width: 100%;
+    padding: 1.25rem;
+  }
+
+  .card-title h2,
+  .logo-sample-title h2 {
+    font-size: 18px;
+  }
+
+  .card-title p,
+  .logo-sample-title span {
+    font-size: 15px;
+    max-width: 95%;
+  }
+
+  .logo-info {
+    gap: 2rem;
+  }
+
+  .logo-info img {
+    height: 120px;
+    max-width: 120px;
+  }
+
+  .logo-info label {
+    font-size: 16px;
+    padding: 9px 22px;
+  }
+
+  .sample-logos img {
+    height: 120px;
+    width: 120px;
+  }
+
+  .form-group label {
+    font-size: 15px;
+    width: 80%;
+  }
+
+  .form-group input {
+    font-size: 15px;
+    padding: 7px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    font-size: 17px;
+    height: 45px;
+  }
+}
+
+/* Small Laptop (min-width: 1024px - max-width: 1280px) */
+@media (min-width: 1024px) and (max-width: 1280px) {
+  .team-logo,
+  .team-info {
+    width: 100%;
+    padding: 1.25rem;
+  }
+
+  .card-title h2,
+  .logo-sample-title h2 {
+    font-size: 19px;
+  }
+
+  .card-title p,
+  .logo-sample-title span {
+    font-size: 16px;
+    max-width: 90%;
+  }
+
+  .logo-info img {
+    height: 130px;
+    max-width: 130px;
+  }
+
+  .logo-info label {
+    font-size: 17px;
+    padding: 9px 24px;
+  }
+
+  .sample-logos img {
+    height: 100px;
+    width: 100px;
+  }
+
+  .form-group label {
+    font-size: 15px;
+  }
+
+  .form-group input {
+    font-size: 15px;
+    padding: 7px;
+  }
+
+  .submit-btn {
+    width: 70%;
+    font-size: 17px;
+    height: 45px;
+  }
+}
+
+/* Desktop (min-width: 1280px) */
+@media (min-width: 1280px) {
+  .team-logo,
+  .team-info {
+    width: 49%;
+  }
 }
 </style>
