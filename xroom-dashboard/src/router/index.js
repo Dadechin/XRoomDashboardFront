@@ -135,8 +135,8 @@ router.beforeEach(async (to, from, next) => {
       if (!customer.is_sms_verified && to.name !== 'SmsVerification') {
         return next('/SmsVerification');
       }
-      else if (!customer.profile_glb && to.name !== 'ReadyPlayer') {
-        return next('/dashboard/readyPlayer');
+      else if (!customer.profile_glb && (to.name !== 'ReadyPlayer' ||to.name !== 'ChangeAvatar' )) {
+        return next('/dashboard/ChangeAvatar');
       }
 
 

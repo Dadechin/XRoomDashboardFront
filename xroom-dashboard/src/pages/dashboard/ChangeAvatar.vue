@@ -14,59 +14,40 @@
       </div>
       <div class="avatar-selection-container">
     <!-- Left Column - Women Models -->
-    <div class="gender-column">
-      <h3 class="mb-4 text-center">آواتارهای زنانه</h3>
-      <div class="avatar-grid">
-        <div v-for="(avatar, index) in femaleAvatars" :key="'female-' + index" class="avatar-card">
-          <div class="model-preview-container">
-            
-            <model-viewer
-              :src="avatar.src"
-              alt="3D Model"
-              ar
-              ar-modes="webxr scene-viewer quick-look"
-              environment-image="neutral"
-              auto-rotate
-              camera-controls
-              class="model-preview"
-              camera-orbit="10deg 135deg 1.1m"
-              field-of-view="10deg"
-              camera-target="0m 0.4m 0.1m"
-          ></model-viewer>
-          </div>
-          <button @click="selectAvatar(avatar)" class="select-button">
-            انتخاب این آواتار
-          </button>
-        </div>
+    
+    <!-- Female avatars column -->
+<div class="gender-column">
+  <h3 class="mb-4 text-center">آواتارهای زنانه</h3>
+  <div class="avatar-grid">
+    <div v-for="(avatar, index) in femaleAvatars" :key="'female-' + index" class="avatar-card">
+      <div class="model-preview-container">
+        <!-- Show profile_img or fallback -->
+        <img :src="avatar.profile_img || 'https://via.placeholder.com/150?text=No+Image'" alt="Avatar Image" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;" />
       </div>
+      <button @click="selectAvatar(avatar)" class="select-button">
+        انتخاب این آواتار
+      </button>
     </div>
+  </div>
+</div>
 
-    <!-- Right Column - Men Models -->
-    <div class="gender-column">
-      <h3 class="mb-4 text-center">آواتارهای مردانه</h3>
-      <div class="avatar-grid">
-        <div v-for="(avatar, index) in maleAvatars" :key="'male-' + index" class="avatar-card">
-          <div class="model-preview-container">
-            <model-viewer
-              :src="avatar.src"
-              alt="3D Model"
-              ar
-              ar-modes="webxr scene-viewer quick-look"
-              environment-image="neutral"
-              auto-rotate
-              camera-controls
-              class="model-preview"
-              camera-orbit="10deg 90deg 1.5m"
-              field-of-view="10deg"
-              camera-target="0m 0.5m 0.5m"
-            ></model-viewer>
-          </div>
-          <button @click="selectAvatar(avatar)" class="select-button">
-            انتخاب این آواتار
-          </button>
-        </div>
+<!-- Male avatars column -->
+<div class="gender-column">
+  <h3 class="mb-4 text-center">آواتارهای مردانه</h3>
+  <div class="avatar-grid">
+    <div v-for="(avatar, index) in maleAvatars" :key="'male-' + index" class="avatar-card">
+      <div class="model-preview-container">
+        <!-- Show profile_img -->
+        <img :src="avatar.profile_img" alt="Avatar Image" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;" />
       </div>
+      <button @click="selectAvatar(avatar)" class="select-button">
+        انتخاب این آواتار
+      </button>
     </div>
+  </div>
+</div>
+
+
   </div>
       
     </div>
@@ -97,18 +78,23 @@ export default {
   },
   setup() {
     const maleAvatars = ref([
-      { id: 1, name: 'مرد ۱', src: 'http://194.62.43.230:8000/media/2025/5/5/men1.glb' },
-      { id: 2, name: 'مرد ۲', src: 'http://194.62.43.230:8000/media/2025/5/5/men1.glb' },
-      { id: 7, name: 'مرد ۳', src: 'http://194.62.43.230:8000/media/2025/5/5/men1.glb' },
+      { id: 1, name: 'مرد ۱', src: 'http://my.xroomapp.com:8000/media/user_glbs/men1.glb', profile_img:'http://my.xroomapp.com:8000/media/user_images/men1.png' },
+      { id: 2, name: 'مرد ۲', src: 'http://my.xroomapp.com:8000/media/user_glbs/men2.glb' , profile_img:'http://my.xroomapp.com:8000/media/user_images/men2.png'},
+      { id: 7, name: 'مرد ۳', src: 'http://my.xroomapp.com:8000/media/user_glbs/men3.glb' , profile_img:'http://my.xroomapp.com:8000/media/user_images/men3.png'},
+      { id: 17, name: 'مرد 4', src: 'http://my.xroomapp.com:8000/media/user_glbs/men4.glb' , profile_img:'http://my.xroomapp.com:8000/media/user_images/men4.png'},
       // Add more male avatars as needed
     ]);
 
+ 
+    
     const femaleAvatars = ref([
-      { id: 4, name: 'زن ۱', src: 'http://194.62.43.230:8000/media/2025/5/5/men1.glb' },
-     { id: 10, name: 'زن ۳', src: 'http://194.62.43.230:8000/media/2025/5/5/men1.glb' },
-      // Add more female avatars as needed
-    ]);
-
+  { id: 4, name: 'زن ۱', src: 'http://my.xroomapp.com:8000/media/user_glbs/women1.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/women1.png' },
+  { id: 10, name: 'زن ۳', src: 'http://my.xroomapp.com:8000/media/user_glbs/women2.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/women2.png' },
+  { id: 10, name: 'زن ۳', src: 'http://my.xroomapp.com:8000/media/user_glbs/women3.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/women3.png' },
+  { id: 10, name: 'زن ۳', src: 'http://my.xroomapp.com:8000/media/user_glbs/women4.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/women4.png' },
+  { id: 10, name: 'زن ۳', src: 'http://my.xroomapp.com:8000/media/user_glbs/women6.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/women6.png' },
+  { id: 10, name: 'زن ۳', src: 'http://my.xroomapp.com:8000/media/user_glbs/women7.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/women7.png' },
+]);
     const selectedAvatar = ref(null);
 
     // const selectAvatar = (avatar) => {
@@ -141,7 +127,8 @@ export default {
       
       // try {
           await axios.post(`${this.baseUrl}/editProfile/`, {
-          profile_glb_url: avatar.src
+          profile_glb_url: avatar.src ,
+          profile_img: avatar.profile_img
         }, {
           headers: {
             'Content-Type': 'application/json'
