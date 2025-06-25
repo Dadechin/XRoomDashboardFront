@@ -171,7 +171,7 @@ export default {
         
         // });
         if (response.status == 200) {
-          alert('حد صحیح است');
+          alert('کد صحیح است');
           this.$router.push('/dashboard');
         }
       } catch (error) {

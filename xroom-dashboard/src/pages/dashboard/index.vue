@@ -13,59 +13,135 @@
           class="my-swiper"
         >
           <swiper-slide>
-            <img
-              src="https://c.animaapp.com/m9nvumalUMfQbN/img/tutorials.svg"
-              alt="Tutorial"
+            <div
               class="swiper-image"
-              @click="tutorialShowModal = true"
-            />
+              @click="tutorialShowModal = true">
+              <div>
+                <h2>آموزش ها</h2>
+                <span>کاوش در XRoom</span>
+              </div>
+              <span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+                  <path d="M15.9993 29.3334C23.3631 29.3334 29.3327 23.3639 29.3327 16.0001C29.3327 8.63628 23.3631 2.66675 15.9993 2.66675C8.63555 2.66675 2.66602 8.63628 2.66602 16.0001C2.66602 23.3639 8.63555 29.3334 15.9993 29.3334Z" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M12.1191 12C12.4326 11.1089 13.0513 10.3575 13.8657 9.87887C14.6802 9.40024 15.6377 9.22528 16.5687 9.38498C17.4998 9.54467 18.3442 10.0287 18.9526 10.7514C19.5609 11.4741 19.8939 12.3887 19.8925 13.3334C19.8925 16 15.8925 17.3334 15.8925 17.3334" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M16 22.6667H16.0133" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+            </div>
           </swiper-slide>
           <swiper-slide>
-            <img
-              src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame-20.svg"
-              alt="Tutorial"
-              class="swiper-image"
-            />
+            <div
+              class="swiper-image">
+              <div>
+                <h2>تغییرات نسخه</h2>
+                <span>جزئیات به‌روزرسانی ها</span>
+              </div>
+              <span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+                  <path d="M17.8673 2.66675H8.00065C7.29341 2.66675 6.61513 2.9477 6.11503 3.4478C5.61494 3.94789 5.33398 4.62617 5.33398 5.33341V26.6667C5.33398 27.374 5.61494 28.0523 6.11503 28.5524C6.61513 29.0525 7.29341 29.3334 8.00065 29.3334H24.0007C24.7079 29.3334 25.3862 29.0525 25.8863 28.5524C26.3864 28.0523 26.6673 27.374 26.6673 26.6667V16.8001" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M2.66602 8H7.99935" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M2.66602 13.3333H7.99935" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M2.66602 18.6667H7.99935" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M2.66602 24H7.99935" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M28.5046 7.50137C29.0358 6.97023 29.3342 6.24985 29.3342 5.4987C29.3342 4.74756 29.0358 4.02718 28.5046 3.49604C27.9735 2.9649 27.2531 2.6665 26.502 2.6665C25.7508 2.6665 25.0304 2.9649 24.4993 3.49604L17.8193 10.1787C17.5023 10.4955 17.2702 10.8871 17.1446 11.3174L16.0286 15.144C15.9952 15.2588 15.9932 15.3804 16.0228 15.4962C16.0525 15.6119 16.1127 15.7176 16.1972 15.8021C16.2817 15.8866 16.3874 15.9469 16.5032 15.9765C16.6189 16.0062 16.7406 16.0042 16.8553 15.9707L20.682 14.8547C21.1122 14.7291 21.5038 14.497 21.8206 14.18L28.5046 7.50137Z" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+            </div>
           </swiper-slide>
           <swiper-slide>
-            <img
-              src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame-19.svg"
-              alt="Tutorial"
+            <div
               class="swiper-image"
-            />
+              @click="goToDownloads">
+              <div>
+                <h2>دانلود</h2>
+                <span>پلتفرم خود را انتخاب کنید</span>
+              </div>
+              <span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+                  <path d="M28 20V25.3333C28 26.0406 27.719 26.7189 27.219 27.219C26.7189 27.719 26.0406 28 25.3333 28H6.66667C5.95942 28 5.28115 27.719 4.78105 27.219C4.28095 26.7189 4 26.0406 4 25.3333V20" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M9.33398 13.3333L16.0007 19.9999L22.6673 13.3333" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M16 20V4" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+            </div>
           </swiper-slide>
           <swiper-slide>
-            <img
-              src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame-21.svg"
-              alt="Tutorial"
+            <div
               class="swiper-image"
-            />
+              @click="goToTeams">
+              <div>
+                <h2>تیم ها</h2>
+                <span>مدیریت تیم های خود</span>
+              </div>
+              <span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+                  <path d="M25.7563 21.8719C24.9741 21.0891 24.0602 20.4501 23.0563 19.9844C24.472 18.8375 25.3751 17.0875 25.3751 15.125C25.3751 11.6625 22.4876 8.82188 19.0251 8.875C15.6157 8.92813 12.8688 11.7063 12.8688 15.125C12.8688 17.0875 13.7751 18.8375 15.1876 19.9844C14.1835 20.4498 13.2695 21.0888 12.4876 21.8719C10.7813 23.5813 9.81258 25.8375 9.75008 28.2437C9.74924 28.2771 9.7551 28.3103 9.76728 28.3413C9.77947 28.3724 9.79776 28.4007 9.82105 28.4246C9.84435 28.4485 9.8722 28.4674 9.90294 28.4804C9.93369 28.4933 9.96672 28.5 10.0001 28.5H11.7501C11.8845 28.5 11.997 28.3937 12.0001 28.2594C12.0595 26.4469 12.7938 24.75 14.0845 23.4625C14.7449 22.7986 15.5305 22.2722 16.3957 21.9139C17.2609 21.5555 18.1886 21.3724 19.1251 21.375C21.0282 21.375 22.8188 22.1156 24.1657 23.4625C25.4532 24.75 26.1876 26.4469 26.2501 28.2594C26.2532 28.3937 26.3657 28.5 26.5001 28.5H28.2501C28.2834 28.5 28.3165 28.4933 28.3472 28.4804C28.378 28.4674 28.4058 28.4485 28.4291 28.4246C28.4524 28.4007 28.4707 28.3724 28.4829 28.3413C28.4951 28.3103 28.5009 28.2771 28.5001 28.2437C28.4376 25.8375 27.4688 23.5813 25.7563 21.8719ZM19.1251 19.125C18.0563 19.125 17.0501 18.7094 16.297 17.9531C15.919 17.5781 15.6204 17.1309 15.4191 16.638C15.2178 16.1451 15.1178 15.6167 15.1251 15.0844C15.1345 14.0594 15.5438 13.0688 16.2595 12.3344C17.0095 11.5656 18.0126 11.1375 19.0845 11.125C20.1438 11.1156 21.172 11.5281 21.9282 12.2688C22.7032 13.0281 23.1282 14.0438 23.1282 15.125C23.1282 16.1938 22.7126 17.1969 21.9563 17.9531C21.5853 18.3259 21.144 18.6214 20.6581 18.8226C20.1721 19.0237 19.651 19.1265 19.1251 19.125ZM11.297 15.95C11.2688 15.6781 11.2532 15.4031 11.2532 15.125C11.2532 14.6281 11.3001 14.1438 11.3876 13.6719C11.4095 13.5594 11.3501 13.4438 11.247 13.3969C10.822 13.2063 10.4313 12.9438 10.0938 12.6125C9.69614 12.2269 9.3832 11.7626 9.17497 11.2493C8.96674 10.736 8.8678 10.1849 8.88445 9.63125C8.91258 8.62813 9.3157 7.675 10.0188 6.95625C10.7907 6.16563 11.8282 5.73438 12.9313 5.74688C13.9282 5.75625 14.8907 6.14063 15.6188 6.82188C15.8657 7.05313 16.0782 7.30938 16.2563 7.58438C16.3188 7.68125 16.4407 7.72188 16.547 7.68438C17.097 7.49375 17.6782 7.35938 18.2751 7.29688C18.4501 7.27813 18.5501 7.09063 18.472 6.93438C17.4563 4.925 15.3813 3.5375 12.9813 3.5C9.5157 3.44688 6.6282 6.2875 6.6282 9.74688C6.6282 11.7094 7.53133 13.4594 8.94695 14.6063C7.9532 15.0656 7.03758 15.7 6.24383 16.4937C4.53133 18.2031 3.56258 20.4594 3.50008 22.8687C3.49924 22.9021 3.50509 22.9353 3.51728 22.9663C3.52947 22.9974 3.54776 23.0257 3.57105 23.0496C3.59435 23.0735 3.6222 23.0924 3.65294 23.1054C3.68369 23.1183 3.71672 23.125 3.75008 23.125H5.5032C5.63758 23.125 5.75008 23.0187 5.7532 22.8844C5.81258 21.0719 6.54695 19.375 7.83758 18.0875C8.75633 17.1687 9.88133 16.5312 11.1095 16.2219C11.2313 16.1906 11.3126 16.075 11.297 15.95Z" fill="#101010"/>
+                </svg>
+              </span>
+            </div>
           </swiper-slide>
         </swiper>
         <div class="tutorial-grid">
-          <img
-            src="https://c.animaapp.com/m9nvumalUMfQbN/img/tutorials.svg"
-            alt="Tutorial"
+          <div
             class="tutorial-item"
-            @click="tutorialShowModal = true"
-          />
-          <img
-            src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame-20.svg"
-            alt="Tutorial"
+            @click="tutorialShowModal = true">
+            <div>
+              <h2>آموزش ها</h2>
+              <span>کاوش در XRoom</span>
+            </div>
+            <span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <path d="M15.9993 29.3334C23.3631 29.3334 29.3327 23.3639 29.3327 16.0001C29.3327 8.63628 23.3631 2.66675 15.9993 2.66675C8.63555 2.66675 2.66602 8.63628 2.66602 16.0001C2.66602 23.3639 8.63555 29.3334 15.9993 29.3334Z" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12.1191 12C12.4326 11.1089 13.0513 10.3575 13.8657 9.87887C14.6802 9.40024 15.6377 9.22528 16.5687 9.38498C17.4998 9.54467 18.3442 10.0287 18.9526 10.7514C19.5609 11.4741 19.8939 12.3887 19.8925 13.3334C19.8925 16 15.8925 17.3334 15.8925 17.3334" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M16 22.6667H16.0133" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </div>
+          <div
+            class="tutorial-item">
+            <div>
+              <h2>تغییرات نسخه</h2>
+              <span>جزئیات به‌روزرسانی ها</span>
+            </div>
+            <span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <path d="M17.8673 2.66675H8.00065C7.29341 2.66675 6.61513 2.9477 6.11503 3.4478C5.61494 3.94789 5.33398 4.62617 5.33398 5.33341V26.6667C5.33398 27.374 5.61494 28.0523 6.11503 28.5524C6.61513 29.0525 7.29341 29.3334 8.00065 29.3334H24.0007C24.7079 29.3334 25.3862 29.0525 25.8863 28.5524C26.3864 28.0523 26.6673 27.374 26.6673 26.6667V16.8001" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2.66602 8H7.99935" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2.66602 13.3333H7.99935" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2.66602 18.6667H7.99935" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2.66602 24H7.99935" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M28.5046 7.50137C29.0358 6.97023 29.3342 6.24985 29.3342 5.4987C29.3342 4.74756 29.0358 4.02718 28.5046 3.49604C27.9735 2.9649 27.2531 2.6665 26.502 2.6665C25.7508 2.6665 25.0304 2.9649 24.4993 3.49604L17.8193 10.1787C17.5023 10.4955 17.2702 10.8871 17.1446 11.3174L16.0286 15.144C15.9952 15.2588 15.9932 15.3804 16.0228 15.4962C16.0525 15.6119 16.1127 15.7176 16.1972 15.8021C16.2817 15.8866 16.3874 15.9469 16.5032 15.9765C16.6189 16.0062 16.7406 16.0042 16.8553 15.9707L20.682 14.8547C21.1122 14.7291 21.5038 14.497 21.8206 14.18L28.5046 7.50137Z" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </div>
+          <div
             class="tutorial-item"
-          />
-          <img
-            src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame-19.svg"
-            alt="Downloads"
+            @click="goToDownloads">
+            <div>
+              <h2>دانلود</h2>
+              <span>پلتفرم خود را انتخاب کنید</span>
+            </div>
+            <span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <path d="M28 20V25.3333C28 26.0406 27.719 26.7189 27.219 27.219C26.7189 27.719 26.0406 28 25.3333 28H6.66667C5.95942 28 5.28115 27.719 4.78105 27.219C4.28095 26.7189 4 26.0406 4 25.3333V20" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M9.33398 13.3333L16.0007 19.9999L22.6673 13.3333" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M16 20V4" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </div>
+          <div
             class="tutorial-item"
-            @click="goToDownloads"
-          />
-          <img
-            src="https://c.animaapp.com/m9nvumalUMfQbN/img/frame-21.svg"
-            alt="Teams"
-            class="tutorial-item"
-            @click="goToTeams"
-          />
+            @click="goToTeams">
+            <div>
+              <h2>تیم ها</h2>
+              <span>مدیریت تیم های خود</span>
+            </div>
+            <span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <path d="M25.7563 21.8719C24.9741 21.0891 24.0602 20.4501 23.0563 19.9844C24.472 18.8375 25.3751 17.0875 25.3751 15.125C25.3751 11.6625 22.4876 8.82188 19.0251 8.875C15.6157 8.92813 12.8688 11.7063 12.8688 15.125C12.8688 17.0875 13.7751 18.8375 15.1876 19.9844C14.1835 20.4498 13.2695 21.0888 12.4876 21.8719C10.7813 23.5813 9.81258 25.8375 9.75008 28.2437C9.74924 28.2771 9.7551 28.3103 9.76728 28.3413C9.77947 28.3724 9.79776 28.4007 9.82105 28.4246C9.84435 28.4485 9.8722 28.4674 9.90294 28.4804C9.93369 28.4933 9.96672 28.5 10.0001 28.5H11.7501C11.8845 28.5 11.997 28.3937 12.0001 28.2594C12.0595 26.4469 12.7938 24.75 14.0845 23.4625C14.7449 22.7986 15.5305 22.2722 16.3957 21.9139C17.2609 21.5555 18.1886 21.3724 19.1251 21.375C21.0282 21.375 22.8188 22.1156 24.1657 23.4625C25.4532 24.75 26.1876 26.4469 26.2501 28.2594C26.2532 28.3937 26.3657 28.5 26.5001 28.5H28.2501C28.2834 28.5 28.3165 28.4933 28.3472 28.4804C28.378 28.4674 28.4058 28.4485 28.4291 28.4246C28.4524 28.4007 28.4707 28.3724 28.4829 28.3413C28.4951 28.3103 28.5009 28.2771 28.5001 28.2437C28.4376 25.8375 27.4688 23.5813 25.7563 21.8719ZM19.1251 19.125C18.0563 19.125 17.0501 18.7094 16.297 17.9531C15.919 17.5781 15.6204 17.1309 15.4191 16.638C15.2178 16.1451 15.1178 15.6167 15.1251 15.0844C15.1345 14.0594 15.5438 13.0688 16.2595 12.3344C17.0095 11.5656 18.0126 11.1375 19.0845 11.125C20.1438 11.1156 21.172 11.5281 21.9282 12.2688C22.7032 13.0281 23.1282 14.0438 23.1282 15.125C23.1282 16.1938 22.7126 17.1969 21.9563 17.9531C21.5853 18.3259 21.144 18.6214 20.6581 18.8226C20.1721 19.0237 19.651 19.1265 19.1251 19.125ZM11.297 15.95C11.2688 15.6781 11.2532 15.4031 11.2532 15.125C11.2532 14.6281 11.3001 14.1438 11.3876 13.6719C11.4095 13.5594 11.3501 13.4438 11.247 13.3969C10.822 13.2063 10.4313 12.9438 10.0938 12.6125C9.69614 12.2269 9.3832 11.7626 9.17497 11.2493C8.96674 10.736 8.8678 10.1849 8.88445 9.63125C8.91258 8.62813 9.3157 7.675 10.0188 6.95625C10.7907 6.16563 11.8282 5.73438 12.9313 5.74688C13.9282 5.75625 14.8907 6.14063 15.6188 6.82188C15.8657 7.05313 16.0782 7.30938 16.2563 7.58438C16.3188 7.68125 16.4407 7.72188 16.547 7.68438C17.097 7.49375 17.6782 7.35938 18.2751 7.29688C18.4501 7.27813 18.5501 7.09063 18.472 6.93438C17.4563 4.925 15.3813 3.5375 12.9813 3.5C9.5157 3.44688 6.6282 6.2875 6.6282 9.74688C6.6282 11.7094 7.53133 13.4594 8.94695 14.6063C7.9532 15.0656 7.03758 15.7 6.24383 16.4937C4.53133 18.2031 3.56258 20.4594 3.50008 22.8687C3.49924 22.9021 3.50509 22.9353 3.51728 22.9663C3.52947 22.9974 3.54776 23.0257 3.57105 23.0496C3.59435 23.0735 3.6222 23.0924 3.65294 23.1054C3.68369 23.1183 3.71672 23.125 3.75008 23.125H5.5032C5.63758 23.125 5.75008 23.0187 5.7532 22.8844C5.81258 21.0719 6.54695 19.375 7.83758 18.0875C8.75633 17.1687 9.88133 16.5312 11.1095 16.2219C11.2313 16.1906 11.3126 16.075 11.297 15.95Z" fill="#101010"/>
+              </svg>
+            </span>
+          </div>
         </div>
       </div>
 
@@ -420,6 +496,48 @@ export default {
   height: auto;
   border-radius: 8px;
   cursor: pointer;
+  position: relative;
+  height: auto;
+  min-height: 6.5rem;
+  background: white;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px;
+}
+
+.swiper-image::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  border-radius: 20px;
+  background: linear-gradient(to right, #001940, #4364f7);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: -1;
+}
+
+.swiper-image h2{
+  color: #101010;
+  font-weight: 600;
+  font-size: 19px;
+}
+
+.swiper-image span{
+  color: #718096;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.swiper-image div{
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .tutorial-grid {
@@ -431,7 +549,50 @@ export default {
   height: auto;
   border-radius: 8px;
   cursor: pointer;
+  position: relative;
+  height: auto;
+  min-height: 6.5rem;
+  background: white;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px;
 }
+
+.tutorial-item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  border-radius: 20px;
+  background: linear-gradient(to right, #001940, #4364f7);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: -1;
+}
+
+.tutorial-item h2{
+  color: #101010;
+  font-weight: 600;
+  font-size: 19px;
+}
+
+.tutorial-item span{
+  color: #718096;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.tutorial-item div{
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 
 .meeting-card {
   background-color: white;
@@ -803,5 +964,16 @@ export default {
   .section-description {
     font-size: 17.5px;
   }
+}
+
+/* Larger Desktop (min-width: 1840px) */
+@media (min-width: 1840px) {
+
+  .tutorial-item {
+    width: 30rem;
+    height: 8.5rem;
+    margin: auto;
+  }
+
 }
 </style>

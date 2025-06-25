@@ -577,6 +577,7 @@ export default {
   gap: 3rem;
 }
 
+
 .file-grid-content {
   display: flex;
   flex-wrap: wrap;
@@ -777,6 +778,21 @@ export default {
   .filter-btn {
     font-size: 1.125rem;
   }
+
+  .file-grid {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .file-section {
+    gap: 1rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+
 }
 
 </style>
