@@ -19,10 +19,10 @@
           <input v-model="form.lastName" type="text" id="lastName" placeholder="نام خانوادگی" />
         </div>
 
-        <!-- Last Name -->
+        <!-- Job Title -->
         <div class="form-group">
-          <label for="lastName">جایگاه شغلی (سمت) </label>
-          <input v-model="form.semat" type="text" id="semat" placeholder="سمت " />
+          <label for="semat">جایگاه شغلی (سمت)</label>
+          <input v-model="form.semat" type="text" id="semat" placeholder="سمت" />
         </div>
 
         <!-- Mobile Number -->
@@ -39,8 +39,8 @@
 
         <!-- Terms and Conditions -->
         <div class="terms-checkbox">
-          <input type="checkbox" id="terms" v-model="form.terms" />
-          <label for="terms">کلیه قوانین داده شده و شرایط حریم خصوصی را مطالعه کرده و تایید می‌کنم.</label>
+          <input type="checkbox" id="terms" v-model="form.terms" required />
+          <label for="terms">کلیه قوانین داده شده و شرایط حریم خصوصی را مطالعه کرده و تأیید می‌کنم.</label>
         </div>
 
         <!-- Submit Button -->
@@ -75,6 +75,28 @@ export default {
   },
   methods: {
     async handleSubmit() {
+      // Define Toast configuration with SweetAlert2
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+
+      // Validate form inputs
+      if (!this.form.firstName || !this.form.lastName || !this.form.semat || !this.form.mobileNumber || !this.form.password) {
+        Toast.fire({
+          icon: 'error',
+          title: '.لطفاً تمام فیلدها را پر کنید',
+        });
+        return;
+      }
+
       // Prepare the data to match API format
       const signupData = {
         first_name: this.form.firstName,
@@ -85,18 +107,52 @@ export default {
       };
 
       try {
+        // Send signup request
         const response = await axios.post('http://194.62.43.230:8000/signup', signupData);
-        console.log('Signup success:', response.data);
-        const token = response.data.token;
-      
 
-        localStorage.setItem('token', token);
-    
-        // Redirect to login page upon successful signup
-        this.$router.push('/');
+        // Check if signup was successful
+        if (response.data.token) {
+          // Store token in localStorage
+          localStorage.setItem('token', response.data.token);
+
+          // Show success Toast
+          Toast.fire({
+            icon: 'success',
+            title: '.حساب کاربری با موفقیت ساخته شد',
+          });
+
+          // Redirect to login page
+          this.$router.push('/');
+        } else {
+          // Show error Toast with server message
+          Toast.fire({
+            icon: 'error',
+            title: response.data.message || 'خطا در ثبت‌نام, لطفاً دوباره تلاش کنید',
+          });
+        }
       } catch (error) {
+        // Handle specific error cases
+        let errorMessage = 'خطا در ثبت‌نام, لطفاً دوباره تلاش کنید';
+        if (error.response) {
+          // Handle server errors (e.g., 400)
+          if (error.response.status === 400) {
+            errorMessage = '.شماره تلفن قبلاً ثبت شده است';
+          } else {
+            errorMessage = error.response.data.message || errorMessage;
+          }
+        } else if (error.request) {
+          // Handle network errors (no response from server)
+          errorMessage = 'مشکل در ارتباط با سرور, لطفاً دوباره تلاش کنید';
+        }
+
+        // Show error Toast
+        Toast.fire({
+          icon: 'error',
+          title: errorMessage,
+        });
+
+        // Log error for debugging
         console.error('Signup error:', error);
-        // Handle error, show alert or error message
       }
     },
   },
@@ -177,6 +233,7 @@ export default {
   display: flex;
   align-items: center;
   margin-bottom: 20px;
+  gap: 5px;
 }
 
 .terms-checkbox input {

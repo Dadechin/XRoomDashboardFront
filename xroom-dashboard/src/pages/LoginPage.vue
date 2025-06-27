@@ -7,10 +7,6 @@
       <h3 class="subtitle">ورود به حساب کاربری</h3>
 
       <form @submit.prevent="handleSubmit">
-        
-
-        
-
         <!-- Mobile Number -->
         <div class="form-group">
           <label for="phone">شماره تماس</label>
@@ -23,10 +19,9 @@
           <input v-model="form.password" type="password" id="password" placeholder="گذرواژه" />
         </div>
 
-       
         <!-- Submit Button -->
-        <button type="submit"   class="submit-btn">
-           ورود
+        <button type="submit" class="submit-btn">
+          ورود
         </button>
       </form>
 
@@ -34,7 +29,7 @@
       <div class="login-link">
         <router-link to="/signup">ساخت حساب کاربری</router-link>
       </div>
-      <!-- Login Link -->
+      <!-- Reset Password Link -->
       <div class="login-link">
         <router-link to="/resetPassword">فراموشی رمز عبور</router-link>
       </div>
@@ -42,8 +37,8 @@
   </div>
 </template>
 
-<script> 
-import apiClient from '@/api/axios'; // Adjust the path if needed
+<script>
+import apiClient from '@/api/axios';
 
 export default {
   data() {
@@ -59,32 +54,79 @@ export default {
   },
   methods: {
     async handleSubmit() {
-  const loginData = {
-    mobile_number: this.form.mobileNumber,
-    password: this.form.password,
-  };
+      // Define Toast configuration with SweetAlert2
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
 
-  try {
-    const response = await apiClient.post('/login', loginData);
-    
-    if (response.data.status === 200) {
-      const token = response.data.data.token;
-      const user = response.data.data.user;
+      // Prepare login data
+      const loginData = {
+        mobile_number: this.form.mobileNumber,
+        password: this.form.password,
+      };
 
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
+      try {
+        // Send login request
+        const response = await apiClient.post('/login', loginData);
 
-      this.$router.push('/dashboard');
-    } else {
-      alert(response.data.message || 'خطا در ورود. لطفا دوباره تلاش کنید.');
-    }
-  } catch (error) {
-    console.error('Login error:', error);
-    alert('خطا در ورود. لطفا دوباره تلاش کنید.');
-  }
-}
+        if (response.data.status === 200) {
+          // Store token and user data in localStorage
+          const token = response.data.data.token;
+          const user = response.data.data.user;
 
+          localStorage.setItem('token', token);
+          localStorage.setItem('user', JSON.stringify(user));
 
+          // Show success Toast
+          Toast.fire({
+            icon: 'success',
+            title: 'ورود با موفقیت انجام شد',
+          });
+
+          // Redirect to dashboard
+          this.$router.push('/dashboard');
+        } else {
+          // Show error Toast with server message
+          Toast.fire({
+            icon: 'error',
+            title: response.data.message || 'خطا در ورود, لطفا دوباره تلاش کنید',
+          });
+        }
+      } catch (error) {
+        // Handle specific error cases
+        let errorMessage = 'خطا در ورود, لطفا دوباره تلاش کنید';
+        if (error.response) {
+          // Handle server errors (e.g., 400, 401, 500)
+          if (error.response.status === 401) {
+            errorMessage = '.شماره تماس یا رمز عبور اشتباه است';
+          } else if (error.response.status === 400) {
+            errorMessage = '.اطلاعات ورودی نامعتبر است';
+          } else {
+            errorMessage = error.response.data.message || errorMessage;
+          }
+        } else if (error.request) {
+          // Handle network errors (no response from server)
+          errorMessage = 'مشکل در ارتباط با سرور, لطفا دوباره تلاش کنید';
+        }
+
+        // Show error Toast
+        Toast.fire({
+          icon: 'error',
+          title: errorMessage,
+        });
+
+        // Log error for debugging
+        console.error('Login error:', error);
+      }
+    },
   },
 };
 </script>

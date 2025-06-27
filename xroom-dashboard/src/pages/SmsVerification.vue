@@ -4,10 +4,10 @@
       <h2 class="title">
         <img :src="require('@/assets/img/Logins-logo.png')" alt="Logo" style="max-width: 150px;" />
       </h2>
-      <h3 class="subtitle"> تایید شماره موبایل </h3>
+      <h3 class="subtitle">تأیید شماره موبایل</h3>
 
       <h5 class="descript-xroom">
-        پیامکی شامل کد تایید به موبایل شما ارسال شده است. 
+        پیامکی شامل کد تأیید به موبایل شما ارسال شده است.
       </h5>
 
       <button
@@ -25,24 +25,8 @@
         </span>
       </button>
 
-
-      <!-- Step 1: Mobile Number Input -->
-      <!-- <form v-if="!codeSent" @submit.prevent="requestResetCode">
-        <div class="form-group">
-          <label for="phone">شماره تماس</label>
-          <input
-            v-model="form.mobileNumber"
-            type="text"
-            id="phone"
-            placeholder="شماره تماس"
-            required
-          />
-        </div>
-       
-      </form> -->
-
-      <!-- Step 2: Code and New Password Input -->
-      <form   @submit.prevent="submitSmsVerification">
+      <!-- Code Input -->
+      <form @submit.prevent="submitSmsVerification">
         <div class="form-group">
           <label for="code">کد تأیید</label>
           <input
@@ -53,26 +37,22 @@
             required
           />
         </div>
-      
-        
+
         <button type="submit" class="submit-btn">
-          تایید کد
+          تأیید کد
         </button>
       </form>
 
       <!-- Links -->
       <div class="login-link">
-        <router-link to="/signup">ساخت حساب کاربری</router-link>  
-      
+        <router-link to="/signup">ساخت حساب کاربری</router-link>
       </div>
     </div>
   </div>
 </template>
 
-
 <script>
-// import apiClient from '@/api/axios'; // Adjust the path based on your project structure
-import axios from '@/axios';
+import axios from '@/axios'; // Adjust the path based on your project structure
 
 export default {
   data() {
@@ -83,117 +63,204 @@ export default {
         password: '',
       },
       codeSent: false, // Tracks if the code has been sent
-
-      
-      isButtonDisabled: false,
-      countdown: 120, // in seconds (2 minutes)
-      countdownInterval: null,
+      isButtonDisabled: false, // Tracks if resend button is disabled
+      countdown: 120, // Countdown timer in seconds (2 minutes)
+      countdownInterval: null, // Interval for countdown
     };
   },
   mounted() {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          window.location.reload();
-        } else {
-          this.sendSms(); // Automatically call sendSms on mount
-        }
+    // Check for token and trigger SMS sending on mount
+    const token = localStorage.getItem('token');
+    if (!token) {
+      window.location.reload();
+    } else {
+      this.sendSms(); // Automatically call sendSms on mount
+    }
   },
   methods: {
     async sendSms() {
-  try {
-    const token = localStorage.getItem('token');
+      // Define Toast configuration with SweetAlert2
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
 
-    const response = await axios.get('/sendSmsVerification', {
-      headers: {
-        'Authorization': `Token ${token}`,
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-
-    if (response.status == 200) {
-      this.codeSent = true;
-      alert('کد تأیید به شماره موبایل شما ارسال شد.');
-      this.startCountdown(); // Start countdown when code is sent
-    }
-  } catch (error) {
-    console.error('Error requesting reset code:', error);
-    alert('خطا در ارسال کد تأیید. لطفاً دوباره تلاش کنید.');
-  }
-},
-
-
- startCountdown() {
-    this.isButtonDisabled = true;
-    this.countdown = 120; // Reset to 2 minutes
-
-    if (this.countdownInterval) {
-      clearInterval(this.countdownInterval);
-    }
-
-    this.countdownInterval = setInterval(() => {
-      if (this.countdown > 0) {
-        this.countdown--;
-      } else {
-        this.isButtonDisabled = false;
-        clearInterval(this.countdownInterval);
-      }
-    }, 1000);
-  },
-
-    async submitSmsVerification() {
       try {
-      const token = localStorage.getItem('token');
+        // Get token from localStorage
+        const token = localStorage.getItem('token');
 
+        // Send request to get verification SMS
+        const response = await axios.get('/sendSmsVerification', {
+          headers: {
+            Authorization: `Token ${token}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        });
 
+        if (response.status === 200) {
+          // Update state to indicate code was sent
+          this.codeSent = true;
 
-       
-      
+          // Show success Toast
+          Toast.fire({
+            icon: 'success',
+            title: '.کد تأیید به شماره موبایل شما ارسال شد',
+          });
 
-
-          const response =     await axios.post('/submitSmsVerification', 
-          {
-                verification_sms_code: this.form.code,
-         
-          }, {headers:  {
-          
-   'Authorization': `Token ${token}`,
-            'Content-Type': 'multipart/form-data'
-      
-        
-        }
-        }
-        );
-
-        // const response = await apiClient.post('/submitSmsVerification', {
-          
-
-        //   verification_sms_code: this.form.code,
-        
-        // });
-        if (response.status == 200) {
-          alert('کد صحیح است');
-          this.$router.push('/dashboard');
+          // Start countdown for resend button
+          this.startCountdown();
+        } else {
+          // Show error Toast with server message
+          Toast.fire({
+            icon: 'error',
+            title: response.data.message || 'خطا در ارسال کد تأیید, لطفاً دوباره تلاش کنید',
+          });
         }
       } catch (error) {
-        console.error('Error resetting password:', error);
-        alert('کد خطا دارد');
+        // Handle specific error cases
+        let errorMessage = 'خطا در ارسال کد تأیید, لطفاً دوباره تلاش کنید';
+        if (error.response) {
+          // Handle server errors (e.g., 400, 401)
+          if (error.response.status === 400) {
+            errorMessage = '.درخواست نامعتبر است';
+          } else if (error.response.status === 401) {
+            errorMessage = 'توکن نامعتبر است, لطفاً دوباره وارد شوید';
+          } else {
+            errorMessage = error.response.data.message || errorMessage;
+          }
+        } else if (error.request) {
+          // Handle network errors (no response from server)
+          errorMessage = 'مشکل در ارتباط با سرور, لطفاً دوباره تلاش کنید';
+        }
+
+        // Show error Toast
+        Toast.fire({
+          icon: 'error',
+          title: errorMessage,
+        });
+
+        // Log error for debugging
+        console.error('Error requesting SMS code:', error);
+      }
+    },
+    startCountdown() {
+      // Disable resend button and start countdown
+      this.isButtonDisabled = true;
+      this.countdown = 120; // Reset to 2 minutes
+
+      if (this.countdownInterval) {
+        clearInterval(this.countdownInterval);
+      }
+
+      // Update countdown every second
+      this.countdownInterval = setInterval(() => {
+        if (this.countdown > 0) {
+          this.countdown--;
+        } else {
+          this.isButtonDisabled = false;
+          clearInterval(this.countdownInterval);
+        }
+      }, 1000);
+    },
+    async submitSmsVerification() {
+      // Define Toast configuration with SweetAlert2
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+
+      try {
+        // Get token from localStorage
+        const token = localStorage.getItem('token');
+
+        // Send request to verify SMS code
+        const response = await axios.post(
+          '/submitSmsVerification',
+          {
+            verification_sms_code: this.form.code,
+          },
+          {
+            headers: {
+              Authorization: `Token ${token}`,
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        );
+
+        if (response.status === 200) {
+          // Show success Toast
+          Toast.fire({
+            icon: 'success',
+            title: '.کد تأیید صحیح است',
+          });
+
+          // Redirect to dashboard
+          this.$router.push('/dashboard');
+        } else {
+          // Show error Toast with server message
+          Toast.fire({
+            icon: 'error',
+            title: response.data.message || '.کد تأیید نامعتبر است',
+          });
+        }
+      } catch (error) {
+        // Handle specific error cases
+        let errorMessage = '.کد تأیید نامعتبر است';
+        if (error.response) {
+          // Handle server errors (e.g., 400, 401)
+          if (error.response.status === 400) {
+            errorMessage = '.کد تأیید نامعتبر است';
+          } else if (error.response.status === 401) {
+            errorMessage = 'توکن نامعتبر است, لطفاً دوباره وارد شوید';
+          } else {
+            errorMessage = error.response.data.message || errorMessage;
+          }
+        } else if (error.request) {
+          // Handle network errors (no response from server)
+          errorMessage = 'مشکل در ارتباط با سرور, لطفاً دوباره تلاش کنید';
+        }
+
+        // Show error Toast
+        Toast.fire({
+          icon: 'error',
+          title: errorMessage,
+        });
+
+        // Log error for debugging
+        console.error('Error verifying SMS code:', error);
       }
     },
   },
 };
 </script>
 
+
+
 <style scoped>
 
 .descript-xroom {
   font-family: IRANSansXFaNum;
-font-weight: 500;
-font-size: 13px;
-line-height: 210%;
-letter-spacing: 0%;
-text-align: justify;
-vertical-align: middle;
-margin-bottom: 30px;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 210%;
+  letter-spacing: 0%;
+  text-align: justify;
+  vertical-align: middle;
+  margin-bottom: 30px;
 }
 /* Basic reset */
 * {

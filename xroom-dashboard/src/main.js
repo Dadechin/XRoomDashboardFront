@@ -1,8 +1,11 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-import router from './router'
-import '@/assets/main.css'
+// src/main.js
+import { createApp } from 'vue';
+import App from './App.vue';
+import router from './router';
+import Swal from 'sweetalert2';
+import '@/assets/main.css';
 
-createApp(App)
-  .use(router) // Make sure you use the router here
-  .mount('#app')
+const app = createApp(App);
+app.use(router);
+app.config.globalProperties.$swal = Swal; // Add SweetAlert2 globally
+app.mount('#app');

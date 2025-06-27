@@ -1,13 +1,7 @@
 <template>
     <div>
- 
-      <!-- Two-Column Form Layout -->
       <div class="profile-edit-container">
-
-        <!-- Left Column -->
         <div class="column">
-
-          <!-- VR Avatar Section -->
           <div class="form-section">
             <h3>آواتار واقعیت مجازی شما</h3>
             <p class="section-description">
@@ -40,8 +34,6 @@
               </div>
             </div>
           </div>
-
-          <!-- Password Change Section -->
           <div class="form-section">
             <h3>تغییر رمز عبور</h3>
             <div class="form-group">
@@ -60,19 +52,13 @@
               {{ saving ? 'در حال ذخیره...' : 'ذخیره' }}
             </button>
           </div>
-
         </div>
-
-        <!-- Right Column -->
         <div class="column">
-
-          <!-- Profile Picture Section -->
           <div class="form-section">
             <h3>تصویر پروفایل</h3>
             <p class="section-description">
               این نماد در کنار نام شما و برای دیگران در واقعیت مجازی و در پلتفرم وب قابل مشاهده خواهد بود.
             </p>
-
             <div style="display: flex; align-items: center;">
               <img :src="userProfilePicUrl" class="profile-image" />
               <label class="profile-upload" for="profile-upload">
@@ -112,10 +98,6 @@
               <input type="file" @change="uploadProfileImage" id="profile-upload" class="upload-input" style="display: none;" />
             </div>
           </div>
-
-
-          
-          <!-- User Info Section -->
           <div class="form-section">
             <h3>اطلاعات کاربر</h3>
             <div class="form-group">
@@ -123,8 +105,12 @@
               <input type="email" id="email" v-model="editForm.email" disabled />
             </div>
             <div class="form-group">
-              <label for="fullName">نام کامل</label>
-              <input type="text" id="fullName" v-model="editForm.full_name" placeholder="نام و نام خانوادگی" />
+              <label for="firstName">نام</label>
+              <input type="text" id="firstName" v-model="editForm.first_name" placeholder="نام" />
+            </div>
+            <div class="form-group">
+              <label for="lastName">نام خانوادگی</label>
+              <input type="text" id="lastName" v-model="editForm.last_name" placeholder="نام خانوادگی" />
             </div>
             <div class="form-group">
               <label for="position">جایگاه</label>
@@ -134,11 +120,8 @@
               {{ saving ? 'در حال ذخیره...' : 'ذخیره' }}
             </button>
           </div>
-
         </div>
       </div>
-
-      
     </div>
 </template>
 
@@ -152,85 +135,239 @@ export default {
     return {
       selectedProfileImage: null,
       userData: {
-        user: { first_name: '', last_name: '', email: '', semat: '' }
+        customer: { semat: '', profile_img: '' },
+        user: { first_name: '', last_name: '' },
       },
-      editForm: { full_name: '', email: '', semat: '' }, // جایگزینی first_name و last_name با full_name
+      editForm: { first_name: '', last_name: '', email: '', semat: '' },
       passwordForm: { current_password: '', new_password: '', confirm_password: '' },
+      initialFormState: { first_name: '', last_name: '', semat: '' },
       saving: false,
       userAvatarUrl: 'https://i.imgur.com/QbXfV6C.png',
-      baseUrl: 'http://194.62.43.230:8000'
-    }
+      baseUrl: 'http://194.62.43.230:8000',
+    };
   },
   created() {
     this.fetchUserData();
   },
   computed: {
     userProfilePicUrl() {
-      const customer = JSON.parse(localStorage.getItem('customer') || {});
-      if (!customer.profile_img) return this.defaultProfileImage;
-      return `${customer.profile_img}`;
-    }
+      // Prioritize userData from API if available
+      if (this.userData.customer && this.userData.customer.profile_img) {
+        return this.userData.customer.profile_img;
+      }
+      // Fallback to localStorage
+      const customer = JSON.parse(localStorage.getItem('customer') || '{}');
+      return customer.profile_img || this.userAvatarUrl;
+    },
   },
   methods: {
     async fetchUserData() {
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+
       try {
         const response = await axios.get('/getInfo');
-        this.userData = response.data;
+
+        // Check if response.data and required fields exist
+        if (!response.data || !response.data.data) {
+          throw new Error('داده‌های پاسخ از سرور معتبر نیست');
+        }
+
+        const userData = response.data.data; // Adjust to match the nested 'data' structure
+        if (!userData.user || !userData.customer) {
+          throw new Error('داده‌های کاربر یا مشتری در پاسخ سرور وجود ندارد');
+        }
+
+        this.userData = userData;
         this.editForm = {
-          full_name: `${response.data.user.first_name} ${response.data.user.last_name}`.trim(), // ترکیب نام و نام خانوادگی
-          email: response.data.user.email,
-          semat: response.data.user.semat,
-          userAvatarUrl: response.data.customer.profile_img
+          first_name: userData.user.first_name || '',
+          last_name: userData.user.last_name || '',
+          email: userData.user.email || '',
+          semat: userData.customer.semat || '',
         };
+        this.initialFormState = {
+          first_name: this.editForm.first_name,
+          last_name: this.editForm.last_name,
+          semat: this.editForm.semat,
+        };
+
+        // Update localStorage to keep it in sync with the API response
+        localStorage.setItem('customer', JSON.stringify(userData.customer));
       } catch (error) {
+        Toast.fire({
+          icon: 'error',
+          title: 'خطا در بارگذاری اطلاعات کاربر. لطفاً دوباره تلاش کنید',
+        });
         console.error('Error fetching user data:', error);
-      }      
+        // Initialize with default values to prevent breaking the UI
+        this.editForm = {
+          first_name: '',
+          last_name: '',
+          email: '',
+          semat: '',
+        };
+        this.initialFormState = {
+          first_name: '',
+          last_name: '',
+          semat: '',
+        };
+      }
     },
     async saveProfile() {
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+
       this.saving = true;
+      let isProfileChanged = false;
+      let isPasswordChanged = false;
+      let onlyNameChanged = false;
+
       try {
         const formData = new FormData();
-        // تجزیه full_name به first_name و last_name (اگر API نیاز دارد)
-        const [first_name = '', last_name = ''] = this.editForm.full_name.split(' ').filter(Boolean);
-        formData.append('first_name', first_name);
-        formData.append('last_name', last_name);
-        formData.append('semat', this.editForm.semat);
+
+        if (this.editForm.first_name !== this.initialFormState.first_name || this.editForm.last_name !== this.initialFormState.last_name) {
+          formData.append('first_name', this.editForm.first_name);
+          formData.append('last_name', this.editForm.last_name);
+          isProfileChanged = true;
+          onlyNameChanged = true;
+        }
+
+        if (this.editForm.semat !== this.initialFormState.semat) {
+          formData.append('semat', this.editForm.semat);
+          isProfileChanged = true;
+          onlyNameChanged = false;
+        }
 
         if (this.selectedProfileImage) {
           formData.append('profile_img', this.selectedProfileImage);
+          isProfileChanged = true;
+          onlyNameChanged = false;
         }
 
-        await axios.post(`${this.baseUrl}/editProfile/`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        });
+        if (isProfileChanged) {
+          await axios.post(`${this.baseUrl}/editProfile/`, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+        }
 
-        // Handle password change if filled
-        if (this.passwordForm.new_password && this.passwordForm.current_password) {
+        if (this.passwordForm.current_password && this.passwordForm.new_password) {
           if (this.passwordForm.new_password !== this.passwordForm.confirm_password) {
-            throw new Error('رمز عبور جدید و تکرار آن مطابقت ندارند');
+            Toast.fire({
+              icon: 'error',
+              title: 'رمز عبور جدید و تکرار آن مطابقت ندارند',
+            });
+            this.saving = false;
+            return;
           }
 
           await axios.post(`${this.baseUrl}/resetPassword/`, {
             old_password: this.passwordForm.current_password,
-            new_password: this.passwordForm.new_password
+            new_password: this.passwordForm.new_password,
           });
+          isPasswordChanged = true;
+          onlyNameChanged = false;
+        }
+
+        if (!isProfileChanged && !isPasswordChanged) {
+          Toast.fire({
+            icon: 'info',
+            title: 'هیچ تغییری اعمال نشده است',
+          });
+          this.saving = false;
+          return;
         }
 
         await this.fetchUserData();
-        alert('تغییرات با موفقیت ذخیره شد');
+        this.passwordForm = { current_password: '', new_password: '', confirm_password: '' };
+        this.editForm.first_name = '';
+        this.editForm.last_name = '';
+        this.editForm.semat = '';
+        this.selectedProfileImage = null;
+
+        Toast.fire({
+          icon: 'success',
+          title: 'تغییرات با موفقیت ذخیره شد',
+        });
+
+        if (onlyNameChanged) {
+          window.location.reload();
+        }
       } catch (error) {
-        alert(error.response?.data?.detail || error.message || 'خطا در ذخیره تغییرات');
+        let errorMessage = 'خطا در ذخیره تغییرات';
+        if (error.response) {
+          if (error.response.status === 400) {
+            errorMessage = 'اطلاعات ورودی نامعتبر است';
+          } else if (error.response.status === 401) {
+            errorMessage = 'رمز عبور فعلی اشتباه است';
+          } else {
+            errorMessage = error.response.data.detail || errorMessage;
+          }
+        } else if (error.request) {
+          errorMessage = 'مشکل در ارتباط با سرور، لطفاً دوباره تلاش کنید';
+        }
+
+        Toast.fire({
+          icon: 'error',
+          title: errorMessage,
+        });
+        console.error('Error saving profile:', error);
       } finally {
         this.saving = false;
       }
     },
     changeAvatar() {
-      alert('تغییر آواتار کلیک شد');
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+      Toast.fire({
+        icon: 'info',
+        title: 'تغییر آواتار کلیک شد',
+      });
     },
     regenerateAvatar() {
-      alert('ساخت مجدد آواتار کلیک شد');
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+      Toast.fire({
+        icon: 'info',
+        title: 'ساخت مجدد آواتار کلیک شد',
+      });
     },
     uploadProfileImage(event) {
       const file = event.target.files[0];
@@ -238,10 +375,11 @@ export default {
         this.selectedProfileImage = file;
         this.userProfilePicUrl = URL.createObjectURL(file);
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
+
 
 <style scoped>
 

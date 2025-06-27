@@ -59,62 +59,53 @@ import { ref } from 'vue';
 
 export default {
   name: 'ChangeAvatar',
-  components: {
-  },
   data() {
     return {
       selectedProfileImage: null,
-
       userData: {
         user: { first_name: '', last_name: '', email: '' }
       },
       editForm: { first_name: '', last_name: '', email: '' },
       passwordForm: { current_password: '', new_password: '', confirm_password: '' },
       saving: false,
-      // userProfilePicUrl: 'https://i.imgur.com/QbXfV6C.png',
       userAvatarUrl: 'https://i.imgur.com/QbXfV6C.png',
       baseUrl: 'http://194.62.43.230:8000'
-    }
+    };
   },
   setup() {
+    // Define male avatars
     const maleAvatars = ref([
-      { id: 1, name: 'مرد ۱', src: 'http://my.xroomapp.com:8000/media/user_glbs/men1.glb', profile_img:'http://my.xroomapp.com:8000/media/user_images/men1.png' },
-      { id: 2, name: 'مرد ۲', src: 'http://my.xroomapp.com:8000/media/user_glbs/men2.glb' , profile_img:'http://my.xroomapp.com:8000/media/user_images/men2.png'},
-      { id: 7, name: 'مرد ۳', src: 'http://my.xroomapp.com:8000/media/user_glbs/men3.glb' , profile_img:'http://my.xroomapp.com:8000/media/user_images/men3.png'},
-      { id: 17, name: 'مرد 4', src: 'http://my.xroomapp.com:8000/media/user_glbs/men4.glb' , profile_img:'http://my.xroomapp.com:8000/media/user_images/men4.png'},
-      // Add more male avatars as needed
+      { id: 1, name: 'مرد ۱', src: 'http://my.xroomapp.com:8000/media/user_glbs/men1.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/men1.png' },
+      { id: 2, name: 'مرد ۲', src: 'http://my.xroomapp.com:8000/media/user_glbs/men2.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/men2.png' },
+      { id: 7, name: 'مرد ۳', src: 'http://my.xroomapp.com:8000/media/user_glbs/men3.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/men3.png' },
+      { id: 17, name: 'مرد ۴', src: 'http://my.xroomapp.com:8000/media/user_glbs/men4.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/men4.png' },
     ]);
 
- 
-    
+    // Define female avatars
     const femaleAvatars = ref([
-  { id: 4, name: 'زن ۱', src: 'http://my.xroomapp.com:8000/media/user_glbs/women1.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/women1.png' },
-  { id: 10, name: 'زن ۳', src: 'http://my.xroomapp.com:8000/media/user_glbs/women2.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/women2.png' },
-  { id: 10, name: 'زن ۳', src: 'http://my.xroomapp.com:8000/media/user_glbs/women3.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/women3.png' },
-  { id: 10, name: 'زن ۳', src: 'http://my.xroomapp.com:8000/media/user_glbs/women4.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/women4.png' },
-  { id: 10, name: 'زن ۳', src: 'http://my.xroomapp.com:8000/media/user_glbs/women6.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/women6.png' },
-  { id: 10, name: 'زن ۳', src: 'http://my.xroomapp.com:8000/media/user_glbs/women7.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/women7.png' },
-]);
-    const selectedAvatar = ref(null);
+      { id: 4, name: 'زن ۱', src: 'http://my.xroomapp.com:8000/media/user_glbs/women1.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/women1.png' },
+      { id: 10, name: 'زن ۲', src: 'http://my.xroomapp.com:8000/media/user_glbs/women2.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/women2.png' },
+      { id: 11, name: 'زن ۳', src: 'http://my.xroomapp.com:8000/media/user_glbs/women3.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/women3.png' },
+      { id: 12, name: 'زن ۴', src: 'http://my.xroomapp.com:8000/media/user_glbs/women4.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/women4.png' },
+      { id: 13, name: 'زن ۵', src: 'http://my.xroomapp.com:8000/media/user_glbs/women6.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/women6.png' },
+      { id: 14, name: 'زن ۶', src: 'http://my.xroomapp.com:8000/media/user_glbs/women7.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/women7.png' },
+    ]);
 
-    // const selectAvatar = (avatar) => {
-    //   selectedAvatar.value = avatar;
-    //   // You can add API call here to save the selected avatar
-    //   console.log('Selected avatar:', avatar);
-    // };
+    const selectedAvatar = ref(null);
 
     return {
       maleAvatars,
       femaleAvatars,
       selectedAvatar,
-      // selectAvatar,
     };
   },
   created() {
+    // Fetch user data on component creation
     this.fetchUserData();
   },
   computed: {
     userProfilePicUrl() {
+      // Get customer data from localStorage
       const customer = JSON.parse(localStorage.getItem('customer') || {});
       if (!customer.profile_img) return this.defaultProfileImage;
       return `http://194.62.43.230:8000/media/${customer.profile_img}`;
@@ -122,12 +113,27 @@ export default {
   },
   methods: {
     async selectAvatar(avatar) {
+      // Define Toast configuration with SweetAlert2
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+
+      // Set saving state and selected avatar
       this.saving = true;
       this.selectedAvatar = avatar.id;
-      
-      // try {
-          await axios.post(`${this.baseUrl}/editProfile/`, {
-          profile_glb_url: avatar.src ,
+
+      try {
+        // Send request to update profile with selected avatar
+        await axios.post(`${this.baseUrl}/editProfile/`, {
+          profile_glb_url: avatar.src,
           profile_img: avatar.profile_img
         }, {
           headers: {
@@ -135,116 +141,230 @@ export default {
           }
         });
 
-        // print(response)
-        // Update local storage if needed
-        // const customer = JSON.parse(localStorage.getItem('customer') || '{}');
-        // customer.profile_glb = avatar.src;
-        // localStorage.setItem('customer', JSON.stringify(customer));
+        // Show success Toast
+        Toast.fire({
+          icon: 'success',
+          title: '.آواتار با موفقیت انتخاب شد',
+        });
 
-        // Show success message
-        // this.$toast.success('آواتار با موفقیت انتخاب شد');
-        alert('تغییرات با موفقیت ذخیره شد');
+        // Delay redirect to allow Toast to be visible
+        setTimeout(() => {
+          window.location.assign('/dashboard');
+        }, 2000); // 3-second delay to match Toast duration
 
-        // Optionally refresh user data
-        // await this.fetchUserData();
-        
-      // } catch (error) {
-      //   console.error('Error selecting avatar:', error);
-      //   const errorMessage = error.response?.data?.detail || 
-      //                      error.response?.data?.message || 
-      //                      'خطا در انتخاب آواتار';
-      //   this.$toast.error(errorMessage);
-      // } finally {
-      //   this.saving = false;
-      //   this.selectedAvatar = null;
-      // }
+      } catch (error) {
+        // Handle specific error cases
+        let errorMessage = 'خطا در انتخاب آواتار. لطفاً دوباره تلاش کنید';
+        if (error.response) {
+          // Handle server errors (e.g., 400, 401)
+          if (error.response.status === 400) {
+            errorMessage = 'درخواست نامعتبر است.';
+          } else if (error.response.status === 401) {
+            errorMessage = 'توکن نامعتبر است. لطفاً دوباره وارد شوید';
+          } else {
+            errorMessage = error.response.data.detail || error.response.data.message || errorMessage;
+          }
+        } else if (error.request) {
+          // Handle network errors (no response from server)
+          errorMessage = 'مشکل در ارتباط با سرور. لطفاً دوباره تلاش کنید';
+        }
+
+        // Show error Toast
+        Toast.fire({
+          icon: 'error',
+          title: errorMessage,
+        });
+
+        // Log error for debugging
+        console.error('Error selecting avatar:', error);
+      } finally {
+        // Reset saving state and selected avatar
+        this.saving = false;
+        this.selectedAvatar = null;
+      }
     },
-    
     async fetchUserData() {
+      // Define Toast configuration with SweetAlert2
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+
       try {
+        // Fetch user data
         const response = await axios.get('/getInfo');
         this.userData = response.data;
       } catch (error) {
+        // Handle specific error cases
+        let errorMessage = 'خطا در دریافت اطلاعات کاربر';
+        if (error.response) {
+          // Handle server errors (e.g., 400, 401)
+          if (error.response.status === 401) {
+            errorMessage = 'توکن نامعتبر است. لطفاً دوباره وارد شوید';
+          } else {
+            errorMessage = error.response.data.detail || error.response.data.message || errorMessage;
+          }
+        } else if (error.request) {
+          // Handle network errors (no response from server)
+          errorMessage = 'مشکل در ارتباط با سرور. لطفاً دوباره تلاش کنید';
+        }
+
+        // Show error Toast
+        Toast.fire({
+          icon: 'error',
+          title: errorMessage,
+        });
+
+        // Log error for debugging
         console.error('Error fetching user data:', error);
       }
     },
-  //   async selectAvatar(avatar) {
-  //   try {
-  //     const response = await axios.post(
-  //       'http://194.62.43.230:8000/editProfile',
-  //       {
-  //         profile_glb: avatar.src  // Send the GLB URL in the specified field
-  //       },
-  //       {
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           'Authorization': `Bearer ${yourAuthToken}` // Add if you use authentication
-  //         }
-  //       }
-  //     );
-      
-  //     // Show success message
-  //     alert('آواتار با موفقیت انتخاب شد!');
-  //     console.log('Avatar selected:', response.data);
-      
-  //   } catch (error) {
-  //     console.error('Error selecting avatar:', error);
-  //     alert('خطا در انتخاب آواتار!');
-  //   }
-  // },
-    
     async saveProfile() {
-  this.saving = true;
-  try {
-    const formData = new FormData();
-    formData.append('first_name', this.editForm.first_name);
-    formData.append('last_name', this.editForm.last_name);
-
-    if (this.selectedProfileImage) {
-      formData.append('profile_img', this.selectedProfileImage);
-    }
-
-    await axios.post(`${this.baseUrl}/editProfile/`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    });
-
-    // Handle password change if filled
-    if (this.passwordForm.new_password && this.passwordForm.current_password) {
-      if (this.passwordForm.new_password !== this.passwordForm.confirm_password) {
-        throw new Error('رمز عبور جدید و تکرار آن مطابقت ندارند');
-      }
-
-      await axios.post(`${this.baseUrl}/resetPassword/`, {
-        old_password: this.passwordForm.current_password,
-        new_password: this.passwordForm.new_password
+      // Define Toast configuration with SweetAlert2
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
       });
-    }
 
-    await this.fetchUserData();
-    alert('تغییرات با موفقیت ذخیره شد');
-  } catch (error) {
-    alert(error.response?.data?.detail || error.message || 'خطا در ذخیره تغییرات');
-  } finally {
-    this.saving = false;
-  }
-},
+      // Set saving state
+      this.saving = true;
+      try {
+        // Prepare form data for profile update
+        const formData = new FormData();
+        formData.append('first_name', this.editForm.first_name);
+        formData.append('last_name', this.editForm.last_name);
+
+        if (this.selectedProfileImage) {
+          formData.append('profile_img', this.selectedProfileImage);
+        }
+
+        // Send request to update profile
+        await axios.post(`${this.baseUrl}/editProfile/`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+
+        // Handle password change if filled
+        if (this.passwordForm.new_password && this.passwordForm.current_password) {
+          if (this.passwordForm.new_password !== this.passwordForm.confirm_password) {
+            // Show error Toast for password mismatch
+            Toast.fire({
+              icon: 'error',
+              title: 'رمز عبور جدید و تکرار آن مطابقت ندارند',
+            });
+            throw new Error('رمز عبور جدید و تکرار آن مطابقت ندارند');
+          }
+
+          // Send request to reset password
+          await axios.post(`${this.baseUrl}/resetPassword/`, {
+            old_password: this.passwordForm.current_password,
+            new_password: this.passwordForm.new_password
+          });
+        }
+
+        // Fetch updated user data
+        await this.fetchUserData();
+
+        // Show success Toast
+        Toast.fire({
+          icon: 'success',
+          title: 'تغییرات با موفقیت ذخیره شد',
+        });
+      } catch (error) {
+        // Handle specific error cases
+        let errorMessage = 'خطا در ذخیره تغییرات. لطفاً دوباره تلاش کنید';
+        if (error.response) {
+          // Handle server errors (e.g., 400, 401)
+          if (error.response.status === 400) {
+            errorMessage = '.درخواست نامعتبر است';
+          } else if (error.response.status === 401) {
+            errorMessage = 'توکن نامعتبر است. لطفاً دوباره وارد شوید';
+          } else {
+            errorMessage = error.response.data.detail || error.response.data.message || errorMessage;
+          }
+        } else if (error.request) {
+          // Handle network errors (no response from server)
+          errorMessage = 'مشکل در ارتباط با سرور. لطفاً دوباره تلاش کنید';
+        }
+
+        // Show error Toast
+        Toast.fire({
+          icon: 'error',
+          title: errorMessage,
+        });
+
+        // Log error for debugging
+        console.error('Error saving profile:', error);
+      } finally {
+        // Reset saving state
+        this.saving = false;
+      }
+    },
     changeAvatar() {
-      alert('تغییر آواتار کلیک شد');
+      // Define Toast configuration with SweetAlert2
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+
+      // Show Toast for change avatar click
+      Toast.fire({
+        icon: 'info',
+        title: 'تغییر آواتار کلیک شد',
+      });
     },
     regenerateAvatar() {
-      alert('ساخت مجدد آواتار کلیک شد');
+      // Define Toast configuration with SweetAlert2
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+
+      // Show Toast for regenerate avatar click
+      Toast.fire({
+        icon: 'info',
+        title: 'ساخت مجدد آواتار کلیک شد.',
+      });
     },
-      uploadProfileImage(event) {
-    const file = event.target.files[0];
-    if (file) {
-      this.selectedProfileImage = file;
-      this.userProfilePicUrl = URL.createObjectURL(file);
+    uploadProfileImage(event) {
+      // Handle profile image upload
+      const file = event.target.files[0];
+      if (file) {
+        this.selectedProfileImage = file;
+        this.userProfilePicUrl = URL.createObjectURL(file);
+      }
     }
   }
-  }
-}
+};
 </script>
 
 <style scoped>
