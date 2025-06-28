@@ -16,175 +16,209 @@
   </template>
   
 <script>
-  import axios from '@/axios';
-  
-  export default {
-    name: 'ChangeAvatar',
-    components: {
+import axios from '@/axios';
+
+export default {
+  name: 'ChangeAvatar',
+  components: {},
+  data() {
+    return {
+      subdomain: 'xroom',
+      avatarUrl: '',
+      frame: null,
+      saving: false,
+      userData: {
+        user: { first_name: '', last_name: '' },
+      },
+      maleAvatars: [
+        { id: 1, name: 'مرد ۱', src: 'http://194.62.43.230:8000/media/2025/5/5/men1.glb' },
+        { id: 2, name: 'مرد ۲', src: 'http://194.62.43.230:8000/media/2025/5/5/men1.glb' },
+        { id: 7, name: 'مرد ۳', src: 'http://194.62.43.230:8000/media/2025/5/5/men1.glb' },
+      ],
+      femaleAvatars: [
+        { id: 4, name: 'زن ۱', src: 'http://194.62.43.230:8000/media/2025/5/5/men1.glb' },
+        { id: 10, name: 'زن ۳', src: 'http://194.62.43.230:8000/media/2025/5/5/men1.glb' },
+      ],
+      baseUrl: 'http://194.62.43.230:8000',
+    };
+  },
+  computed: {
+    iframeSrc() {
+      return `https://${this.subdomain}.readyplayer.me/avatar?frameApi`;
     },
-    data() {
-      return {
-        subdomain: 'xroom',
-        avatarUrl: '',
-        frame: null,
-        saving: false,
-        userData: {
-          user: { first_name: '', last_name: '' }
-        },
-        maleAvatars: [
-          { id: 1, name: 'مرد ۱', src: 'http://194.62.43.230:8000/media/2025/5/5/men1.glb' },
-          { id: 2, name: 'مرد ۲', src: 'http://194.62.43.230:8000/media/2025/5/5/men1.glb' },
-          { id: 7, name: 'مرد ۳', src: 'http://194.62.43.230:8000/media/2025/5/5/men1.glb' },
-        ],
-        femaleAvatars: [
-          { id: 4, name: 'زن ۱', src: 'http://194.62.43.230:8000/media/2025/5/5/men1.glb' },
-          { id: 10, name: 'زن ۳', src: 'http://194.62.43.230:8000/media/2025/5/5/men1.glb' },
-        ],
-        baseUrl: 'http://194.62.43.230:8000'
-      };
-    },
-    computed: {
-      iframeSrc() {
-        return `https://${this.subdomain}.readyplayer.me/avatar?frameApi`;
-      }
-    },
-    mounted() {
-      this.frame = document.getElementById('frame');
-      window.addEventListener('message', this.subscribe);
-      document.addEventListener('message', this.subscribe);
-      
-      // Load existing avatar if available
-      this.loadUserData();
-    },
-    beforeUnmount() {
-      window.removeEventListener('message', this.subscribe);
-      document.removeEventListener('message', this.subscribe);
-    },
-    methods: {
-        async saveAvatarUrl(glbUrl) {
+  },
+  mounted() {
+    this.frame = document.getElementById('frame');
+    window.addEventListener('message', this.subscribe);
+    document.addEventListener('message', this.subscribe);
+
+    this.loadUserData();
+  },
+  beforeUnmount() {
+    window.removeEventListener('message', this.subscribe);
+    document.removeEventListener('message', this.subscribe);
+  },
+  methods: {
+    async saveAvatarUrl(glbUrl) {
       try {
         const customer = JSON.parse(localStorage.getItem('customer') || '{}');
         const payload = {
-          profile_glb_url: glbUrl
+          profile_glb_url: glbUrl,
         };
 
-        // If profile_img is null, set it to the thumbnail of the GLB
         if (!customer.profile_img) {
           payload.profile_img = this.getAvatarThumbnail(glbUrl);
         }
 
         const response = await axios.post(`${this.baseUrl}/editProfile/`, payload, {
           headers: {
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
         });
 
-        // Update local storage
         if (!customer.profile_img) {
           customer.profile_img = payload.profile_img;
         }
         customer.profile_glb_url = glbUrl;
         localStorage.setItem('customer', JSON.stringify(customer));
-        
+
         return response.data;
       } catch (error) {
         console.error('Error saving avatar URL:', error);
         throw error;
       }
     },
-    
     getAvatarThumbnail(glbUrl) {
-      // Replace .glb with .png for thumbnail
-      // Adjust this based on your actual thumbnail URLs
       if (glbUrl.includes('readyplayer.me')) {
-        // For Ready Player Me avatars, use their thumbnail service
         return glbUrl.replace('.glb', '.png');
       }
       return glbUrl.replace('.glb', '.png') || 'https://i.imgur.com/QbXfV6C.png';
     },
-      loadUserData() {
-        const customer = JSON.parse(localStorage.getItem('customer') || '{}');
-        if (customer.profile_glb_url) {
-          this.avatarUrl = customer.profile_glb_url;
-        }
-      },
-      async subscribe(event) {
-        const json = this.parse(event);
-  
-        if (json?.source !== 'readyplayerme') {
-          return;
-        }
-  
-        if (json.eventName === 'v1.frame.ready') {
-          this.frame.contentWindow.postMessage(
-            JSON.stringify({
-              target: 'readyplayerme',
-              type: 'subscribe',
-              eventName: 'v1.**'
-            }),
-            '*'
-          );
-        }
-  
-        if (json.eventName === 'v1.avatar.exported') {
-          this.saving = true;
-          try {
-            console.log(`Avatar URL: ${json.data.url}`);
-            this.avatarUrl = json.data.url;
-            this.frame.hidden = true;
-            
-            // Save the avatar URL to your backend
-            await this.saveAvatarUrl(json.data.url);
-            
-            alert('آواتار با موفقیت ذخیره شد');
-            this.$router.push('/dashboard');
+    loadUserData() {
+      const customer = JSON.parse(localStorage.getItem('customer') || '{}');
+      if (customer.profile_glb_url) {
+        this.avatarUrl = customer.profile_glb_url;
+      }
+    },
+    async subscribe(event) {
+      const json = this.parse(event);
 
-          } catch (error) {
-            console.error('Error saving avatar:', error);
-            alert('خطا در ذخیره آواتار');
-          } finally {
-            this.saving = false;
-          }
-        }
-      },
-      parse(event) {
-        try {
-          return JSON.parse(event.data);
-        } catch (error) {
-          return null;
-        }
-      },
-      openAvatarEditor() {
-        this.frame.hidden = false;
-      },
-     
-      
-      async selectAvatar(avatar) {
+      if (json?.source !== 'readyplayerme') {
+        return;
+      }
+
+      if (json.eventName === 'v1.frame.ready') {
+        this.frame.contentWindow.postMessage(
+          JSON.stringify({
+            target: 'readyplayerme',
+            type: 'subscribe',
+            eventName: 'v1.**',
+          }),
+          '*'
+        );
+      }
+
+      if (json.eventName === 'v1.avatar.exported') {
+        // Define Toast configuration
+        const Toast = this.$swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.onmouseenter = this.$swal.stopTimer;
+            toast.onmouseleave = this.$swal.resumeTimer;
+          },
+        });
+
         this.saving = true;
         try {
-          await this.saveAvatarUrl(avatar.src);
-          this.avatarUrl = avatar.src;
-          alert('آواتار با موفقیت انتخاب شد');
-          this.$router.push('/dashboard');
+          console.log(`Avatar URL: ${json.data.url}`);
+          this.avatarUrl = json.data.url;
+          this.frame.hidden = true;
 
+          await this.saveAvatarUrl(json.data.url);
+
+          // Show success Toast
+          Toast.fire({
+            icon: 'success',
+            title: 'آواتار با موفقیت ذخیره شد',
+          });
+
+          this.$router.push('/dashboard');
         } catch (error) {
-          console.error('Error selecting avatar:', error);
-          alert(error.response?.data?.detail || error.message || 'خطا در انتخاب آواتار');
+          // Show error Toast
+          Toast.fire({
+            icon: 'error',
+            title: error.response?.data?.detail || 'خطا در ذخیره آواتار',
+          });
+
+          console.error('Error saving avatar:', error);
         } finally {
           this.saving = false;
         }
-      },
-      async fetchUserData() {
-        try {
-          const response = await axios.get('/getInfo');
-          this.userData = response.data;
-        } catch (error) {
-          console.error('Error fetching user data:', error);
-        }
       }
-    }
-  };
-  </script>
+    },
+    parse(event) {
+      try {
+        return JSON.parse(event.data);
+      } catch (error) {
+        return null;
+      }
+    },
+    openAvatarEditor() {
+      this.frame.hidden = false;
+    },
+    async selectAvatar(avatar) {
+      // Define Toast configuration
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+
+      this.saving = true;
+      try {
+        await this.saveAvatarUrl(avatar.src);
+        this.avatarUrl = avatar.src;
+
+        // Show success Toast
+        Toast.fire({
+          icon: 'success',
+          title: 'آواتار با موفقیت انتخاب شد',
+        });
+
+        this.$router.push('/dashboard');
+      } catch (error) {
+        // Show error Toast with specific message
+        Toast.fire({
+          icon: 'error',
+          title: error.response?.data?.detail || 'خطا در انتخاب آواتار',
+        });
+
+        console.error('Error selecting avatar:', error);
+      } finally {
+        this.saving = false;
+      }
+    },
+    async fetchUserData() {
+      try {
+        const response = await axios.get('/getInfo');
+        this.userData = response.data;
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    },
+  },
+};
+</script>
   
   <style scoped>
   /* Previous styles remain the same, add these new styles */

@@ -67,18 +67,15 @@ export default {
         },
       });
 
-      // Prepare login data
       const loginData = {
         mobile_number: this.form.mobileNumber,
         password: this.form.password,
       };
 
       try {
-        // Send login request
         const response = await apiClient.post('/login', loginData);
 
         if (response.data.status === 200) {
-          // Store token and user data in localStorage
           const token = response.data.data.token;
           const user = response.data.data.user;
 
@@ -91,7 +88,6 @@ export default {
             title: 'ورود با موفقیت انجام شد',
           });
 
-          // Redirect to dashboard
           this.$router.push('/dashboard');
         } else {
           // Show error Toast with server message
@@ -101,10 +97,8 @@ export default {
           });
         }
       } catch (error) {
-        // Handle specific error cases
         let errorMessage = 'خطا در ورود, لطفا دوباره تلاش کنید';
         if (error.response) {
-          // Handle server errors (e.g., 400, 401, 500)
           if (error.response.status === 401) {
             errorMessage = '.شماره تماس یا رمز عبور اشتباه است';
           } else if (error.response.status === 400) {
@@ -113,7 +107,6 @@ export default {
             errorMessage = error.response.data.message || errorMessage;
           }
         } else if (error.request) {
-          // Handle network errors (no response from server)
           errorMessage = 'مشکل در ارتباط با سرور, لطفا دوباره تلاش کنید';
         }
 
@@ -123,7 +116,6 @@ export default {
           title: errorMessage,
         });
 
-        // Log error for debugging
         console.error('Login error:', error);
       }
     },

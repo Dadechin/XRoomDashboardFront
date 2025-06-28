@@ -137,6 +137,19 @@ export default {
       this.$emit('close');
     },
     async downloadFile() {
+      // Define Toast configuration with SweetAlert2
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+
       try {
         const response = await fetch(this.previewUrl);
         const blob = await response.blob();
@@ -148,13 +161,37 @@ export default {
         a.click();
         window.URL.revokeObjectURL(downloadUrl);
         document.body.removeChild(a);
+
+        // Show success Toast
+        Toast.fire({
+          icon: 'success',
+          title: 'فایل با موفقیت دانلود شد',
+        });
       } catch (error) {
         console.error('Error downloading file:', error);
-        alert('خطا در دانلود فایل');
+
+        // Show error Toast
+        Toast.fire({
+          icon: 'error',
+          title: 'خطا در دانلود فایل',
+        });
       }
     },
     async deleteFile() {
       if (this.previewIndex === null || !this.previewType) return;
+
+      // Define Toast configuration with SweetAlert2
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
 
       try {
         const token = localStorage.getItem('token');
@@ -168,10 +205,33 @@ export default {
 
         this.$emit('delete-success');
         this.closePreviewDialog();
-        alert('فایل با موفقیت حذف شد');
+
+        // Show success Toast
+        Toast.fire({
+          icon: 'success',
+          title: 'فایل با موفقیت حذف شد',
+        });
       } catch (error) {
         console.error('Error deleting file:', error);
-        alert('خطا در حذف فایل');
+
+        let errorMessage = 'خطا در حذف فایل';
+        if (error.response) {
+          if (error.response.status === 401) {
+            errorMessage = 'عدم دسترسی: لطفا دوباره وارد شوید.';
+          } else if (error.response.status === 400) {
+            errorMessage = 'درخواست نامعتبر است.';
+          } else {
+            errorMessage = error.response.data.message || errorMessage;
+          }
+        } else if (error.request) {
+          errorMessage = 'مشکل در ارتباط با سرور. لطفا دوباره تلاش کنید.';
+        }
+
+        // Show error Toast
+        Toast.fire({
+          icon: 'error',
+          title: errorMessage,
+        });
       }
     },
   },

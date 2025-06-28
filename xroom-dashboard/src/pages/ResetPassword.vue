@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import apiClient from '@/api/axios'; // Adjust the path based on your project structure
+import apiClient from '@/api/axios';
 
 export default {
   data() {
@@ -74,7 +74,7 @@ export default {
         code: '',
         password: '',
       },
-      codeSent: false, // Tracks if the code has been sent
+      codeSent: false,
     };
   },
   methods: {
@@ -93,13 +93,11 @@ export default {
       });
 
       try {
-        // Send request to get reset code
         const response = await apiClient.post('/requestResetCode', {
           mobile_number: this.form.mobileNumber,
         });
 
         if (response.data.success) {
-          // Update state to show code and password input form
           this.codeSent = true;
 
           // Show success Toast
@@ -115,10 +113,8 @@ export default {
           });
         }
       } catch (error) {
-        // Handle specific error cases
         let errorMessage = 'خطا در ارسال کد تأیید, لطفاً دوباره تلاش کنید';
         if (error.response) {
-          // Handle server errors (e.g., 400, 401, 500)
           if (error.response.status === 400) {
             errorMessage = '.شماره تماس نامعتبر است';
           } else if (error.response.status === 404) {
@@ -127,7 +123,6 @@ export default {
             errorMessage = error.response.data.message || errorMessage;
           }
         } else if (error.request) {
-          // Handle network errors (no response from server)
           errorMessage = 'مشکل در ارتباط با سرور, لطفاً دوباره تلاش کنید';
         }
 
@@ -137,7 +132,6 @@ export default {
           title: errorMessage,
         });
 
-        // Log error for debugging
         console.error('Error requesting reset code:', error);
       }
     },
@@ -156,7 +150,6 @@ export default {
       });
 
       try {
-        // Send request to verify code and reset password
         const response = await apiClient.post('/verifyResetCode', {
           mobile_number: this.form.mobileNumber,
           code: this.form.code,
@@ -170,7 +163,6 @@ export default {
             title: '.رمز عبور با موفقیت بازنشانی شد',
           });
 
-          // Redirect to login page
           this.$router.push('/');
         } else {
           // Show error Toast with server message
@@ -180,10 +172,8 @@ export default {
           });
         }
       } catch (error) {
-        // Handle specific error cases
         let errorMessage = '.خطا در بازنشانی رمز عبور , لطفاً کد یا رمز عبور را بررسی کنید';
         if (error.response) {
-          // Handle server errors (e.g., 400, 401, 500)
           if (error.response.status === 400) {
             errorMessage = '.کد تأیید یا رمز عبور نامعتبر است';
           } else if (error.response.status === 401) {
@@ -192,7 +182,6 @@ export default {
             errorMessage = error.response.data.message || errorMessage;
           }
         } else if (error.request) {
-          // Handle network errors (no response from server)
           errorMessage = '.مشکل در ارتباط با سرور , لطفاً دوباره تلاش کنید';
         }
 
@@ -202,7 +191,6 @@ export default {
           title: errorMessage,
         });
 
-        // Log error for debugging
         console.error('Error resetting password:', error);
       }
     },

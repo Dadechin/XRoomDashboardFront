@@ -260,6 +260,19 @@ export default {
   },
   methods: {
     async updateMeeting(updatedMeeting) {
+      // Define Toast configuration with SweetAlert2
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+
       try {
         this.meetings = this.meetings.map((meeting) =>
           meeting.id === updatedMeeting.id
@@ -278,8 +291,17 @@ export default {
         this.$nextTick(() => {
           this.refreshSwiper();
         });
+        // Show success Toast
+        Toast.fire({
+          icon: 'success',
+          title: 'جلسه با موفقیت به‌روزرسانی شد',
+        });
       } catch (error) {
-        alert(`خطا در به‌روزرسانی جلسات: ${error.message}`);
+        // Show error Toast
+        Toast.fire({
+          icon: 'error',
+          title: `خطا در به‌روزرسانی جلسات: ${error.message}`,
+        });
       }
     },
     openMeetingInfo(meeting) {
@@ -293,6 +315,19 @@ export default {
       }
     },
     async fetchMeetings() {
+      // Define Toast configuration with SweetAlert2
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+
       try {
         let token = localStorage.getItem('token');
         if (!token) throw new Error('توکن احراز هویت پیدا نشد');
@@ -341,7 +376,11 @@ export default {
         this.filterMeetings();
         this.refreshSwiper();
       } catch (error) {
-        alert(`خطایی در دریافت جلسات رخ داد: ${error.response?.data?.message || error.message}`);
+        // Show error Toast
+        Toast.fire({
+          icon: 'error',
+          title: `خطایی در دریافت جلسات رخ داد: ${error.response?.data?.message || error.message}`,
+        });
       }
     },
     filterMeetings() {
@@ -366,6 +405,19 @@ export default {
       this.filterMeetings();
     },
     async refreshToken() {
+      // Define Toast configuration with SweetAlert2
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+
       try {
         const response = await axios.post(`${API_BASE_URL}/refresh_token`, {
           refresh_token: localStorage.getItem('refresh_token'),
@@ -374,12 +426,29 @@ export default {
         localStorage.setItem('token', newToken);
         return newToken;
       } catch (error) {
-        alert('لطفاً دوباره وارد شوید');
+        // Show error Toast and redirect to login
+        Toast.fire({
+          icon: 'error',
+          title: 'لطفاً دوباره وارد شوید',
+        });
         window.location.href = '/login';
         throw error;
       }
     },
     async createNewMeeting(meetingData) {
+      // Define Toast configuration with SweetAlert2
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+
       try {
         let token = localStorage.getItem('token');
         if (!token) throw new Error('توکن احراز هویت پیدا نشد');
@@ -404,9 +473,17 @@ export default {
         await new Promise((resolve) => setTimeout(resolve, 500));
         await this.fetchMeetings();
         this.showModal = false;
-        alert('جلسه با موفقیت ایجاد شد!');
+        // Show success Toast
+        Toast.fire({
+          icon: 'success',
+          title: 'جلسه با موفقیت ایجاد شد',
+        });
       } catch (error) {
-        alert(`خطایی در ایجاد جلسه رخ داد: ${error.response?.data?.message || error.message}`);
+        // Show error Toast
+        Toast.fire({
+          icon: 'error',
+          title: `خطایی در ایجاد جلسه رخ داد: ${error.response?.data?.message || error.message}`,
+        });
       }
     },
   },

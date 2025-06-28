@@ -73,7 +73,6 @@ export default {
     };
   },
   setup() {
-    // Define male avatars
     const maleAvatars = ref([
       { id: 1, name: 'مرد ۱', src: 'http://my.xroomapp.com:8000/media/user_glbs/men1.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/men1.png' },
       { id: 2, name: 'مرد ۲', src: 'http://my.xroomapp.com:8000/media/user_glbs/men2.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/men2.png' },
@@ -81,7 +80,6 @@ export default {
       { id: 17, name: 'مرد ۴', src: 'http://my.xroomapp.com:8000/media/user_glbs/men4.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/men4.png' },
     ]);
 
-    // Define female avatars
     const femaleAvatars = ref([
       { id: 4, name: 'زن ۱', src: 'http://my.xroomapp.com:8000/media/user_glbs/women1.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/women1.png' },
       { id: 10, name: 'زن ۲', src: 'http://my.xroomapp.com:8000/media/user_glbs/women2.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/women2.png' },
@@ -100,12 +98,10 @@ export default {
     };
   },
   created() {
-    // Fetch user data on component creation
     this.fetchUserData();
   },
   computed: {
     userProfilePicUrl() {
-      // Get customer data from localStorage
       const customer = JSON.parse(localStorage.getItem('customer') || {});
       if (!customer.profile_img) return this.defaultProfileImage;
       return `http://194.62.43.230:8000/media/${customer.profile_img}`;
@@ -126,12 +122,10 @@ export default {
         },
       });
 
-      // Set saving state and selected avatar
       this.saving = true;
       this.selectedAvatar = avatar.id;
 
       try {
-        // Send request to update profile with selected avatar
         await axios.post(`${this.baseUrl}/editProfile/`, {
           profile_glb_url: avatar.src,
           profile_img: avatar.profile_img
@@ -147,16 +141,13 @@ export default {
           title: '.آواتار با موفقیت انتخاب شد',
         });
 
-        // Delay redirect to allow Toast to be visible
         setTimeout(() => {
           window.location.assign('/dashboard');
-        }, 2000); // 3-second delay to match Toast duration
+        }, 2000);
 
       } catch (error) {
-        // Handle specific error cases
         let errorMessage = 'خطا در انتخاب آواتار. لطفاً دوباره تلاش کنید';
         if (error.response) {
-          // Handle server errors (e.g., 400, 401)
           if (error.response.status === 400) {
             errorMessage = 'درخواست نامعتبر است.';
           } else if (error.response.status === 401) {
@@ -165,7 +156,6 @@ export default {
             errorMessage = error.response.data.detail || error.response.data.message || errorMessage;
           }
         } else if (error.request) {
-          // Handle network errors (no response from server)
           errorMessage = 'مشکل در ارتباط با سرور. لطفاً دوباره تلاش کنید';
         }
 
@@ -175,10 +165,8 @@ export default {
           title: errorMessage,
         });
 
-        // Log error for debugging
         console.error('Error selecting avatar:', error);
       } finally {
-        // Reset saving state and selected avatar
         this.saving = false;
         this.selectedAvatar = null;
       }
@@ -198,21 +186,17 @@ export default {
       });
 
       try {
-        // Fetch user data
         const response = await axios.get('/getInfo');
         this.userData = response.data;
       } catch (error) {
-        // Handle specific error cases
         let errorMessage = 'خطا در دریافت اطلاعات کاربر';
         if (error.response) {
-          // Handle server errors (e.g., 400, 401)
           if (error.response.status === 401) {
             errorMessage = 'توکن نامعتبر است. لطفاً دوباره وارد شوید';
           } else {
             errorMessage = error.response.data.detail || error.response.data.message || errorMessage;
           }
         } else if (error.request) {
-          // Handle network errors (no response from server)
           errorMessage = 'مشکل در ارتباط با سرور. لطفاً دوباره تلاش کنید';
         }
 
@@ -222,7 +206,6 @@ export default {
           title: errorMessage,
         });
 
-        // Log error for debugging
         console.error('Error fetching user data:', error);
       }
     },
@@ -240,10 +223,8 @@ export default {
         },
       });
 
-      // Set saving state
       this.saving = true;
       try {
-        // Prepare form data for profile update
         const formData = new FormData();
         formData.append('first_name', this.editForm.first_name);
         formData.append('last_name', this.editForm.last_name);
@@ -252,14 +233,12 @@ export default {
           formData.append('profile_img', this.selectedProfileImage);
         }
 
-        // Send request to update profile
         await axios.post(`${this.baseUrl}/editProfile/`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
         });
 
-        // Handle password change if filled
         if (this.passwordForm.new_password && this.passwordForm.current_password) {
           if (this.passwordForm.new_password !== this.passwordForm.confirm_password) {
             // Show error Toast for password mismatch
@@ -270,14 +249,12 @@ export default {
             throw new Error('رمز عبور جدید و تکرار آن مطابقت ندارند');
           }
 
-          // Send request to reset password
           await axios.post(`${this.baseUrl}/resetPassword/`, {
             old_password: this.passwordForm.current_password,
             new_password: this.passwordForm.new_password
           });
         }
 
-        // Fetch updated user data
         await this.fetchUserData();
 
         // Show success Toast
@@ -286,10 +263,8 @@ export default {
           title: 'تغییرات با موفقیت ذخیره شد',
         });
       } catch (error) {
-        // Handle specific error cases
         let errorMessage = 'خطا در ذخیره تغییرات. لطفاً دوباره تلاش کنید';
         if (error.response) {
-          // Handle server errors (e.g., 400, 401)
           if (error.response.status === 400) {
             errorMessage = '.درخواست نامعتبر است';
           } else if (error.response.status === 401) {
@@ -298,7 +273,6 @@ export default {
             errorMessage = error.response.data.detail || error.response.data.message || errorMessage;
           }
         } else if (error.request) {
-          // Handle network errors (no response from server)
           errorMessage = 'مشکل در ارتباط با سرور. لطفاً دوباره تلاش کنید';
         }
 
@@ -308,10 +282,8 @@ export default {
           title: errorMessage,
         });
 
-        // Log error for debugging
         console.error('Error saving profile:', error);
       } finally {
-        // Reset saving state
         this.saving = false;
       }
     },
@@ -356,7 +328,6 @@ export default {
       });
     },
     uploadProfileImage(event) {
-      // Handle profile image upload
       const file = event.target.files[0];
       if (file) {
         this.selectedProfileImage = file;

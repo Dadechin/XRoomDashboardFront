@@ -502,7 +502,7 @@ export default {
       return this.customer.profile_img || this.defaultProfileIcon;
     },
     userId() {
-      return this.customer.id || null;
+      return this.customer.user_id || null;
     },
   },
   watch: {
@@ -524,6 +524,19 @@ export default {
   },
   methods: {
     async fetchTeamMembers() {
+      // Define Toast configuration with SweetAlert2
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+
       try {
         const token = localStorage.getItem('token');
         if (!token) throw new Error('توکن احراز هویت پیدا نشد');
@@ -535,7 +548,11 @@ export default {
         );
       } catch (error) {
         if (error.response?.status === 403) {
-          alert('لطفاً دوباره وارد شوید');
+          // Show error Toast for unauthorized access
+          Toast.fire({
+            icon: 'error',
+            title: 'لطفاً دوباره وارد شوید',
+          });
           window.location.href = '/login';
         }
         this.error = 'خطا در بارگذاری لیست اعضای تیم';
@@ -638,20 +655,53 @@ export default {
       return member ? `${member.user.first_name} ${member.user.last_name}` : '';
     },
     addParticipant() {
+      // Define Toast configuration for participant errors
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+
       if (!this.selectedParticipantId) {
+        // Show error Toast for no participant selected
+        Toast.fire({
+          icon: 'error',
+          title: 'لطفاً یک عضو تیم انتخاب کنید.',
+        });
         this.error = 'لطفاً یک عضو تیم انتخاب کنید.';
         return;
       }
       const selectedMember = this.teamMembers.find((member) => member.user.id === this.selectedParticipantId);
       if (!selectedMember) {
+        // Show error Toast for invalid participant
+        Toast.fire({
+          icon: 'error',
+          title: 'کاربر انتخاب‌شده یافت نشد.',
+        });
         this.error = 'کاربر انتخاب‌شده یافت نشد.';
         return;
       }
       if (this.participants.some((p) => p.id === this.selectedParticipantId)) {
+        // Show error Toast for duplicate participant
+        Toast.fire({
+          icon: 'error',
+          title: 'این کاربر قبلاً اضافه شده است.',
+        });
         this.error = 'این کاربر قبلاً اضافه شده است.';
         return;
       }
       if (this.selectedParticipantId === this.userId) {
+        // Show error Toast for self-addition
+        Toast.fire({
+          icon: 'error',
+          title: 'نمی‌توانید خودتان را به‌عنوان شرکت‌کننده اضافه کنید.',
+        });
         this.error = 'نمی‌توانید خودتان را به‌عنوان شرکت‌کننده اضافه کنید.';
         return;
       }
@@ -709,22 +759,55 @@ export default {
       if (this.form[field] > 0) this.form[field]--;
     },
     async handleSubmit() {
+      // Define Toast configuration with SweetAlert2
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+
       if (!this.form.title || !this.form.date) {
+        // Show error Toast for missing title or date
+        Toast.fire({
+          icon: 'error',
+          title: 'لطفاً نام جلسه و تاریخ را وارد کنید.',
+        });
         this.error = 'لطفاً نام جلسه و تاریخ را وارد کنید.';
         return;
       }
       if (!this.form.selectedRoom || this.form.space === null || this.form.asset_bundle === null) {
+        // Show error Toast for missing room selection
+        Toast.fire({
+          icon: 'error',
+          title: 'لطفاً یک اتاق برای جلسه انتخاب کنید.',
+        });
         this.error = 'لطفاً یک اتاق برای جلسه انتخاب کنید.';
         return;
       }
       const momentDate = moment(this.form.date, 'jYYYY/jMM/jDD');
       if (!momentDate.isValid()) {
+        // Show error Toast for invalid date
+        Toast.fire({
+          icon: 'error',
+          title: 'تاریخ وارد شده معتبر نیست.',
+        });
         this.error = 'تاریخ وارد شده معتبر نیست.';
         return;
       }
       const startTimeInMinutes = this.form.startHour * 60 + this.form.startMinute;
       const endTimeInMinutes = this.form.endHour * 60 + this.form.endMinute;
       if (endTimeInMinutes <= startTimeInMinutes) {
+        // Show error Toast for invalid time range
+        Toast.fire({
+          icon: 'error',
+          title: 'زمان پایان باید بعد از زمان شروع باشد.',
+        });
         this.error = 'زمان پایان باید بعد از زمان شروع باشد.';
         return;
       }
@@ -761,15 +844,26 @@ export default {
           maxCapacity: this.form.selectedRoom.capacity || 10,
           invited_users: this.participants,
         });
+        // Show success Toast
+        Toast.fire({
+          icon: 'success',
+          title: 'جلسه با موفقیت ویرایش شد!',
+        });
         this.closeModalByButton();
-        alert('جلسه با موفقیت ویرایش شد!');
       } catch (error) {
+        // Show error Toast for submission failure
+        Toast.fire({
+          icon: 'error',
+          title: `خطا در ویرایش جلسه: ${error.response?.data?.message || error.message}`,
+        });
         this.error = `خطا در ویرایش جلسه: ${error.response?.data?.message || error.message}`;
       }
     },
   },
 };
 </script>
+
+
 <style scoped>
 .participant-input {
   position: relative;

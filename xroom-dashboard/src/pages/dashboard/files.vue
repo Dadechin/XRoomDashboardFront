@@ -585,7 +585,7 @@ export default {
 }
 
 .file-card, .swiper-file-card {
-  width: calc(33.333% - .67rem);
+  width: 23.7%;
   border: 1px solid #b8c0cb;
   border-radius: 16px;
   background: #fff;
@@ -740,16 +740,16 @@ export default {
 
   .file-card {
     border-radius: 16px;
-    padding: .5rem .5rem 1rem;
+    padding: 6px;
   }
 
   .file-image {
     height: 190px;
-    border-radius: 15px;
+    border-radius: 12px;
   }
 
   .file-pdf, .file-video, .file-glb, .file-other {
-    width: 100%;
+    width: 70%;
   }
 
   .file-card-info {
@@ -757,8 +757,8 @@ export default {
   }
 
   .file-title {
-    color: #444d5a;
-    font-size: 1.25rem;
+    color: #101010;
+    font-size: 19px;
   }
 
   .file-meta svg {

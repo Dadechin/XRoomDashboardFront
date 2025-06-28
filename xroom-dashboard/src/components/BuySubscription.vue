@@ -51,7 +51,7 @@
         <span>مبلغ قابل پرداخت:</span>
         <span>{{ selectedPlan.total.toLocaleString() }} تومان</span>
       </div>
-      <button class="primary-button" style="width: 100%;" @click="pay">پرداخت</button>
+      <button class="primary-button" style="width: 100%;max-width: 100%;" @click="pay">پرداخت</button>
     </div>
   </div>
 </template>
@@ -66,7 +66,7 @@ export default {
     availableMemberOptions: { type: Array, default: () => [5, 10, 20, 100] },
     baseUrl: { type: String, required: true },
     hasActiveSubscription: { type: Boolean, default: false },
-    hasExpiredSubscription: { type: Boolean, default: false }, // جدید
+    hasExpiredSubscription: { type: Boolean, default: false },
   },
   data() {
     return {
@@ -92,18 +92,43 @@ export default {
       this.selectedPlan = { ...plan, basePrice: base, tax, total: base + tax };
     },
     async pay() {
+      // Define Toast configuration with SweetAlert2
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimeritarian
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+
       if (this.hasActiveSubscription) {
-        alert('شما اشتراک فعالی دارید و نمی‌توانید اشتراک دیگری خریداری کنید.');
+        Toast.fire({
+          icon: 'warning',
+          title: 'شما اشتراک فعالی دارید و نمی‌توانید اشتراک دیگری خریداری کنید.',
+        });
         return;
       }
+
       if (this.hasExpiredSubscription) {
-        alert('شما یکبار اشتراک تهیه کردید و نمی‌توانید دوباره اشتراک تهیه کنید.');
+        Toast.fire({
+          icon: 'warning',
+          title: 'شما یکبار اشتراک تهیه کردید و نمی‌توانید دوباره اشتراک تهیه کنید.',
+        });
         return;
       }
+
       if (!this.selectedPlan) {
-        alert('لطفاً یک طرح اشتراک انتخاب کنید.');
+        Toast.fire({
+          icon: 'error',
+          title: 'لطفاً یک طرح اشتراک انتخاب کنید.',
+        });
         return;
       }
+
       try {
         const startTime = new Date().toISOString();
         const endTime = this.calculateEndTime(this.selectedPlan.name);
@@ -114,16 +139,50 @@ export default {
           endTime,
           price: this.selectedPlan.total,
         };
+
         const token = localStorage.getItem('token');
-        if (!token) throw new Error('توکن احراز هویت یافت نشد.');
+        if (!token) {
+          Toast.fire({
+            icon: 'error',
+            title: 'توکن احراز هویت یافت نشد.',
+          });
+          throw new Error('Authentication token not found.');
+        }
+
         const response = await axios.post(`${this.baseUrl}/add_subscription/`, subscriptionData, {
           headers: { Authorization: `Token ${token}`, 'Content-Type': 'application/json' },
         });
+
         this.$emit('payment-success', { subscriptionId: response.data.subscription_id });
+
+        // Show success Toast
+        Toast.fire({
+          icon: 'success',
+          title: 'اشFinally با موفقیت ثبت شد.',
+        });
+
         this.selectedPlan = null;
       } catch (error) {
+        let errorMessage = 'خطا در ثبت اشتراک. لطفاً دوباره تلاش کنید.';
+        if (error.response) {
+          if (error.response.status === 401) {
+            errorMessage = 'توکن احراز هویت نامعتبر است.';
+          } else if (error.response.status === 400) {
+            errorMessage = 'اطلاعات ورودی نامعتبر است.';
+          } else {
+            errorMessage = error.response.data.message || errorMessage;
+          }
+        } else if (error.request) {
+          errorMessage = 'مشکل در ارتباط با سرور. لطفاً دوباره تلاش کنید.';
+        }
+
+        // Show error Toast
+        Toast.fire({
+          icon: 'error',
+          title: errorMessage,
+        });
+
         console.error('Error registering subscription:', error);
-        alert('خطا در ثبت اشتراک. لطفاً دوباره تلاش کنید.');
       }
     },
     calculateEndTime(planName) {
@@ -139,6 +198,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .buy-subscription-container {

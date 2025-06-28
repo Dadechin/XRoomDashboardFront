@@ -102,63 +102,79 @@
 </template>
 
 <script>
-export default {
-  name: 'AddUserModal',
-  props: {
-    isVisible: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  data() {
-    return {
-      newUser: {
-        first_name: '',
-        last_name: '',
-        mobile_number: '',
-        password: '',
-        semat: '',
-        isAdmin: false,
+  export default {
+    name: 'AddUserModal',
+    props: {
+      isVisible: {
+        type: Boolean,
+        default: false,
       },
-    };
-  },
-  watch: {
-    isVisible(newVal) {
-      if (newVal) {
-        // غیرفعال کردن اسکرول هنگام باز شدن پاپ‌آپ
-        document.body.style.overflow = 'hidden';
-      } else {
-        // فعال کردن اسکرول هنگام بسته شدن پاپ‌آپ
-        document.body.style.overflow = '';
-      }
     },
-  },
-  methods: {
-      beforeDestroy() {
-    // اطمینان از فعال شدن اسکرول هنگام حذف کامپوننت
-    document.body.style.overflow = '';
-  },
-    close() {
-      this.newUser = {
-        first_name: '',
-        last_name: '',
-        mobile_number: '',
-        password: '',
-        semat: '',
-        isAdmin: false,
+    data() {
+      return {
+        newUser: {
+          first_name: '',
+          last_name: '',
+          mobile_number: '',
+          password: '',
+          semat: '',
+          isAdmin: false,
+        },
       };
-      this.$emit('close');
     },
-    handleSubmit() {
-      if (!this.newUser.first_name || !this.newUser.last_name || !this.newUser.mobile_number || !this.newUser.password || !this.newUser.semat) {
-        alert('لطفاً تمام فیلدها را پر کنید.');
-        return;
-      }      
-      this.$emit('add-user', { ...this.newUser });
-      this.close();
+    watch: {
+      isVisible(newVal) {
+        if (newVal) {
+          document.body.style.overflow = 'hidden';
+        } else {
+          document.body.style.overflow = '';
+        }
+      },
     },
-  },
-};
+    methods: {
+      beforeDestroy() {
+        document.body.style.overflow = '';
+      },
+      close() {
+        this.newUser = {
+          first_name: '',
+          last_name: '',
+          mobile_number: '',
+          password: '',
+          semat: '',
+          isAdmin: false,
+        };
+        this.$emit('close');
+      },
+      handleSubmit() {
+        // Define Toast configuration with SweetAlert2
+        const Toast = this.$swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.onmouseenter = this.$swal.stopTimer;
+            toast.onmouseleave = this.$swal.resumeTimer;
+          },
+        });
+
+        if (!this.newUser.first_name || !this.newUser.last_name || !this.newUser.mobile_number || !this.newUser.password || !this.newUser.semat) {
+          // Show error Toast for incomplete fields
+          Toast.fire({
+            icon: 'error',
+            title: 'لطفاً تمام فیلدها را پر کنید.',
+          });
+          return;
+        }
+
+        this.$emit('add-user', { ...this.newUser });
+
+        this.close();
+      },
+    },
+  };
 </script>
 
 <style scoped>

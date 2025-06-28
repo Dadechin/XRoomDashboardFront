@@ -321,9 +321,26 @@ export default {
   },
   methods: {
     openAddUserModal() {
+      // Define Toast configuration with SweetAlert2
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+
       if (this.remainingCapacity <= 0) {
         this.$emit('change-tab', 'buy-subscription');
-        alert('اشتراک فعالی ندارید , لطفا اشتراک تهیه نمایید.');
+        // Show error Toast for no active subscription
+        Toast.fire({
+          icon: 'error',
+          title: 'اشتراک فعالی ندارید، لطفا اشتراک تهیه نمایید.',
+        });
         return;
       }
       this.isAddUserModalVisible = true;
@@ -348,7 +365,6 @@ export default {
   beforeUnmount() {
     window.removeEventListener('resize', this.handleResize);
   },
-
 };
 </script>
 
@@ -846,7 +862,7 @@ export default {
 
   .add-card {
     width: 48%;
-    height: auto;
+    height: 11.38rem;
   }
 }
 

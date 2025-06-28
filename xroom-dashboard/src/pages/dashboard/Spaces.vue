@@ -96,8 +96,8 @@ export default {
       ],
       activeSharingFilter: 'all',
       activeSpaceTypeFilter: 'spaces',
-      spaces: [], // Initialize the spaces array
-      selectedSpace: null, // Store the selected space
+      spaces: [],
+      selectedSpace: null,
     };
   },
   computed: {
@@ -126,14 +126,14 @@ export default {
     },
     async fetchSpaces() {
       try {
-        const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+        const token = localStorage.getItem('token');
         if (!token) {
           console.error('No token found!');
           return;
         }
 
         const response = await axios.get(
-          'http://my.xroomapp.com:8000/get_spaces', // API endpoint
+          'http://my.xroomapp.com:8000/get_spaces',
           {
             headers: {
               Authorization: `Token ${token}`,
@@ -142,28 +142,26 @@ export default {
           }
         );
 
-        // Store the spaces data in the spaces array
         this.spaces = response.data.spaces.map(space => ({
           name: space.name,
-          img: space.assetBundleRoomId.img,  // Assuming 'img' exists in the API response
+          img: space.assetBundleRoomId.img,
           capacity: space.capacity,
-          type: space.Private ? 'Private' : 'Public', // Adjust if you have a different field
+          type: space.Private ? 'Private' : 'Public',
           sharing: space.Private ? 'private' : 'team',
           spaceType: 'spaces',
-          description: space.description, // Store description from response
+          description: space.description,
         }));
       } catch (error) {
         console.error('Error fetching spaces:', error);
       }
     },
     handleCreateSpaceSubmit(space) {
-      // Handle form submission here, space will contain the selected space and the additional fields
       console.log('Form submitted with:', space);
-      this.closeCreateSpaceModal(); // Close the modal after submission
+      this.closeCreateSpaceModal();
     },
   },
   mounted() {
-    this.fetchSpaces(); // Fetch spaces when the component is mounted
+    this.fetchSpaces();
   },
 };
 </script>

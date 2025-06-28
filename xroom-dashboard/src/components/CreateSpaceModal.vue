@@ -49,7 +49,10 @@
           </div>
         </div> 
 
-        <div v-else class="loading-message">
+        <div v-if="spaces.length === 0 && !isLoading" class="loading-message">
+          <p>امکان ساختن فضا برای شما وجود ندارد</p>
+        </div>
+        <div v-else-if="spaces.length === 0 && isLoading" class="loading-message">
           <p>در حال بارگذاری فضاها...</p>
         </div>
       </div>
@@ -106,34 +109,52 @@ export default {
         capacity: '',
         description: '',
       },
+      isLoading: false,
     };
   },
   methods: {
-      beforeDestroy() {
-    // اطمینان از فعال شدن اسکرول هنگام حذف کامپوننت
-    document.body.style.overflow = '';
-  },
+    beforeDestroy() {
+      document.body.style.overflow = '';
+    },
     closeModal() {
       this.$emit('close');
-      this.resetForm()
+      this.resetForm();
     },
     resetForm() {
-      this.spaces = [],
-      this.selectedSpace = null,
+      this.spaces = [];
+      this.selectedSpace = null;
       this.form = {
-        name : '',
-        capacity : '',
-        description : '',
-      }
+        name: '',
+        capacity: '',
+        description: '',
+      };
     },
     selectSpace(space) {
       this.selectedSpace = space;
     },
     async fetchSpaces() {
+      // Define Toast configuration with SweetAlert2
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+
       try {
+        this.isLoading = true;
         const token = localStorage.getItem('token');
         if (!token) {
-          console.error('No token found!');
+          // Show error Toast if no token is found
+          Toast.fire({
+            icon: 'error',
+            title: 'توکن یافت نشد. لطفا دوباره وارد شوید.',
+          });
           return;
         }
 
@@ -147,8 +168,6 @@ export default {
           }
         );
 
-        console.log(response.data);
-
         this.spaces = response.data.assetbundle_rooms.map(room => ({
           name: room.name,
           img: room.img,
@@ -158,10 +177,30 @@ export default {
           id: room.id,
         }));
       } catch (error) {
+        // Show error Toast
+        Toast.fire({
+          icon: 'error',
+          title: 'خطا در بارگذاری فضاها. لطفا دوباره تلاش کنید.',
+        });
         console.error('Error fetching spaces:', error);
+      } finally {
+        this.isLoading = false;
       }
     },
     async submitForm() {
+      // Define Toast configuration with SweetAlert2
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+
       const spaceData = {
         assetBundleRoomId: this.selectedSpace.id,
         name: this.form.name,
@@ -172,7 +211,11 @@ export default {
       try {
         const token = localStorage.getItem('token');
         if (!token) {
-          console.error('No token found!');
+          // Show error Toast if no token is found
+          Toast.fire({
+            icon: 'error',
+            title: 'توکن یافت نشد. لطفا دوباره وارد شوید.',
+          });
           return;
         }
 
@@ -187,24 +230,45 @@ export default {
           }
         );
 
-        console.log(response.data);
+        // Show success Toast
+        Toast.fire({
+          icon: 'success',
+          title: 'فضا با موفقیت اضافه شد',
+        });
+
         this.$emit('submit', response.data);
-        this.closeModal(); // Close the modal
-        window.location.reload(); // Refresh the page
+        this.closeModal();
+        window.location.reload();
       } catch (error) {
+        let errorMessage = 'خطا در ارسال اطلاعات. لطفا دوباره تلاش کنید.';
+        if (error.response) {
+          if (error.response.status === 401) {
+            errorMessage = 'عدم دسترسی. لطفا دوباره وارد شوید.';
+          } else if (error.response.status === 400) {
+            errorMessage = 'اطلاعات ورودی نامعتبر است.';
+          } else {
+            errorMessage = error.response.data.message || errorMessage;
+          }
+        } else if (error.request) {
+          errorMessage = 'مشکل در ارتباط با سرور. لطفا دوباره تلاش کنید.';
+        }
+
+        // Show error Toast
+        Toast.fire({
+          icon: 'error',
+          title: errorMessage,
+        });
+
         console.error('Error submitting form:', error);
-        alert('خطا در ارسال اطلاعات، لطفا دوباره تلاش کنید');
       }
     },
   },
   watch: {
     isVisible(newVal) {
       if (newVal) {
-        // غیرفعال کردن اسکرول هنگام باز شدن پاپ‌آپ
         document.body.style.overflow = 'hidden';
         this.fetchSpaces();
       } else {
-        // فعال کردن اسکرول هنگام بسته شدن پاپ‌آپ
         document.body.style.overflow = '';
       }
     },

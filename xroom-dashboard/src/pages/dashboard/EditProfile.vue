@@ -151,11 +151,9 @@ export default {
   },
   computed: {
     userProfilePicUrl() {
-      // Prioritize userData from API if available
       if (this.userData.customer && this.userData.customer.profile_img) {
         return this.userData.customer.profile_img;
       }
-      // Fallback to localStorage
       const customer = JSON.parse(localStorage.getItem('customer') || '{}');
       return customer.profile_img || this.userAvatarUrl;
     },
@@ -176,13 +174,11 @@ export default {
 
       try {
         const response = await axios.get('/getInfo');
-
-        // Check if response.data and required fields exist
         if (!response.data || !response.data.data) {
           throw new Error('داده‌های پاسخ از سرور معتبر نیست');
         }
 
-        const userData = response.data.data; // Adjust to match the nested 'data' structure
+        const userData = response.data.data;
         if (!userData.user || !userData.customer) {
           throw new Error('داده‌های کاربر یا مشتری در پاسخ سرور وجود ندارد');
         }
@@ -200,7 +196,6 @@ export default {
           semat: this.editForm.semat,
         };
 
-        // Update localStorage to keep it in sync with the API response
         localStorage.setItem('customer', JSON.stringify(userData.customer));
       } catch (error) {
         Toast.fire({
@@ -208,7 +203,6 @@ export default {
           title: 'خطا در بارگذاری اطلاعات کاربر. لطفاً دوباره تلاش کنید',
         });
         console.error('Error fetching user data:', error);
-        // Initialize with default values to prevent breaking the UI
         this.editForm = {
           first_name: '',
           last_name: '',

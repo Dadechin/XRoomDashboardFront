@@ -88,7 +88,6 @@ export default {
         },
       });
 
-      // Validate form inputs
       if (!this.form.firstName || !this.form.lastName || !this.form.semat || !this.form.mobileNumber || !this.form.password) {
         Toast.fire({
           icon: 'error',
@@ -97,7 +96,6 @@ export default {
         return;
       }
 
-      // Prepare the data to match API format
       const signupData = {
         first_name: this.form.firstName,
         last_name: this.form.lastName,
@@ -107,12 +105,9 @@ export default {
       };
 
       try {
-        // Send signup request
         const response = await axios.post('http://194.62.43.230:8000/signup', signupData);
 
-        // Check if signup was successful
         if (response.data.token) {
-          // Store token in localStorage
           localStorage.setItem('token', response.data.token);
 
           // Show success Toast
@@ -121,7 +116,6 @@ export default {
             title: '.حساب کاربری با موفقیت ساخته شد',
           });
 
-          // Redirect to login page
           this.$router.push('/');
         } else {
           // Show error Toast with server message
@@ -131,17 +125,14 @@ export default {
           });
         }
       } catch (error) {
-        // Handle specific error cases
         let errorMessage = 'خطا در ثبت‌نام, لطفاً دوباره تلاش کنید';
         if (error.response) {
-          // Handle server errors (e.g., 400)
           if (error.response.status === 400) {
             errorMessage = '.شماره تلفن قبلاً ثبت شده است';
           } else {
             errorMessage = error.response.data.message || errorMessage;
           }
         } else if (error.request) {
-          // Handle network errors (no response from server)
           errorMessage = 'مشکل در ارتباط با سرور, لطفاً دوباره تلاش کنید';
         }
 
@@ -151,7 +142,6 @@ export default {
           title: errorMessage,
         });
 
-        // Log error for debugging
         console.error('Signup error:', error);
       }
     },

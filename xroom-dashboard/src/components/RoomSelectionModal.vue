@@ -430,7 +430,7 @@ export default {
       if (selectedRoomDetails.isTemporary) {
         roomData = {
           ...selectedRoomDetails,
-          space: 18,
+          space: 29,
           asset_bundle: selectedRoomDetails.id,
           use_space: false,
           image: selectedRoomDetails.image || 'https://via.placeholder.com/150',
@@ -455,6 +455,8 @@ export default {
   },
 };
 </script>
+
+
 <style scoped>
 .modal-overlay {
   position: fixed;

@@ -63,6 +63,7 @@
   </div>
 </template>
 
+
 <script>
 import TeamUser from '@/components/TeamUser.vue';
 import BuySubscription from '@/components/BuySubscription.vue';
@@ -82,8 +83,8 @@ export default {
       teamMemberCapacity: 0,
       subscriptionCount: 0,
       hasActiveSubscription: false,
-      hasExpiredSubscription: false, // جدید: بررسی اشتراک منقضی‌شده
-      subscriptionEndTime: null, // جدید: ذخیره تاریخ انقضای اشتراک
+      hasExpiredSubscription: false,
+      subscriptionEndTime: null,
       teamId: null,
       subscriptionId: null,
       isBillingModalVisible: false,
@@ -107,16 +108,46 @@ export default {
       this.activeTab = tabName;
     },
     async fetchTeamData() {
+      // Define Toast configuration for SweetAlert2
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+
       try {
         const response = await this.axiosGet('/get_team');
         const team = response.data.teams[0];
         this.teamId = team?.id || null;
       } catch (error) {
+        // Log and show error Toast
         console.error('Error fetching team data:', error);
-        alert('خطا در بارگذاری اطلاعات تیم.');
+        Toast.fire({
+          icon: 'error',
+          title: 'خطا در بارگذاری اطلاعات تیم.',
+        });
       }
     },
     async fetchTeamMemberInfo() {
+      // Define Toast configuration for SweetAlert2
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+
       try {
         const response = await this.axiosGet('/get_all_team_members');
         this.userList = response.data.members.map(member => ({
@@ -128,28 +159,62 @@ export default {
         }));
         this.teamMemberCapacity = response.data.members.length;
       } catch (error) {
+        // Log and show error Toast
         console.error('Error fetching team members:', error);
-        alert('خطا در بارگذاری اطلاعات اعضای تیم.');
+        Toast.fire({
+          icon: 'error',
+          title: 'خطا در بارگذاری اطلاعات اعضای تیم.',
+        });
       }
     },
     async fetchUserData() {
+      // Define Toast configuration for SweetAlert2
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+
       try {
         const response = await this.axiosGet('/get_user_subscriptions');
         const subscriptions = response.data.subscriptions || [];
         this.subscriptionCount = subscriptions.reduce((total, sub) => total + sub.user_count, 0);
         this.subscriptionId = subscriptions[0]?.id || null;
-        this.subscriptionEndTime = subscriptions[0]?.endTime || null; // جدید: تاریخ انقضا
+        this.subscriptionEndTime = subscriptions[0]?.endTime || null;
         const now = new Date();
         const isExpiredByTime = this.subscriptionEndTime && new Date(this.subscriptionEndTime) < now;
         const isExpiredByCapacity = this.subscriptionCount <= this.teamMemberCapacity;
         this.hasActiveSubscription = subscriptions.length > 0 && !isExpiredByTime && !isExpiredByCapacity;
         this.hasExpiredSubscription = subscriptions.length > 0 && (isExpiredByTime || isExpiredByCapacity);
       } catch (error) {
+        // Log and show error Toast
         console.error('Error fetching user data:', error);
-        alert('خطا در بارگذاری اطلاعات اشتراک.');
+        Toast.fire({
+          icon: 'error',
+          title: 'خطا در بارگذاری اطلاعات اشتراک.',
+        });
       }
     },
     async handlePaymentSuccess({ subscriptionId }) {
+      // Define Toast configuration for SweetAlert2
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+
       try {
         this.subscriptionId = subscriptionId;
         await Promise.all([
@@ -160,14 +225,26 @@ export default {
 
         if (!this.teamId && this.subscriptionId) {
           await this.createTeam();
-          alert('اشتراک و تیم به درستی ساخته شد.');
+          // Show success Toast
+          Toast.fire({
+            icon: 'success',
+            title: 'اشتراک و تیم با موفقیت ساخته شد.',
+          });
         } else if (this.teamId) {
-          alert('تیم از قبل وجود دارد.');
+          // Show message if team already exists
+          Toast.fire({
+            icon: 'info',
+            title: 'تیم از قبل وجود دارد.',
+          });
         }
         this.activeTab = 'membership';
       } catch (error) {
+        // Log and show error Toast
         console.error('Error handling payment success:', error);
-        alert('خطا در پردازش پرداخت یا ساخت تیم.');
+        Toast.fire({
+          icon: 'error',
+          title: 'خطا در پردازش پرداخت یا ساخت تیم.',
+        });
       }
     },
     async createTeam() {
@@ -181,13 +258,34 @@ export default {
       await this.fetchTeamData();
     },
     async submitNewUser(newUser) {
+      // Define Toast configuration for SweetAlert2
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+
       if (this.subscriptionCount - this.teamMemberCapacity <= 0) {
-        alert('اشتراک فعالی ندارید , اشتراک تهیه نمایید.');
+        // Show error if no active subscription
+        Toast.fire({
+          icon: 'warning',
+          title: 'اشتراک فعالی ندارید، لطفاً اشتراک تهیه کنید.',
+        });
         this.activeTab = 'buy-subscription';
         return;
       }
       if (!this.teamId) {
-        alert('خطا: اطلاعات تیم یافت نشد.');
+        // Show error if team ID is missing
+        Toast.fire({
+          icon: 'error',
+          title: 'خطا: اطلاعات تیم یافت نشد.',
+        });
         return;
       }
       try {
@@ -200,10 +298,18 @@ export default {
         });
         this.teamMemberCapacity++;
         await this.fetchTeamMemberInfo();
-        alert('کاربر با موفقیت اضافه شد.');
+        // Show success Toast
+        Toast.fire({
+          icon: 'success',
+          title: 'کاربر با موفقیت اضافه شد.',
+        });
       } catch (error) {
+        // Log and show error Toast
         console.error('Error adding user:', error);
-        alert('خطا در اضافه کردن کاربر.');
+        Toast.fire({
+          icon: 'error',
+          title: 'خطا در اضافه کردن کاربر.',
+        });
       }
     },
     handleTeamData(data) {
@@ -211,14 +317,14 @@ export default {
     },
     async axiosGet(endpoint) {
       const token = localStorage.getItem('token');
-      if (!token) throw new Error('توکن احراز هویت یافت نشد.');
+      if (!token) throw new Error('Authentication token not found.');
       return await axios.get(`${this.baseUrl}${endpoint}`, {
         headers: { Authorization: `Token ${token}`, 'Content-Type': 'application/json' },
       });
     },
     async axiosPost(endpoint, data) {
       const token = localStorage.getItem('token');
-      if (!token) throw new Error('توکن احراز هویت یافت نشد.');
+      if (!token) throw new Error('Authentication token not found.');
       return await axios.post(`${this.baseUrl}${endpoint}`, data, {
         headers: { Authorization: `Token ${token}`, 'Content-Type': 'application/json' },
       });
@@ -231,7 +337,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 

@@ -146,7 +146,7 @@ export default {
         } else if (/\.(mp4|mov|mkv|wmv|m4v|mpg|webm|ogg)$/i.test(fileName)) {
           this.currentUploadType = 'video';
           this.dialogTitle = 'آپلود ویدیو';
-        } else if (/\.(glb|obj|fbx|stl|ply|gltf)|$/i.test(fileName)) {
+        } else if (/\.(glb|obj|fbx|stl|ply|gltf)$/i.test(fileName)) {
           this.currentUploadType = 'glb';
           this.dialogTitle = 'آپلود مدل 3D';
         } else {
@@ -156,8 +156,25 @@ export default {
       }
     },
     async uploadFile() {
+      // Define Toast configuration with SweetAlert2
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+
       if (!this.selectedFile) {
-        alert('لطفاً یک فایل انتخاب کنید.');
+        // Check if a file is selected
+        Toast.fire({
+          icon: 'error',
+          title: 'لطفاً یک فایل انتخاب کنید.',
+        });
         return;
       }
 
@@ -171,9 +188,12 @@ export default {
         let uploadUrl = `${this.baseUrl}/upload${this.currentUploadType.charAt(0).toUpperCase() + this.currentUploadType.slice(1)}/`;
 
         if (this.currentUploadType === 'other') {
-
-          console.log('فایل به دسته "سایر" ارسال می‌شود:', this.selectedFile.name);
-          alert('فایل به دسته "سایر" ارسال شد (تستی).');
+          console.log('File sent to "other" category:', this.selectedFile.name);
+          // Log and show Toast for 'other' file type (test mode)
+          Toast.fire({
+            icon: 'success',
+            title: 'فایل به دسته "سایر" ارسال شد.',
+          });
           this.resetForm();
           this.$emit('upload-success');
           this.$emit('close');
@@ -187,17 +207,40 @@ export default {
           },
         });
 
+        // Show success Toast
+        Toast.fire({
+          icon: 'success',
+          title: 'فایل با موفقیت آپلود شد',
+        });
+
         this.resetForm();
         this.$emit('upload-success');
         this.$emit('close');
-        alert('فایل با موفقیت آپلود شد');
 
         if (this.$route.path !== '/dashboard/files') {
           this.$router.push('/dashboard/files');
         }
       } catch (error) {
+        let errorMessage = 'خطا در آپلود فایل. لطفا دوباره تلاش کنید.';
+        if (error.response) {
+          if (error.response.status === 401) {
+            errorMessage = 'عدم دسترسی. لطفاً وارد حساب کاربری شوید.';
+          } else if (error.response.status === 400) {
+            errorMessage = 'اطلاعات ورودی نامعتبر است.';
+          } else {
+            errorMessage = error.response.data.message || errorMessage;
+          }
+        } else if (error.request) {
+          errorMessage = 'مشکل در ارتباط با سرور. لطفا دوباره تلاش کنید.';
+        }
+
+        // Show error Toast
+        Toast.fire({
+          icon: 'error',
+          title: errorMessage,
+        });
+
         console.error('Error uploading file:', error);
-        alert('خطا در آپلود فایل');
       } finally {
         this.uploading = false;
       }

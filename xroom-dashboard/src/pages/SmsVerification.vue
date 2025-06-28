@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import axios from '@/axios'; // Adjust the path based on your project structure
+import axios from '@/axios';
 
 export default {
   data() {
@@ -62,19 +62,18 @@ export default {
         code: '',
         password: '',
       },
-      codeSent: false, // Tracks if the code has been sent
-      isButtonDisabled: false, // Tracks if resend button is disabled
-      countdown: 120, // Countdown timer in seconds (2 minutes)
-      countdownInterval: null, // Interval for countdown
+      codeSent: false,
+      isButtonDisabled: false,
+      countdown: 120,
+      countdownInterval: null,
     };
   },
   mounted() {
-    // Check for token and trigger SMS sending on mount
     const token = localStorage.getItem('token');
     if (!token) {
       window.location.reload();
     } else {
-      this.sendSms(); // Automatically call sendSms on mount
+      this.sendSms();
     }
   },
   methods: {
@@ -93,10 +92,7 @@ export default {
       });
 
       try {
-        // Get token from localStorage
         const token = localStorage.getItem('token');
-
-        // Send request to get verification SMS
         const response = await axios.get('/sendSmsVerification', {
           headers: {
             Authorization: `Token ${token}`,
@@ -105,29 +101,21 @@ export default {
         });
 
         if (response.status === 200) {
-          // Update state to indicate code was sent
           this.codeSent = true;
-
-          // Show success Toast
           Toast.fire({
             icon: 'success',
             title: '.کد تأیید به شماره موبایل شما ارسال شد',
           });
-
-          // Start countdown for resend button
           this.startCountdown();
         } else {
-          // Show error Toast with server message
           Toast.fire({
             icon: 'error',
             title: response.data.message || 'خطا در ارسال کد تأیید, لطفاً دوباره تلاش کنید',
           });
         }
       } catch (error) {
-        // Handle specific error cases
         let errorMessage = 'خطا در ارسال کد تأیید, لطفاً دوباره تلاش کنید';
         if (error.response) {
-          // Handle server errors (e.g., 400, 401)
           if (error.response.status === 400) {
             errorMessage = '.درخواست نامعتبر است';
           } else if (error.response.status === 401) {
@@ -136,30 +124,23 @@ export default {
             errorMessage = error.response.data.message || errorMessage;
           }
         } else if (error.request) {
-          // Handle network errors (no response from server)
           errorMessage = 'مشکل در ارتباط با سرور, لطفاً دوباره تلاش کنید';
         }
-
-        // Show error Toast
         Toast.fire({
           icon: 'error',
           title: errorMessage,
         });
-
-        // Log error for debugging
         console.error('Error requesting SMS code:', error);
       }
     },
     startCountdown() {
-      // Disable resend button and start countdown
       this.isButtonDisabled = true;
-      this.countdown = 120; // Reset to 2 minutes
+      this.countdown = 120;
 
       if (this.countdownInterval) {
         clearInterval(this.countdownInterval);
       }
 
-      // Update countdown every second
       this.countdownInterval = setInterval(() => {
         if (this.countdown > 0) {
           this.countdown--;
@@ -184,10 +165,7 @@ export default {
       });
 
       try {
-        // Get token from localStorage
         const token = localStorage.getItem('token');
-
-        // Send request to verify SMS code
         const response = await axios.post(
           '/submitSmsVerification',
           {
@@ -202,26 +180,20 @@ export default {
         );
 
         if (response.status === 200) {
-          // Show success Toast
           Toast.fire({
             icon: 'success',
             title: '.کد تأیید صحیح است',
           });
-
-          // Redirect to dashboard
           this.$router.push('/dashboard');
         } else {
-          // Show error Toast with server message
           Toast.fire({
             icon: 'error',
             title: response.data.message || '.کد تأیید نامعتبر است',
           });
         }
       } catch (error) {
-        // Handle specific error cases
         let errorMessage = '.کد تأیید نامعتبر است';
         if (error.response) {
-          // Handle server errors (e.g., 400, 401)
           if (error.response.status === 400) {
             errorMessage = '.کد تأیید نامعتبر است';
           } else if (error.response.status === 401) {
@@ -230,17 +202,12 @@ export default {
             errorMessage = error.response.data.message || errorMessage;
           }
         } else if (error.request) {
-          // Handle network errors (no response from server)
           errorMessage = 'مشکل در ارتباط با سرور, لطفاً دوباره تلاش کنید';
         }
-
-        // Show error Toast
         Toast.fire({
           icon: 'error',
           title: errorMessage,
         });
-
-        // Log error for debugging
         console.error('Error verifying SMS code:', error);
       }
     },

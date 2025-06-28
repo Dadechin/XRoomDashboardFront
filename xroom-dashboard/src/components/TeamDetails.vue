@@ -122,9 +122,30 @@ export default {
   },
   methods: {
     async fetchTeamData() {
+      // Define Toast configuration with SweetAlert2
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+
       try {
         const token = localStorage.getItem('token');
-        if (!token) throw new Error('توکن احراز هویت یافت نشد.');
+        if (!token) {
+          // Show error Toast for missing token
+          Toast.fire({
+            icon: 'error',
+            title: 'توکن احراز هویت یافت نشد.',
+          });
+          throw new Error('No authentication token found.');
+        }
+
         const response = await axios.get(`${this.baseUrl}/get_team`, {
           headers: { Authorization: `Token ${token}`, 'Content-Type': 'application/json' },
         });
@@ -135,10 +156,19 @@ export default {
           this.form.teamId = team.id;
           this.teamLogo = team.logo ? `${this.baseUrl}${team.logo}` : null;
         } else {
-          alert('هیچ اطلاعاتی برای تیم یافت نشد.');
+          // Show error Toast for no team data
+          Toast.fire({
+            icon: 'error',
+            title: 'هیچ اطلاعاتی برای تیم یافت نشد.',
+          });
         }
-      } catch {
-        alert('خطا در بارگذاری اطلاعات تیم.');
+      } catch (error) {
+        // Show error Toast for fetch failure
+        Toast.fire({
+          icon: 'error',
+          title: 'خطا در بارگذاری اطلاعات تیم.',
+        });
+        console.error('Fetch team error:', error);
       }
     },
     handleLogoUpload(event) {
@@ -148,30 +178,69 @@ export default {
       }
     },
     async submitForm() {
+      // Define Toast configuration with SweetAlert2
+      const Toast = this.$swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = this.$swal.stopTimer;
+          toast.onmouseleave = this.$swal.resumeTimer;
+        },
+      });
+
       if (!this.form.teamName && !this.form.activityType && !this.uploadedLogoFile) {
-        alert('لطفاً حداقل یک فیلد یا لوگو وارد کنید.');
+        // Show error Toast for empty form
+        Toast.fire({
+          icon: 'error',
+          title: 'لطفاً حداقل یک فیلد یا لوگو وارد کنید.',
+        });
         return;
       }
+
       try {
         const formData = new FormData();
         if (this.form.teamName) formData.append('name', this.form.teamName);
         if (this.form.activityType) formData.append('description', this.form.activityType);
         if (this.uploadedLogoFile) formData.append('logo', this.uploadedLogoFile);
+
         const token = localStorage.getItem('token');
-        if (!token) throw new Error('توکن احراز هویت یافت نشد.');
+        if (!token) {
+          // Show error Toast for missing token
+          Toast.fire({
+            icon: 'error',
+            title: 'توکن احراز هویت یافت نشد.',
+          });
+          throw new Error('No authentication token found.');
+        }
+
         await axios.patch(`${this.baseUrl}/update_team/${this.form.teamId}/`, formData, {
           headers: { Authorization: `Token ${token}`, 'Content-Type': 'multipart/form-data' },
         });
+
         this.$emit('update:team-data', {
           teamName: this.form.teamName,
           activityType: this.form.activityType,
           teamLogo: this.uploadedLogoFile,
         });
-        alert('اطلاعات تیم با موفقیت به‌روزرسانی شد.');
+
+        // Show success Toast
+        Toast.fire({
+          icon: 'success',
+          title: 'اطلاعات تیم با موفقیت به‌روزرسانی شد.',
+        });
+
         this.resetForm();
         await this.fetchTeamData();
-      } catch {
-        alert('خطا در به‌روزرسانی اطلاعات تیم.');
+      } catch (error) {
+        // Show error Toast for update failure
+        Toast.fire({
+          icon: 'error',
+          title: 'خطا در به‌روزرسانی اطلاعات تیم.',
+        });
+        console.error('Update team error:', error);
       }
     },
     resetForm() {
