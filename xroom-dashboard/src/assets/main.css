@@ -46,13 +46,17 @@ a {
 /* sweet alert */
 
 .swal2-popup {
-  right: 1rem !important;
-  top: 1rem !important;
+  right: 0.5rem !important;
+  top: 1.2rem !important;
   display: flex !important;
   align-items: center !important;
   justify-content: right !important;
   width: 95% !important;
   padding-right: 0 !important;
+
+  backdrop-filter: blur(2px) !important;
+  direction: rtl !important;
+  flex-direction: row-reverse !important;
 }
 
 .swal2-title {

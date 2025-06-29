@@ -85,7 +85,7 @@ export default {
           // Show success Toast
           Toast.fire({
             icon: 'success',
-            title: 'ورود با موفقیت انجام شد',
+            title: 'ورود با موفقیت انجام شد.',
           });
 
           this.$router.push('/dashboard');
@@ -93,21 +93,21 @@ export default {
           // Show error Toast with server message
           Toast.fire({
             icon: 'error',
-            title: response.data.message || 'خطا در ورود, لطفا دوباره تلاش کنید',
+            title: response.data.message || 'خطا در ورود, لطفا دوباره تلاش کنید.',
           });
         }
       } catch (error) {
-        let errorMessage = 'خطا در ورود, لطفا دوباره تلاش کنید';
+        let errorMessage = 'خطا در ورود, لطفا دوباره تلاش کنید.';
         if (error.response) {
           if (error.response.status === 401) {
-            errorMessage = '.شماره تماس یا رمز عبور اشتباه است';
+            errorMessage = 'شماره تماس یا رمز عبور اشتباه است.';
           } else if (error.response.status === 400) {
-            errorMessage = '.اطلاعات ورودی نامعتبر است';
+            errorMessage = 'اطلاعات ورودی نامعتبر است.';
           } else {
             errorMessage = error.response.data.message || errorMessage;
           }
         } else if (error.request) {
-          errorMessage = 'مشکل در ارتباط با سرور, لطفا دوباره تلاش کنید';
+          errorMessage = 'مشکل در ارتباط با سرور, لطفا دوباره تلاش کنید.';
         }
 
         // Show error Toast

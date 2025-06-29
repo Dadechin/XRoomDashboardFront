@@ -104,27 +104,27 @@ export default {
           this.codeSent = true;
           Toast.fire({
             icon: 'success',
-            title: '.کد تأیید به شماره موبایل شما ارسال شد',
+            title: 'کد تأیید به شماره موبایل شما ارسال شد.',
           });
           this.startCountdown();
         } else {
           Toast.fire({
             icon: 'error',
-            title: response.data.message || 'خطا در ارسال کد تأیید, لطفاً دوباره تلاش کنید',
+            title: response.data.message || 'خطا در ارسال کد تأیید, لطفاً دوباره تلاش کنید.',
           });
         }
       } catch (error) {
-        let errorMessage = 'خطا در ارسال کد تأیید, لطفاً دوباره تلاش کنید';
+        let errorMessage = 'خطا در ارسال کد تأیید, لطفاً دوباره تلاش کنید.';
         if (error.response) {
           if (error.response.status === 400) {
-            errorMessage = '.درخواست نامعتبر است';
+            errorMessage = 'درخواست نامعتبر است.';
           } else if (error.response.status === 401) {
-            errorMessage = 'توکن نامعتبر است, لطفاً دوباره وارد شوید';
+            errorMessage = 'توکن نامعتبر است, لطفاً دوباره وارد شوید.';
           } else {
             errorMessage = error.response.data.message || errorMessage;
           }
         } else if (error.request) {
-          errorMessage = 'مشکل در ارتباط با سرور, لطفاً دوباره تلاش کنید';
+          errorMessage = 'مشکل در ارتباط با سرور, لطفاً دوباره تلاش کنید.';
         }
         Toast.fire({
           icon: 'error',
@@ -182,27 +182,27 @@ export default {
         if (response.status === 200) {
           Toast.fire({
             icon: 'success',
-            title: '.کد تأیید صحیح است',
+            title: 'کد تأیید صحیح است.',
           });
           this.$router.push('/dashboard');
         } else {
           Toast.fire({
             icon: 'error',
-            title: response.data.message || '.کد تأیید نامعتبر است',
+            title: response.data.message || 'کد تأیید نامعتبر است.',
           });
         }
       } catch (error) {
-        let errorMessage = '.کد تأیید نامعتبر است';
+        let errorMessage = 'کد تأیید نامعتبر است.';
         if (error.response) {
           if (error.response.status === 400) {
-            errorMessage = '.کد تأیید نامعتبر است';
+            errorMessage = 'کد تأیید نامعتبر است.';
           } else if (error.response.status === 401) {
-            errorMessage = 'توکن نامعتبر است, لطفاً دوباره وارد شوید';
+            errorMessage = 'توکن نامعتبر است, لطفاً دوباره وارد شوید.';
           } else {
             errorMessage = error.response.data.message || errorMessage;
           }
         } else if (error.request) {
-          errorMessage = 'مشکل در ارتباط با سرور, لطفاً دوباره تلاش کنید';
+          errorMessage = 'مشکل در ارتباط با سرور, لطفاً دوباره تلاش کنید.';
         }
         Toast.fire({
           icon: 'error',

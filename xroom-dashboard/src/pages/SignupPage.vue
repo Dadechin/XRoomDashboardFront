@@ -91,7 +91,7 @@ export default {
       if (!this.form.firstName || !this.form.lastName || !this.form.semat || !this.form.mobileNumber || !this.form.password) {
         Toast.fire({
           icon: 'error',
-          title: '.لطفاً تمام فیلدها را پر کنید',
+          title: 'لطفاً تمام فیلدها را پر کنید.',
         });
         return;
       }
@@ -113,7 +113,7 @@ export default {
           // Show success Toast
           Toast.fire({
             icon: 'success',
-            title: '.حساب کاربری با موفقیت ساخته شد',
+            title: 'حساب کاربری با موفقیت ساخته شد.',
           });
 
           this.$router.push('/');
@@ -121,19 +121,19 @@ export default {
           // Show error Toast with server message
           Toast.fire({
             icon: 'error',
-            title: response.data.message || 'خطا در ثبت‌نام, لطفاً دوباره تلاش کنید',
+            title: response.data.message || 'خطا در ثبت‌نام, لطفاً دوباره تلاش کنید.',
           });
         }
       } catch (error) {
-        let errorMessage = 'خطا در ثبت‌نام, لطفاً دوباره تلاش کنید';
+        let errorMessage = 'خطا در ثبت‌نام, لطفاً دوباره تلاش کنید.';
         if (error.response) {
           if (error.response.status === 400) {
-            errorMessage = '.شماره تلفن قبلاً ثبت شده است';
+            errorMessage = 'شماره تلفن قبلاً ثبت شده است.';
           } else {
             errorMessage = error.response.data.message || errorMessage;
           }
         } else if (error.request) {
-          errorMessage = 'مشکل در ارتباط با سرور, لطفاً دوباره تلاش کنید';
+          errorMessage = 'مشکل در ارتباط با سرور, لطفاً دوباره تلاش کنید.';
         }
 
         // Show error Toast

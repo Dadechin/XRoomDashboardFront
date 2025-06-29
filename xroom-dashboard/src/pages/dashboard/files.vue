@@ -53,7 +53,7 @@
       <div class="file-grid">
         <div v-for="section in filteredFileSections" :key="section.type" class="file-section">
           <div class="section-title">{{ section.title }}</div>
-          <div v-if="filteredFiles(section.type).length > 0" style="display: flex; align-items: center; gap: 1.5rem 0.9rem; flex-wrap: wrap;">
+          <div v-if="filteredFiles(section.type).length > 0" style="display: flex;align-items: center;gap: 1.5rem 0.7rem;flex-wrap: wrap;justify-content: flex-start;">
             <div
               class="file-card"
               v-for="(file, index) in filteredFiles(section.type)"
@@ -506,7 +506,7 @@ export default {
 
 .file-manager-layout {
   display: flex;
-  gap: 3rem;
+  gap: 1.5rem;
 }
 
 .file-sidebar {

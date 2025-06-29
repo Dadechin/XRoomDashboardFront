@@ -103,27 +103,27 @@ export default {
           // Show success Toast
           Toast.fire({
             icon: 'success',
-            title: '.کد تأیید به شماره موبایل شما ارسال شد',
+            title: 'کد تأیید به شماره موبایل شما ارسال شد.',
           });
         } else {
           // Show error Toast with server message
           Toast.fire({
             icon: 'error',
-            title: response.data.message || 'خطا در ارسال کد تأیید, لطفاً دوباره تلاش کنید',
+            title: response.data.message || 'خطا در ارسال کد تأیید, لطفاً دوباره تلاش کنید.',
           });
         }
       } catch (error) {
-        let errorMessage = 'خطا در ارسال کد تأیید, لطفاً دوباره تلاش کنید';
+        let errorMessage = 'خطا در ارسال کد تأیید, لطفاً دوباره تلاش کنید.';
         if (error.response) {
           if (error.response.status === 400) {
-            errorMessage = '.شماره تماس نامعتبر است';
+            errorMessage = 'شماره تماس نامعتبر است.';
           } else if (error.response.status === 404) {
             errorMessage = '.شماره تماس ثبت‌نشده است';
           } else {
             errorMessage = error.response.data.message || errorMessage;
           }
         } else if (error.request) {
-          errorMessage = 'مشکل در ارتباط با سرور, لطفاً دوباره تلاش کنید';
+          errorMessage = 'مشکل در ارتباط با سرور, لطفاً دوباره تلاش کنید.';
         }
 
         // Show error Toast
@@ -160,7 +160,7 @@ export default {
           // Show success Toast
           Toast.fire({
             icon: 'success',
-            title: '.رمز عبور با موفقیت بازنشانی شد',
+            title: 'رمز عبور با موفقیت بازنشانی شد.',
           });
 
           this.$router.push('/');
@@ -168,21 +168,21 @@ export default {
           // Show error Toast with server message
           Toast.fire({
             icon: 'error',
-            title: response.data.message || '.خطا در بازنشانی رمز عبور , لطفاً کد یا رمز عبور را بررسی کنید',
+            title: response.data.message || 'خطا در بازنشانی رمز عبور , لطفاً کد یا رمز عبور را بررسی کنید.',
           });
         }
       } catch (error) {
-        let errorMessage = '.خطا در بازنشانی رمز عبور , لطفاً کد یا رمز عبور را بررسی کنید';
+        let errorMessage = 'خطا در بازنشانی رمز عبور , لطفاً کد یا رمز عبور را بررسی کنید.';
         if (error.response) {
           if (error.response.status === 400) {
-            errorMessage = '.کد تأیید یا رمز عبور نامعتبر است';
+            errorMessage = 'کد تأیید یا رمز عبور نامعتبر است.';
           } else if (error.response.status === 401) {
-            errorMessage = '.کد تأیید اشتباه است';
+            errorMessage = 'کد تأیید اشتباه است.';
           } else {
             errorMessage = error.response.data.message || errorMessage;
           }
         } else if (error.request) {
-          errorMessage = '.مشکل در ارتباط با سرور , لطفاً دوباره تلاش کنید';
+          errorMessage = 'مشکل در ارتباط با سرور , لطفاً دوباره تلاش کنید.';
         }
 
         // Show error Toast

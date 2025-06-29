@@ -305,22 +305,20 @@ export default {
   -ms-overflow-style: none;
 }
 
-
 .modal-content::-webkit-scrollbar {
   display: none;
 }
 
-
 .popUp-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #101010;
-    color: #fff;
-    width: 100%;
-    padding: 20px 26px;
-    margin-bottom: 1.5rem;
-    border-radius: 20px 20px 0px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #101010;
+  color: #fff;
+  width: 100%;
+  padding: 20px 26px;
+  margin-bottom: 1.5rem;
+  border-radius: 20px 20px 0px 0px;
 }
 
 .popUp-header h2 {
@@ -328,46 +326,44 @@ export default {
 }
 
 .popUp-header button {
-    background-color: #101010;
-    border: none;
-    cursor: pointer;
+  background-color: #101010;
+  border: none;
+  cursor: pointer;
 }
 
 .popUp-title {
-    padding: 20px;
-    padding-right: 50px;
+  padding: 20px;
+  padding-right: 50px;
 }
 
 .popUp-title-object {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
 }
 
-
-
-.popUp-title-object h2{
-    font-size: 20px;
-    font-weight: 600;
-    color: #101010;
+.popUp-title-object h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #101010;
 }
 
 .popUp-title-object span {
-    font-size: 16px;
-    font-weight: 500;
-    color: #4F5A69;
-    margin-top: 1rem;
+  font-size: 16px;
+  font-weight: 500;
+  color: #4F5A69;
+  margin-top: 1rem;
 }
 
 .popUp-objects {
-    margin-top: 0rem !important;
-    padding: 20px;
-    background-color: #FFFFFF;
-    border-radius: 16px;
-    width: 100%;
-    max-width: 620px;
-    display: block;
-    margin: auto;
+  margin-top: 0rem !important;
+  padding: 20px;
+  background-color: #FFFFFF;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 620px;
+  display: block;
+  margin: auto;
 }
 
 .form-group {
@@ -391,7 +387,7 @@ export default {
   border: 1px solid #718096;
   border-radius: 8px;
   font-size: 1rem;
-  max-width: 22rem
+  max-width: 22rem;
 }
 
 .form-group textarea {
@@ -406,13 +402,12 @@ export default {
 }
 
 .form-group input:focus {
-    outline: none;
+  outline: none;
 }
 
 .form-group textarea:focus {
-    outline: none;
+  outline: none;
 }
-
 
 .space-selection {
   display: flex;
@@ -437,10 +432,9 @@ export default {
   transform: scale(1.05);
 }
 
-/* Add selected class styles */
 .space-card.selected {
   border: 2px solid #3A57E8;
-  box-shadow: 0 4px 8px rgba(58, 87, 232, 0.5); /* Blue border and shadow */
+  box-shadow: 0 4px 8px rgba(58, 87, 232, 0.5);
 }
 
 .space-img {
@@ -452,7 +446,7 @@ export default {
 
 .space-info {
   padding: 10px;
-  text-align: center;
+  text-align: right;
   gap: 1rem;
   display: grid;
 }
@@ -464,7 +458,8 @@ export default {
   margin-top: 5px;
 }
 
-.space-type, .space-capacity {
+.space-type,
+.space-capacity {
   font-size: 14px;
   color: #718096;
 }
@@ -483,10 +478,9 @@ export default {
 .form-actions {
   display: flex;
   justify-content: space-between;
-  padding: 20px 0px; 
+  padding: 20px 5%;
   padding-bottom: 0;
   width: 100%;
-  max-width: 620px;
   margin: auto;
 }
 
@@ -514,4 +508,172 @@ export default {
   font-size: 18px;
 }
 
+/* Responsive Styles */
+
+/* Mobile: max-width 600px */
+@media (max-width: 600px) {
+  .modal-content {
+    max-width: 90%;
+    height: 90vh;
+  }
+
+  .popUp-header {
+    padding: 15px 20px;
+  }
+
+  .popUp-header h2 {
+    font-size: 18px;
+  }
+
+  .popUp-header button svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .popUp-title {
+    padding: 15px;
+    padding-right: 30px;
+  }
+
+  .popUp-objects {
+    max-width: 90%;
+    padding: 15px;
+  }
+
+  .space-selection {
+    gap: 1rem 10px;
+    justify-content: space-between;
+  }
+
+  .space-card {
+    width: calc(50% - 5px); /* Two cards per row with gap */
+    height: 12rem;
+  }
+
+  .space-info {
+    padding-top: 3px !important;
+    padding: 5px;
+    gap: 10px;
+  }
+
+  .space-name ,
+  .space-type ,
+  .space-capacity{
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow-x: clip;
+    width: 80%;
+  }
+
+  .space-img {
+    height: 7rem;
+  }
+
+  .space-name {
+    font-size: 14px;
+  }
+
+  .space-type,
+  .space-capacity {
+    font-size: 12px;
+  }
+
+  .form-group {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+  }
+
+  .form-group label {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .form-group input {
+    max-width: 100%;
+  }
+
+  .form-group textarea {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .form-actions {
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  .submit-btn,
+  .cancel-btn {
+    width: 100%;
+    height: 35px;
+    font-size: 15px;
+  }
+
+  .popUp-title-object h2 {
+    font-size: 18px;
+  }
+
+  .popUp-title-object span {
+    font-size: 14px;
+  }
+  
+}
+
+/* Tablet: min-width 600px - max-width 1024px */
+@media (min-width: 600px) and (max-width: 1024px) {
+  .modal-content {
+    max-width: 80%;
+  }
+
+  .popUp-objects {
+    max-width: 90%;
+  }
+
+  .space-card {
+    width: calc(33% - 10px); /* Maintain three cards per row */
+  }
+
+  .form-group input {
+    max-width: 20rem;
+  }
+
+  .form-group textarea {
+    max-width: 20rem;
+  }
+
+
+}
+
+/* Large Tablet / Small Desktop: min-width 1024px - max-width 1280px */
+@media (min-width: 1024px) and (max-width: 1280px) {
+  .modal-content {
+    max-width: 750px;
+  }
+
+  .popUp-objects {
+    max-width: 680px;
+  }
+
+  .space-card {
+    width: calc(33% - 10px); /* Maintain three cards per row */
+  }
+
+
+}
+
+/* Desktop: min-width 1280px */
+@media (min-width: 1280px) {
+  .modal-content {
+    max-width: 700px;
+  }
+
+  .popUp-objects {
+    max-width: 620px;
+  }
+
+  .space-card {
+    width: 31%; /* Original layout */
+  }
+}
 </style>
