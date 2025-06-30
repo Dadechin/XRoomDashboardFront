@@ -36,7 +36,7 @@
       </div>
       <div class="popUp-objects">
         <form @submit.prevent="handleSubmit" autocomplete="off">
-          <div class="form-group" style="justify-content: normal;">
+          <div class="form-group is-compony-form" style="justify-content: normal;">
             <span>سفارش به عنوان یک شرکت</span>
             <input
               type="checkbox"
@@ -171,13 +171,9 @@ export default {
 
 
 <style scoped>
-
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
@@ -187,35 +183,31 @@ export default {
 
 .modal-content {
   background: #F7F5FA;
-  border-radius: 8px;
+  border-radius: 20px;
   width: 100%;
   max-width: 700px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   direction: rtl;
-  border-radius: 20px;
   padding-bottom: 1.5rem;
-  height: 95vh;
+  height: max-content;
   overflow-y: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
 
-
 .modal-content::-webkit-scrollbar {
   display: none;
 }
 
-
 .popUp-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #101010;
-    color: #fff;
-    width: 100%;
-    padding: 20px 26px;
-    margin-bottom: 1.5rem;
-    border-radius: 20px 20px 0px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #101010;
+  color: #fff;
+  padding: 20px 26px;
+  margin-bottom: 1.5rem;
+  border-radius: 20px 20px 0 0;
 }
 
 .popUp-header h2 {
@@ -223,41 +215,39 @@ export default {
 }
 
 .popUp-header button {
-    background-color: #101010;
-    border: none;
-    cursor: pointer;
+  background-color: inherit;
+  border: none;
+  cursor: pointer;
 }
 
 .popUp-title {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    padding: 20px;
-    padding-right: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 20px 50px 20px 20px;
 }
 
 .popUp-title h2 {
-    font-size: 20px;
-    font-weight: 600;
-    color: #101010;
-} 
+  font-size: 20px;
+  font-weight: 600;
+  color: #101010;
+}
 
 .popUp-title span {
-    font-size: 16px;
-    font-weight: 500;
-    color: #4F5A69;
-    margin-top: 1rem;
+  font-size: 16px;
+  font-weight: 500;
+  color: #4F5A69;
+  margin-top: 1rem;
 }
 
 .popUp-objects {
-    margin-top: 1rem !important;
-    padding: 20px;
-    background-color: #FFFFFF;
-    border-radius: 16px;
-    width: 100%;
-    max-width: 620px;
-    display: block;
-    margin: auto;
+  margin: 1rem auto 0;
+  padding: 20px;
+  background-color: #FFFFFF;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 620px;
+  display: block;
 }
 
 .form-group {
@@ -268,7 +258,6 @@ export default {
 }
 
 .form-group label {
-  display: block;
   font-weight: 500;
   width: 50%;
   font-size: 16px;
@@ -281,33 +270,17 @@ export default {
   border: 1px solid #718096;
   border-radius: 8px;
   font-size: 1rem;
-  max-width: 22rem
-}
-
-.form-group textarea {
-  height: 140px;
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #718096;
-  border-radius: 8px;
-  font-size: 1rem;
-  max-width: 25rem;
-  resize: none;
+  max-width: 22rem;
 }
 
 .form-group input:focus {
-    outline: none;
-}
-
-.form-group textarea:focus {
-    outline: none;
+  outline: none;
 }
 
 .form-actions {
   display: flex;
   justify-content: space-between;
-  padding: 20px 0px; 
-  padding-bottom: 0;
+  padding: 20px 0;
   width: 100%;
   max-width: 620px;
   margin: auto;
@@ -315,62 +288,220 @@ export default {
 
 .submit-btn,
 .cancel-btn {
-  text-align: center;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   height: 50px;
   width: 47%;
+  font-weight: 500;
+  font-size: 18px;
+  text-align: center;
 }
 
 .submit-btn {
   background-color: #3A57E8;
   color: white;
-  font-weight: 500;
-  font-size: 18px;
 }
 
 .cancel-btn {
   background-color: #EBEEFD;
   color: #101010;
-  font-weight: 500;
-  font-size: 18px;
 }
 
-/* checkbox toggler */
+/* Checkbox toggler */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px !important;
+  height: 25px;
+  background-color: #CCCCCC;
+  border-radius: 20px;
+  margin-right: 4rem;
+}
 
-.switch { 
-    position : relative ;
-    display : inline-block;
-    width: 60px !important;
-    height: 25px;
-    background-color: #CCCCCC;
-    border-radius: 20px;
-    margin-right: 4rem;
- }
-
- .switch::after {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background-color: white;
-    top: 2px;
-    right: 3px;
-    transition: all 0.3s;
+.switch::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: white;
+  top: 2px;
+  right: 3px;
+  transition: all 0.3s;
 }
 
 .checkbox:checked + .switch::after {
-    right: 37px; 
+  right: 37px;
 }
+
 .checkbox:checked + .switch {
-    background-color: #3a57e8;
+  background-color: #3A57E8;
 }
 
-.checkbox { 
-    display : none;
+.checkbox {
+  display: none;
 }
 
+/* Responsive Styles */
 
+/* Mobile: max-width 600px */
+@media (max-width: 600px) {
+  .modal-content {
+    max-width: 90%;
+    height: 85vh;
+    margin: 0 1rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .popUp-header {
+    padding: 15px 20px;
+  }
+
+  .popUp-header h2 {
+    font-size: 18px;
+  }
+
+  .popUp-header button svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .popUp-title {
+    padding: 15px 20px;
+  }
+
+  .popUp-title h2 {
+    font-size: 18px;
+  }
+
+  .popUp-title span {
+    font-size: 14px;
+    margin-top: 0.75rem;
+    line-height: 150%;
+  }
+
+  .popUp-objects {
+    max-width: 90%;
+    padding: 15px;
+  }
+
+  .form-group {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    gap: 0.5rem;
+  }
+
+  .is-compony-form {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+  }
+
+  .form-group label {
+    width: 100%;
+    font-size: 14px;
+  }
+
+  .form-group input {
+    width: 100%;
+    font-size: 14px;
+    height: 2.25rem;
+    max-width: 100%;
+  }
+
+  .form-actions {
+    flex-direction: row;
+    gap: 1rem;
+    padding: 15px 0;
+    max-width: 90%;
+  }
+
+  .submit-btn,
+  .cancel-btn {
+    width: 48%;
+    height: 40px;
+    font-size: 14px;
+  }
+
+  /* Checkbox in mobile */
+  .form-group .switch {
+    margin-right: 0;
+    width: 50px !important;
+    height: 20px;
+  }
+
+  .form-group .switch::after {
+    width: 16px;
+    height: 16px;
+    top: 2px;
+    right: 2px;
+  }
+
+  .checkbox:checked + .switch::after {
+    right: 32px;
+  }
+}
+
+/* Tablet: min-width 600px - max-width 1024px */
+@media (min-width: 600px) and (max-width: 1024px) {
+  .modal-content {
+    max-width: 80%;
+    height: 95vh;
+  }
+
+  .popUp-objects {
+    max-width: 90%;
+  }
+
+  .form-actions {
+    max-width: 90%;
+  }
+
+  .form-group input {
+    max-width: 20rem;
+  }
+
+  .form-group .switch {
+    margin-right: 3rem;
+  }
+}
+
+/* Large Tablet / Small Desktop: min-width 1024px - max-width 1280px */
+@media (min-width: 1024px) and (max-width: 1280px) {
+  .modal-content {
+    max-width: 720px;
+    height: 95vh;
+  }
+
+  .popUp-objects {
+    max-width: 680px;
+  }
+
+  .form-actions {
+    max-width: 680px;
+  }
+
+  .form-group .switch {
+    margin-right: 3.5rem;
+  }
+}
+
+/* Desktop: min-width 1280px */
+@media (min-width: 1280px) {
+  .modal-content {
+    max-width: 700px;
+    height: 95vh;
+  }
+
+  .popUp-objects {
+    max-width: 620px;
+  }
+
+  .form-actions {
+    max-width: 620px;
+  }
+}
 </style>

@@ -240,7 +240,6 @@ export default {
 
 
 <style scoped>
-
 :deep(.plyr) {
   width: 100%;
   height: 100%;
@@ -330,12 +329,11 @@ export default {
   width: 100%;
   max-width: 620px;
   display: block;
-  border-radius: 12px;
 }
 
 .preview-content img {
-    border-radius: 12px;
-    object-fit: cover;
+  border-radius: 12px;
+  object-fit: cover;
 }
 
 .preview-file {
@@ -354,7 +352,7 @@ export default {
 
 .pdf-preview,
 .model-preview {
-  width: 580px;
+  width: 100%;
   height: 300px;
 }
 
@@ -391,7 +389,7 @@ export default {
 }
 
 .delete-btn {
-  background-color: #B31C51;
+  background-color: #b02424;
   color: white;
 }
 
@@ -400,5 +398,178 @@ export default {
   color: #101010;
 }
 
+/* Responsive Styles */
 
+/* Mobile: max-width 600px */
+@media (max-width: 600px) {
+  .modal-content {
+    max-width: 90%;
+    height: max-content;
+    margin: 0 1rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .modal-header {
+    padding: 15px 20px;
+  }
+
+  .modal-header h2 {
+    font-size: 18px;
+  }
+
+  .modal-header button svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .modal-title {
+    padding: 15px 20px;
+  }
+
+  .modal-title h2 {
+    font-size: 18px;
+  }
+
+  .modal-title span {
+    font-size: 14px;
+    margin-top: 0.75rem;
+  }
+
+  .preview-content {
+    max-width: 90%;
+    padding: 15px;
+  }
+
+  .preview-file {
+    max-height: 250px;
+  }
+
+  .pdf-preview-container,
+  .video-preview-container,
+  .model-preview-container {
+    max-height: 250px;
+  }
+
+  .pdf-preview,
+  .model-preview {
+    width: 100%;
+    height: 200px;
+  }
+
+  .modal-actions {
+    flex-direction: row;
+    gap: 0.75rem;
+    padding: 15px 0;
+    max-width: 90%;
+  }
+
+  .download-btn,
+  .delete-btn {
+    width: 48%;
+    height: 40px;
+    font-size: 14px;
+  }
+
+  .close-btn {
+    width: 100%;
+    height: 40px;
+    font-size: 14px;
+  }
+
+  /* Custom layout for buttons in mobile */
+  .modal-actions {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .download-btn,
+  .delete-btn {
+    flex: 0 0 calc(50% - 0.5rem); /* Two buttons side by side with gap */
+  }
+
+  .close-btn {
+    flex: 0 0 100%; /* Full width for close button */
+    order: 2; /* Place close button below others */
+  }
+}
+
+/* Tablet: min-width 600px - max-width 1024px */
+@media (min-width: 600px) and (max-width: 1024px) {
+  .modal-content {
+    max-width: 80%;
+    height: max-content;
+  }
+
+  .preview-content {
+    max-width: 90%;
+  }
+
+  .modal-actions {
+    max-width: 90%;
+  }
+
+  .preview-file {
+    max-height: 350px;
+  }
+
+  .pdf-preview-container,
+  .video-preview-container,
+  .model-preview-container {
+    max-height: 350px;
+  }
+
+  .pdf-preview,
+  .model-preview {
+    width: 100%;
+    height: 250px;
+  }
+
+  .download-btn,
+  .delete-btn,
+  .close-btn {
+    width: 33%;
+    font-size: 16px;
+    height: 45px;
+  }
+}
+
+/* Large Tablet / Small Desktop: min-width 1024px - max-width 1280px */
+@media (min-width: 1024px) and (max-width: 1280px) {
+  .modal-content {
+    max-width: 720px;
+  }
+
+  .preview-content {
+    max-width: 680px;
+  }
+
+  .modal-actions {
+    max-width: 680px;
+  }
+
+  .pdf-preview,
+  .model-preview {
+    width: 100%;
+  }
+}
+
+/* Desktop: min-width 1280px */
+@media (min-width: 1280px) {
+  .modal-content {
+    max-width: 700px;
+  }
+
+  .preview-content {
+    max-width: 620px;
+  }
+
+  .modal-actions {
+    max-width: 620px;
+  }
+
+  .pdf-preview,
+  .model-preview {
+    width: 100%;
+  }
+}
 </style>

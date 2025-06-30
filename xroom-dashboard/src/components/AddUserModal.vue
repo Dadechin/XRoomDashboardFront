@@ -81,7 +81,7 @@
               required
             />
           </div>
-          <div class="form-group" style="justify-content: normal;">
+          <div class="form-group is-admin-form" style="justify-content: normal;">
             <span>مدیر</span>
             <input
               type="checkbox"
@@ -196,7 +196,7 @@
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   direction: rtl;
   padding-bottom: 1.5rem;
-  height: 95vh;
+  height: max-content;
   overflow-y: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -313,8 +313,7 @@
   color: #101010;
 }
 
-/* checkbox toggler */
-
+/* Checkbox toggler */
 .switch {
   position: relative;
   display: inline-block;
@@ -342,10 +341,169 @@
 }
 
 .checkbox:checked + .switch {
-  background-color: #3a57e8;
+  background-color: #3A57E8;
 }
 
 .checkbox {
   display: none;
+}
+
+/* Responsive Styles */
+
+/* Mobile: max-width 600px */
+@media (max-width: 600px) {
+  .modal-content {
+    max-width: 90%;
+    height: 85vh;
+    margin: 0 1rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .popUp-header {
+    padding: 15px 20px;
+  }
+
+  .popUp-header h2 {
+    font-size: 18px;
+  }
+
+  .popUp-header button svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .popUp-title {
+    padding: 15px 20px;
+  }
+
+  .popUp-title h2 {
+    font-size: 18px;
+  }
+
+  .popUp-title span {
+    font-size: 14px;
+    margin-top: 0.75rem;
+    line-height: 150%;
+  }
+
+  .popUp-objects {
+    max-width: 90%;
+    padding: 15px;
+  }
+
+  .form-group {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    gap: 0.5rem;
+  }
+
+  .is-admin-form {
+    flex-direction: row !important;
+    gap: 2rem;
+  }
+
+  .form-group label {
+    width: 100%;
+    font-size: 14px;
+  }
+
+  .form-group input {
+    width: 100%;
+    font-size: 14px;
+    height: 2.25rem;
+  }
+
+  .form-actions {
+    flex-direction: row;
+    gap: 1rem;
+    padding: 15px 0;
+    max-width: 90%;
+  }
+
+  .submit-btn,
+  .cancel-btn {
+    width: 48%;
+    height: 40px;
+    font-size: 14px;
+  }
+
+  /* Checkbox in mobile */
+  .form-group .switch {
+    margin-right: 0;
+    width: 50px !important;
+    height: 20px;
+  }
+
+  .form-group .switch::after {
+    width: 16px;
+    height: 16px;
+    top: 2px;
+    right: 2px;
+  }
+
+  .checkbox:checked + .switch::after {
+    right: 32px;
+  }
+}
+
+/* Tablet: min-width 600px - max-width 1024px */
+@media (min-width: 600px) and (max-width: 1024px) {
+  .modal-content {
+    max-width: 80%;
+    height: 95vh;
+  }
+
+  .popUp-objects {
+    max-width: 90%;
+  }
+
+  .form-actions {
+    max-width: 90%;
+  }
+
+  .form-group input {
+    max-width: 20rem;
+  }
+
+  .form-group .switch {
+    margin-right: 8rem;
+  }
+}
+
+/* Large Tablet / Small Desktop: min-width 1024px - max-width 1280px */
+@media (min-width: 1024px) and (max-width: 1280px) {
+  .modal-content {
+    max-width: 720px;
+    height: 95vh;
+  }
+
+  .popUp-objects {
+    max-width: 680px;
+  }
+
+  .form-actions {
+    max-width: 680px;
+  }
+
+  .form-group .switch {
+    margin-right: 10rem;
+  }
+}
+
+/* Desktop: min-width 1280px */
+@media (min-width: 1280px) {
+  .modal-content {
+    max-width: 700px;
+    height: 95vh;
+  }
+
+  .popUp-objects {
+    max-width: 620px;
+  }
+
+  .form-actions {
+    max-width: 620px;
+  }
 }
 </style>
