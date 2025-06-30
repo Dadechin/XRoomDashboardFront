@@ -514,7 +514,7 @@ export default {
 @media (max-width: 600px) {
   .modal-content {
     max-width: 90%;
-    height: 90vh;
+    height: 85vh;
   }
 
   .popUp-header {

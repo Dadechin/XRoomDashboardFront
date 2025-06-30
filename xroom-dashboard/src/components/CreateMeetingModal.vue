@@ -95,181 +95,185 @@
             <label for="meetingTime">ساعت</label>
             <div class="input-group">
               <div class="time-input-group">
-                <p style="margin-left: 1rem;">شروع</p>
-                <div class="input-div">
-                  <button type="button" @click="incrementTime('startMinute')">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 20 20"
-                      fill="none"
-                    >
-                      <path
-                        d="M15 12.5L10 7.5L5 12.5"
-                        stroke="#3A57E8"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                  </button>
-                  <input
-                    type="number"
-                    v-model.number="form.startMinute"
-                    min="0"
-                    max="59"
-                    required
-                  />
-                  <button type="button" @click="decrementTime('startMinute')">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 20 20"
-                      fill="none"
-                    >
-                      <path
-                        d="M5 7.5L10 12.5L15 7.5"
-                        stroke="#3A57E8"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                  </button>
+                <div class="child-time-input-group">
+                  <p>شروع</p>
+                  <div class="input-div">
+                    <button type="button" @click="incrementTime('startMinute')">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                      >
+                        <path
+                          d="M15 12.5L10 7.5L5 12.5"
+                          stroke="#3A57E8"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </button>
+                    <input
+                      type="number"
+                      v-model.number="form.startMinute"
+                      min="0"
+                      max="59"
+                      required
+                    />
+                    <button type="button" @click="decrementTime('startMinute')">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                      >
+                        <path
+                          d="M5 7.5L10 12.5L15 7.5"
+                          stroke="#3A57E8"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                  <span>:</span>
+                  <div class="input-div">
+                    <button type="button" @click="incrementTime('startHour')">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                      >
+                        <path
+                          d="M15 12.5L10 7.5L5 12.5"
+                          stroke="#3A57E8"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </button>
+                    <input
+                      type="number"
+                      v-model.number="form.startHour"
+                      min="0"
+                      max="23"
+                      required
+                    />
+                    <button type="button" @click="decrementTime('startHour')">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                      >
+                        <path
+                          d="M5 7.5L10 12.5L15 7.5"
+                          stroke="#3A57E8"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
-                <span>:</span>
-                <div class="input-div">
-                  <button type="button" @click="incrementTime('startHour')">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 20 20"
-                      fill="none"
-                    >
-                      <path
-                        d="M15 12.5L10 7.5L5 12.5"
-                        stroke="#3A57E8"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                  </button>
-                  <input
-                    type="number"
-                    v-model.number="form.startHour"
-                    min="0"
-                    max="23"
-                    required
-                  />
-                  <button type="button" @click="decrementTime('startHour')">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 20 20"
-                      fill="none"
-                    >
-                      <path
-                        d="M5 7.5L10 12.5L15 7.5"
-                        stroke="#3A57E8"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                  </button>
-                </div>
-                <p style="margin-left: 1rem; margin-right: 2.5rem;">پایان</p>
-                <div class="input-div">
-                  <button type="button" @click="incrementTime('endMinute')">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 20 20"
-                      fill="none"
-                    >
-                      <path
-                        d="M15 12.5L10 7.5L5 12.5"
-                        stroke="#3A57E8"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                  </button>
-                  <input
-                    type="number"
-                    v-model.number="form.endMinute"
-                    min="0"
-                    max="59"
-                    required
-                  />
-                  <button type="button" @click="decrementTime('endMinute')">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 20 20"
-                      fill="none"
-                    >
-                      <path
-                        d="M5 7.5L10 12.5L15 7.5"
-                        stroke="#3A57E8"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                  </button>
-                </div>
-                <span>:</span>
-                <div class="input-div">
-                  <button type="button" @click="incrementTime('endHour')">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 20 20"
-                      fill="none"
-                    >
-                      <path
-                        d="M15 12.5L10 7.5L5 12.5"
-                        stroke="#3A57E8"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                  </button>
-                  <input
-                    type="number"
-                    v-model.number="form.endHour"
-                    min="0"
-                    max="23"
-                    required
-                  />
-                  <button type="button" @click="decrementTime('endHour')">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 20 20"
-                      fill="none"
-                    >
-                      <path
-                        d="M5 7.5L10 12.5L15 7.5"
-                        stroke="#3A57E8"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                  </button>
+                <div class="child-time-input-group">
+                  <p>پایان</p>
+                  <div class="input-div">
+                    <button type="button" @click="incrementTime('endMinute')">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                      >
+                        <path
+                          d="M15 12.5L10 7.5L5 12.5"
+                          stroke="#3A57E8"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </button>
+                    <input
+                      type="number"
+                      v-model.number="form.endMinute"
+                      min="0"
+                      max="59"
+                      required
+                    />
+                    <button type="button" @click="decrementTime('endMinute')">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                      >
+                        <path
+                          d="M5 7.5L10 12.5L15 7.5"
+                          stroke="#3A57E8"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                  <span>:</span>
+                  <div class="input-div">
+                    <button type="button" @click="incrementTime('endHour')">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                      >
+                        <path
+                          d="M15 12.5L10 7.5L5 12.5"
+                          stroke="#3A57E8"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </button>
+                    <input
+                      type="number"
+                      v-model.number="form.endHour"
+                      min="0"
+                      max="23"
+                      required
+                    />
+                    <button type="button" @click="decrementTime('endHour')">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                      >
+                        <path
+                          d="M5 7.5L10 12.5L15 7.5"
+                          stroke="#3A57E8"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -760,6 +764,7 @@ export default {
 
 
 <style scoped>
+/* Base styles remain unchanged */
 .participant-input {
   position: relative;
   display: flex;
@@ -843,7 +848,6 @@ export default {
   margin-top: 15px;
 }
 
-
 .dropdown-item .user-name {
   font-size: 16px;
   font-weight: 600;
@@ -856,12 +860,12 @@ export default {
 }
 
 .dropdown-item .user-info span {
-    font-size: 14px;
-    color: #718096;
-    width: 75px;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow-x: clip;
+  font-size: 14px;
+  color: #718096;
+  width: 75px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow-x: clip;
 }
 
 .dropdown-item .user-role {
@@ -876,6 +880,13 @@ export default {
   color: #718096;
 }
 
+.child-time-input-group {
+  display: flex;
+  align-items: center;
+  width: 50%;
+  justify-content: space-around;
+}
+
 .participant-input button {
   margin-left: 10px;
   padding: 10px;
@@ -887,7 +898,6 @@ export default {
   align-items: center;
   justify-content: center;
 }
-
 
 .modal-overlay {
   position: fixed;
@@ -917,21 +927,20 @@ export default {
   -ms-overflow-style: none;
 }
 
-
 .modal-content::-webkit-scrollbar {
   display: none;
 }
 
 .popUp-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #101010;
-    color: #fff;
-    width: 100%;
-    padding: 20px 26px;
-    margin-bottom: 1.5rem;
-    border-radius: 20px 20px 0px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #101010;
+  color: #fff;
+  width: 100%;
+  padding: 20px 26px;
+  margin-bottom: 1.5rem;
+  border-radius: 20px 20px 0px 0px;
 }
 
 .popUp-header h2 {
@@ -939,42 +948,41 @@ export default {
 }
 
 .popUp-header button {
-    background-color: #101010;
-    border: none;
-    cursor: pointer;
+  background-color: #101010;
+  border: none;
+  cursor: pointer;
 }
 
-
 .popUp-objects {
-    margin-top: 1rem !important;
-    padding: 20px;
-    background-color: #FFFFFF;
-    border-radius: 16px;
-    width: 100%;
-    max-width: 620px;
-    display: block;
-    margin: auto;
+  margin-top: 1rem !important;
+  padding: 20px;
+  background-color: #FFFFFF;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 620px;
+  display: block;
+  margin: auto;
 }
 
 .popUp-title {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    padding: 20px;
-    padding-right: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  padding: 20px;
+  padding-right: 50px;
 }
 
 .popUp-title h2 {
-    font-size: 20px;
-    font-weight: 600;
-    color: #101010;
-} 
+  font-size: 20px;
+  font-weight: 600;
+  color: #101010;
+}
 
-.popUp-title span {
-    font-size: 16px;
-    font-weight: 500;
-    color: #4F5A69;
-    margin-top: 1rem;
+.popUpcntl:popUp-title span {
+  font-size: 16px;
+  font-weight: 500;
+  color: #4F5A69;
+  margin-top: 1rem;
 }
 
 .form-group {
@@ -998,12 +1006,12 @@ export default {
   border: 1px solid #718096;
   border-radius: 8px;
   font-size: 1rem;
-  max-width: 25rem
+  max-width: 25rem;
 }
 
 .input-group {
-    position: relative;
-    width: 100%;
+  position: relative;
+  width: 100%;
 }
 
 .form-group textarea {
@@ -1017,12 +1025,9 @@ export default {
   resize: none;
 }
 
-.form-group input:focus {
-    outline: none;
-}
-
+.form-group input:focus,
 .form-group textarea:focus {
-    outline: none;
+  outline: none;
 }
 
 .time-input-group {
@@ -1043,12 +1048,12 @@ export default {
 
 .time-input-group input::-webkit-outer-spin-button,
 .time-input-group input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .time-input-group input[type=number] {
-    -moz-appearance:textfield;
+  -moz-appearance: textfield;
 }
 
 .time-input-group p {
@@ -1060,9 +1065,9 @@ export default {
 }
 
 .input-div {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .input-div button {
@@ -1072,14 +1077,12 @@ export default {
   padding: 0;
 }
 
-
 .form-actions {
   display: flex;
   justify-content: space-between;
-  padding: 20px;
+  padding: 20px 5%;
   padding-bottom: 0;
   width: 100%;
-  max-width: 620px;
   margin: auto;
 }
 
@@ -1123,7 +1126,7 @@ export default {
   background-color: #3A57E8;
   color: #fff;
   border-radius: 8px;
-  border:none ;
+  border: none;
   font-size: 17px;
   height: 50px;
   width: 60%;
@@ -1152,14 +1155,14 @@ export default {
 }
 
 .presenter {
-    margin: 2rem 0 2rem 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0px 1px 4px 0px #00000029;
-    border-radius: 12px;
-    height: 95px;
-    padding-left: 1rem;
+  margin: 2rem 0 2rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0px 1px 4px 0px #00000029;
+  border-radius: 12px;
+  height: 95px;
+  padding-left: 1rem;
 }
 
 .user-avatar {
@@ -1196,18 +1199,18 @@ export default {
 
 .presenter button {
   background-color: transparent;
-  border:none;
+  border: none;
   height: 35px;
   cursor: pointer;
 }
 
 .last-span {
   color: rgb(79, 90, 105);
-    font-size: 16.5px;
-    line-height: 190%;
-    display: block;
-    margin-top: 4rem;
-    margin-bottom: 1rem;
+  font-size: 16.5px;
+  line-height: 190%;
+  display: block;
+  margin-top: 4rem;
+  margin-bottom: 1rem;
 }
 
 .participant-input {
@@ -1232,25 +1235,388 @@ export default {
   padding-right: 1.5rem;
 }
 
+/* Responsive Styles */
+
+/* Mobile (max-width: 600px) */
+@media (max-width: 600px) {
+  .modal-content {
+    max-width: 90%;
+    height: 85vh;
+    padding-bottom: 1rem;
+  }
+
+  .popUp-header {
+    padding: 15px 20px;
+  }
+
+  .popUp-header h2 {
+    font-size: 18px; /* Smaller header font */
+  }
+
+  .popUp-header button svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .popUp-objects {
+    padding: 10px;
+    max-width: 325px;
+    border-radius: 16px;
+  }
+
+  .child-time-input-group {
+    display: flex;
+    align-items: center;
+    width: 50%;
+    justify-content: space-between;
+  }
+
+  .popUp-title {
+    padding: 10px;
+    padding-right: 10px;
+    padding-top: 0;
+    gap: 0.5rem 0;
+  }
+
+  .popUp-title h2 {
+    font-size: 18px;
+  }
+
+  .popUp-title span {
+    font-size: 14px;
+  }
+
+  .form-group {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+  }
+
+  .form-group label {
+    width: 100%;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    max-width: 100%;
+    font-size: 14px;
+  }
+
+  .time-input-group {
+    justify-content: flex-start;
+    gap: 1.5rem;
+  }
+
+  .time-input-group input {
+    width: 35px;
+    height: 35px;
+    font-size: 14px;
+  }
+
+  .input-div svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .time-input-group p {
+    font-size: 15px;
+  }
+
+  .time-input-group span {
+    margin: 0 0.3rem;
+  }
+
+  .form-actions {
+    flex-direction: row;
+    gap: 10px;
+    padding: 15px;
+  }
+
+  .submit-button,
+  .cancel-button {
+    width: 100%;
+    height: 40px;
+    font-size: 14px;
+  }
+
+  .rooms-selecter {
+    flex-direction: row;
+    align-items: flex-start;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .rooms-selecter button {
+    width: 60%;
+    height: 40px;
+    font-size: 14px;
+  }
+
+
+  .rooms-selecter span {
+    font-size: 15px;
+    width: 50%;
+  }
+
+  .participants-objects h2 {
+    font-size: 17px;
+  }
+
+  .participants-objects p {
+    font-size: 14px;
+    margin: 1.5rem 0;
+  }
+
+  .participants-guide {
+    font-size: 14px;
+    line-height: 1.8rem;
+  }
+
+  .presenter {
+    height: 80px;
+    padding-left: 0.5rem;
+  }
+
+  .user-avatar {
+    width: 60px;
+    height: 60px;
+  }
+
+  .user-info {
+    font-size: 16px;
+    max-height: 60px;
+  }
+
+  .user-info p {
+    font-size: 15px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow-x: clip;
+    width: 6rem;
+  }
+
+  .user-info span {
+    font-size: 13px;
+  }
+
+  .presenter-role {
+    font-size: 13px;
+    text-align: center;
+    width: 70px;
+    font-weight: 500;
+  }
+
+  .presenter button svg {
+    width: 30px;
+    height: 30px;
+  }
+
+  .last-span {
+    font-size: 14px;
+    margin-top: 1.5rem;
+  }
+
+  .dropdown-item .avatar-wrapper {
+    width: 60px;
+    height: 60px;
+  }
+
+  .dropdown-item .user-name {
+    font-size: 14px;
+    width: 80px;
+  }
+
+  .dropdown-item .user-info span {
+    font-size: 12px;
+    width: 60px;
+  }
+
+  .dropdown-item .user-role {
+    font-size: 11px;
+  }
+
+  .custom-input {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .dropdown-menu {
+    max-height: 250px;
+  }
+}
+
+/* Tablet (min-width: 600px - max-width: 1024px) */
+@media (min-width: 600px) and (max-width: 1024px) {
+  .modal-content {
+    max-width: 90vw;
+    padding: 0px;
+    padding-bottom: 2rem;
+  }
+
+  .popUp-header h2 {
+    font-size: 20px;
+  }
+
+  .popUp-objects {
+    max-width: 95%;
+    padding: 18px;
+  }
+
+  .popUp-title {
+    padding-right: 20px;
+    gap: 1rem;
+  }
+
+  .popUp-title h2 {
+    font-size: 19px;
+  }
+
+  .popUp-title span {
+    font-size: 15px;
+  }
+
+  .form-group label {
+    font-size: 15px;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    max-width: 90%;
+    font-size: 15px;
+  }
+
+  .time-input-group input {
+    width: 42px;
+    height: 42px;
+  }
+
+  .time-input-group p {
+    font-size: 16px;
+  }
+
+  .submit-button,
+  .cancel-button {
+    font-size: 17px;
+    height: 48px;
+  }
+
+  .rooms-selecter button {
+    width: 60%;
+    font-size: 16px;
+  }
+
+  .participants-objects h2 {
+    font-size: 18px;
+  }
+
+  .participants-objects p {
+    font-size: 15px;
+  }
+
+  .participants-guide {
+    font-size: 15px;
+  }
+
+  .presenter {
+    height: 90px;
+  }
+
+  .user-avatar {
+    width: 70px;
+    height: 70px;
+  }
+
+  .user-info {
+    font-size: 17px;
+  }
+
+  .user-name {
+    font-size: 16px;
+  }
+
+  .user-info span {
+    font-size: 14px;
+  }
+
+  .presenter-role {
+    font-size: 16px;
+    width: 140px;
+  }
+}
+
+/* Large Tablet / Small Desktop (min-width: 1024px - max-width: 1280px) */
+@media (min-width: 1024px) and (max-width: 1280px) {
+  .modal-content {
+    max-width: 85vw;
+  }
+
+  .popUp-objects {
+    max-width: 95%;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    max-width: 95%;
+  }
+
+  .rooms-selecter button {
+    width: 65%;
+  }
+}
+
+/* Desktop (min-width: 1280px) */
+@media (min-width: 1280px) {
+  .modal-content {
+    max-width: 700px; /* Keep the original max-width */
+  }
+
+  .popUp-objects {
+    max-width: 620px;
+  }
+
+  .popUp-title {
+    gap: 1rem;
+  }
+}
 </style>
 
 <style>
-
 .vpd-input-group input {
-    height: 40px;
-    width: 100%;
-    border: 1px solid #718096;
-    border-radius: 8px;
-    font-size: 1rem;
-    max-width: 25rem;
-    text-align: center;
-    padding: 0;
+  height: 40px;
+  width: 100%;
+  border: 1px solid #718096;
+  border-radius: 8px;
+  font-size: 1rem;
+  max-width: 25rem;
+  text-align: center;
+  padding: 0;
 }
-
 
 .vpd-input-group label {
-    display: none;
+  display: none;
 }
 
+/* Responsive adjustments for VuePersianDatetimePicker */
+@media (max-width: 600px) {
+  .vpd-input-group input {
+    height: 40px;
+    max-width: 100%;
+    font-size: 14px;
+  }
+}
 
+@media (min-width: 600px) and (max-width: 1024px) {
+  .vpd-input-group input {
+    max-width: 90%;
+    font-size: 15px;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1280px) {
+  .vpd-input-group input {
+    max-width: 95%;
+  }
+}
 </style>

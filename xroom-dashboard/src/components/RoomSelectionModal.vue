@@ -32,7 +32,7 @@
       </div>
       <div class="popUp-title">
         <h2>فضاها</h2>
-        <span>یک اتاق برای این جلسه انتخاب کنید</span>
+        <span v-if="rooms.length || temporaryRooms.length">یک اتاق برای این جلسه انتخاب کنید</span>
       </div>
       <div class="rooms-list" v-if="rooms.length">
         <div
@@ -165,8 +165,8 @@
           </div>
         </div>
       </div>
-      <div v-else>
-        <span>هیچ فضایی یافت نشد.</span>
+      <div v-else style="text-align: center;line-height: 200%;color: #718096;">
+        <span>اتاقی یافت نشد</span>
       </div>
       <div v-if="temporaryRooms.length">
         <div class="popUp-title">
@@ -305,8 +305,8 @@
           </div>
         </div>
       </div>
-      <div v-else>
-        <span>هیچ اتاق موقتی یافت نشد.</span>
+      <div v-else style="text-align: center;line-height: 200%;color: #718096;">
+        <span>اتاق موقتی یافت نشد.</span>
       </div>
       <div class="form-actions">
         <button type="button" class="cancel-button" @click="cancel">لغو</button>
@@ -458,6 +458,7 @@ export default {
 
 
 <style scoped>
+/* استایل‌های پیش‌فرض برای دسکتاپ (min-width: 1280px) */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -512,28 +513,6 @@ export default {
   cursor: pointer;
 }
 
-.room-item {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  border: 1px solid #B8C0CB;
-  border-radius: 12px;
-  padding: 8px;
-  text-align: right;
-  cursor: pointer;
-}
-
-.temporary-room-form {
-  margin-top: 1rem;
-  padding: 20px;
-  background-color: #FFFFFF;
-  border-radius: 16px;
-  width: 100%;
-  max-width: 700px;
-  margin: 1rem auto 2rem auto;
-
-}
-
 .rooms-list {
   margin-top: 1rem;
   padding: 20px;
@@ -560,8 +539,53 @@ export default {
   margin: 1rem auto 2rem auto;
 }
 
+.room-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  border: 1px solid #B8C0CB;
+  border-radius: 12px;
+  padding: 4px;
+  text-align: right;
+  cursor: pointer;
+}
+
 .room-item.selected {
   border: 1px solid #101010;
+}
+
+.room-image {
+  border-radius: 10px;
+  object-fit: cover;
+  width: 120px;
+  height: 120px;
+}
+
+.room-details {
+  margin-right: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 80%;
+}
+
+.room-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #101010;
+}
+
+.room-capacity,
+.room-type {
+  font-size: 14px;
+  font-weight: 500;
+  color: #718096;
+  display: flex;
+  align-items: center;
+}
+
+.room-type {
+  color: #3A57E8;
 }
 
 .popUp-title {
@@ -583,27 +607,6 @@ export default {
   font-weight: 500;
   color: #4F5A69;
   margin-top: 1rem;
-}
-
-.form-group label {
-  display: block;
-  font-weight: 500;
-  width: 50%;
-  font-size: 16px;
-}
-
-.form-group input {
-  height: 45px;
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #718096;
-  border-radius: 8px;
-  font-size: 1rem;
-  max-width: 25rem;
-}
-
-.form-group input:focus {
-  outline: none;
 }
 
 .form-actions {
@@ -640,71 +643,191 @@ export default {
   font-size: 18px;
 }
 
-.room-title {
-  font-size: 16px;
-  font-weight: 500;
-  color: #101010;
-}
+/* موبایل (max-width: 600px) */
+@media (max-width: 600px) {
+  .modal-content {
+    max-width: 90%;
+    height: 90vh;
+    border-radius: 20px;
+    padding-bottom: 1rem;
+  }
 
-.form-group {
-  margin-bottom: 3rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
+  .popUp-header h2 {
+    font-size: 18px;
+  }
 
-.form-group label {
-  display: block;
-  font-weight: 500;
-  width: 50%;
-  font-size: 16px;
-}
+  .popUp-header button svg {
+    width: 28px;
+    height: 28px;
+  }
 
-.form-group input {
-  height: 45px;
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #718096;
-  border-radius: 8px;
-  font-size: 1rem;
-  max-width: 25rem
-}
+  .popUp-header {
+    padding: 15px 20px;
+  }
 
-.room-capacity {
-  font-size: 14px;
-  font-weight: 500;
-  color: #718096;
-  margin: 1.2rem 0;
-  display: flex;
-  align-items: center;
-}
+  .rooms-list,
+  .temporary-rooms-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    padding: 10px;
+    max-width: 100%;
+  }
 
-.room-type {
-  font-size: 14px;
-  font-weight: 500;
-  color: #3A57E8;
-  display: flex;
-  align-items: center;
-}
+  .rooms-list {
+    background-color: transparent;
+    margin-bottom:1rem ;
+  }
 
-.create-room {
+  .room-item {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 5px;
+    background-color: #fff;
+  }
+
+  .room-image {
+    width: 100%;
+    height: 130px;
+    margin-bottom: 10px;
+  }
+
+  .room-details {
+    text-align: right;
+    width: 100%;
+    margin-right: 4px !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-top: 8px;
+    height: 5rem;
+  }
+
+  .room-title {
+    font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow-x: clip;
     width: 120px;
-    height: 45px;
-    padding: 12px 24px 12px 24px;
-    background-color: #3A57E8;
-    border-radius: 8px;
+  }
+
+  .room-capacity,
+  .room-type {
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow-x: clip;
+    width: 140px;
+  }
+
+  .popUp-title {
+    padding: 15px;
+    padding-right: 20px;
+  }
+
+  .popUp-title h2 {
     font-size: 16px;
-    font-weight: 500;
-    color: #FFFFFF;
-    border: none;
-    cursor: pointer;
-    display: block;
-    margin-right: auto;
+  }
+
+  .popUp-title span {
+    font-size: 14px;
+  }
+
+  .form-actions {
+    flex-direction: row;
+    gap: 10px;
+    padding: 15px;
+  }
+
+  .submit-button,
+  .cancel-button {
+    width: 100%;
+    height: 40px;
+    font-size: 14px;
+  }
 }
 
-.room-image {
-  border-radius: 10px;
-  object-fit :cover;
+/* تبلت (min-width: 600px و max-width: 1024px) */
+@media (min-width: 600px) and (max-width: 1024px) {
+  .modal-content {
+    max-width: 90%;
+    height: 90vh;
+  }
+
+  .rooms-list,
+  .temporary-rooms-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    padding: 15px;
+    max-width: 90%;
+  }
+
+  .room-item {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .room-image {
+    width: 100px;
+    height: 100px;
+  }
+
+  .room-title {
+    font-size: 15px;
+  }
+
+  .room-capacity,
+  .room-type {
+    font-size: 13px;
+  }
+
+  .popUp-title h2 {
+    font-size: 18px;
+  }
+
+  .popUp-title span {
+    font-size: 15px;
+  }
+
+  .form-actions {
+    padding: 15px;
+  }
+
+  .submit-button,
+  .cancel-button {
+    height: 45px;
+    font-size: 16px;
+  }
 }
 
+/* رزولوشن‌های بزرگ‌تر (min-width: 1024px و max-width: 1280px) */
+@media (min-width: 1024px) and (max-width: 1280px) {
+  .modal-content {
+    max-width: 80%;
+  }
+
+  .rooms-list,
+  .temporary-rooms-list {
+    max-width: 90%;
+    gap: 1.5rem;
+  }
+
+  .room-image {
+    width: 110px;
+    height: 110px;
+  }
+
+  .room-title {
+    font-size: 15px;
+  }
+
+  .room-capacity,
+  .room-type {
+    font-size: 13px;
+  }
+}
+
+/* رزولوشن‌های خیلی بزرگ (min-width: 1280px) */
+@media (min-width: 1280px) {
+  /* استایل‌های پیش‌فرض حفظ می‌شوند */
+}
 </style>

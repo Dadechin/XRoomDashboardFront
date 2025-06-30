@@ -798,7 +798,7 @@ export default {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow-x: clip;
-    width: 130px;
+    width: 100px;
     text-align: justify;
   }
 
