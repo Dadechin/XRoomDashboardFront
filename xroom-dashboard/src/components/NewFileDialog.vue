@@ -47,7 +47,7 @@
           </div>
           <div class="input-group">
             <p>انتخاب فایل</p>
-            <div style="width: 67%;">
+            <div style="width: 100%;">
               <label for="fileUpload" class="file-input-label">
                 <span v-if="selectedFile" class="file-name">{{ selectedFile.name }}</span>
                 <span v-else>برای انتخاب فایل کلیک کنید</span>
@@ -264,7 +264,7 @@ export default {
   background: #F7F5FA;
   border-radius: 20px;
   width: 100%;
-  max-width: 700px;
+  max-width: 620px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   direction: rtl;
   padding-bottom: 1.5rem;
@@ -336,7 +336,7 @@ export default {
   justify-content: space-between;
 }
 
-.input-group label {
+.input-group label , .input-group p {
   font-weight: 500;
   width: 50%;
   font-size: 16px;
@@ -418,32 +418,146 @@ export default {
   color: #101010;
 }
 
-.file-type-selector {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  text-align: start;
-  margin: 1rem 0 3rem 0;
+/* Responsive Styles */
+
+/* Mobile: max-width 600px */
+@media (max-width: 600px) {
+  .modal-content {
+    max-width: 90%;
+    height: max-content;
+    margin: 0 1rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .modal-header {
+    padding: 15px 20px;
+  }
+
+  .modal-header h2 {
+    font-size: 18px;
+  }
+
+  .modal-header button svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .modal-title {
+    padding: 15px 20px;
+  }
+
+  .modal-title h2 {
+    font-size: 18px;
+  }
+
+  .modal-title span {
+    font-size: 14px;
+    margin-top: 0.75rem;
+  }
+
+  .form-content {
+    max-width: 90%;
+    padding: 15px;
+  }
+
+  .input-group {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    gap: 0.5rem;
+  }
+
+  .input-group label , .input-group p {
+    width: 100%;
+    font-size: 14px;
+  }
+
+  .input-group input,
+  .input-group .file-input-label {
+    width: 100%;
+    font-size: 14px;
+    height: 2.25rem;
+  }
+
+  .input-group .file-name {
+    font-size: 14px;
+  }
+
+  .modal-actions {
+    flex-direction: row;
+    gap: 1rem;
+    padding: 15px 0;
+    max-width: 90%;
+  }
+
+  .upload-btn,
+  .close-btn {
+    width: 100%;
+    height: 35px;
+    font-size: 14px;
+  }
 }
 
-.file-type-selector label {
-  margin-left: 10px;
-  font-weight: 500;
-  font-size: 16px;
+/* Tablet: min-width 600px - max-width 1024px */
+@media (min-width: 600px) and (max-width: 1024px) {
+  .modal-content {
+    max-width: 80%;
+    height: max-content;
+  }
+
+  .form-content {
+    max-width: 90%;
+  }
+
+  .modal-actions {
+    max-width: 90%;
+  }
+
+  .input-group input,
+  .input-group .file-input-label {
+    max-width: 20rem;
+  }
+
+  .input-group p {
+    width: 60%;
+  }
 }
 
-.file-type-selector select {
-  padding: 8px 8px;
-  border-radius: 8px;
-  border-left: 10px solid transparent !important;
-  box-shadow: #00000029 0px 1px 4px 0px;
-  border: none;
-  width: 67%;
-  height: 2.5rem;
-  font-size: 16px;
+/* Large Tablet / Small Desktop: min-width 1024px - max-width 1280px */
+@media (min-width: 1024px) and (max-width: 1280px) {
+  .modal-content {
+    max-width: 720px;
+  }
+
+  .form-content {
+    max-width: 680px;
+  }
+
+  .modal-actions {
+    max-width: 680px;
+  }
+
+  .input-group p {
+    width: 100%;
+  }
 }
 
-.file-type-selector select:focus {
-  outline: none;
+/* Desktop: min-width 1280px */
+@media (min-width: 1280px) {
+  .modal-content {
+    max-width: 700px;
+  }
+
+  .form-content {
+    max-width: 620px;
+  }
+
+  .modal-actions {
+    max-width: 620px;
+  }
+
+  .input-group p {
+    width: 50%;
+  }
 }
 </style>
