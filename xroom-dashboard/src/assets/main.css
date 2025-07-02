@@ -45,15 +45,20 @@ a {
 
 /* sweet alert */
 
+body.swal2-toast-shown .swal2-container {
+  width: -webkit-fill-available !important;
+}
+
 .swal2-popup {
-  right: 0.5rem !important;
+  right: 2.5rem !important;
   top: 1.2rem !important;
   display: flex !important;
   align-items: center !important;
   justify-content: right !important;
-  width: 95% !important;
+  width: fit-content !important;
   padding-right: 0 !important;
 
+  background-color: #ffffffa8 !important;
   backdrop-filter: blur(2px) !important;
   direction: rtl !important;
   flex-direction: row-reverse !important;
@@ -64,4 +69,31 @@ a {
   margin-right: 0 !important;
   color: #101010 !important;
   text-align: right !important;
+}
+
+
+div:where(.swal2-icon).swal2-warning {
+  border-color: #FFC107 !important;  
+  color: #FFC107 !important;
+}
+
+div:where(.swal2-icon).swal2-error {
+  border-color: #B91307 !important;  
+  color: #B91307 !important;
+}
+
+div:where(.swal2-icon).swal2-error [class^=swal2-x-mark-line] { 
+  background-color: #B91307 !important;
+}
+
+.swal2-success-circular-line-right , .swal2-success-fix , .swal2-success-circular-line-left {
+  display: none !important;
+}
+
+div:where(.swal2-icon).swal2-success [class^=swal2-success-line] {
+  background-color: rgb(57 165 77) !important;
+}
+
+.swal2-success-ring {
+  border-color: rgb(57 165 77) !important;
 }

@@ -48,15 +48,6 @@ export default {
       this.isSidebarOpen = !this.isSidebarOpen;
     }
   },
-  mounted() {
-    const content = document.querySelector('.content');
-    if (content) {
-      content.addEventListener('scroll', () => {
-        document.body.scrollTop = content.scrollTop;
-        document.documentElement.scrollTop = content.scrollTop;
-      });
-    }
-  }
 };
 </script>
 
