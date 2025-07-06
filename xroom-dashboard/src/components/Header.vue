@@ -8,7 +8,7 @@
         <div class="avatar-wrapper">
           <img class="user-avatar" :src="profileIcon"   />
         </div>
-        <div class="user-name">{{ fullName }}</div>
+        <div class="user-name" style="text-align: left;" :style="{ direction: userNameDirection }">{{ fullName }}</div>
         <span>          
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M7.19922 10L11.9992 14L16.7992 10" stroke="#8D99AB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -76,6 +76,10 @@ export default {
       return customer.profile_img
         ? `${customer.profile_img}`
         : 'https://c.animaapp.com/m9nvumalUMfQbN/img/frame.svg';
+    },
+    userNameDirection() {
+      const persianArabicRegex = /[\u0600-\u06FF\u0750-\u077F]/;
+      return persianArabicRegex.test(this.fullName) ? 'rtl' : 'ltr';
     }
   },
   methods: {
@@ -180,7 +184,7 @@ export default {
 .user-name-container {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
   position: relative;
   cursor: pointer;
 }
@@ -282,8 +286,13 @@ export default {
 /* Mobile (max-width: 520px) */
 @media (max-width: 520px) {
   .header-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(1, 1fr);
+    gap: 30px;
     padding: 20px 0;
   }
+
 
   .green-button {
     display: none;
@@ -291,28 +300,41 @@ export default {
 
   .menu {
     text-align: right;
-    width: 30%;
+    width: 100%;
   }
 
   .welcome-container {
     text-align: left;
-    order: 3;
-    width: 30%;
+    order: 2;
+    width: 100%;
   }
 
   .welcome-message {
     font-size: 15px;
     width: 90px;
+    text-align: center;
   }
 
   .user-info-container {
     justify-content: center;
-    order: 2;
-    width: 40%;
+    order: 3;
+    width: fit-content;
+    max-width: 100%;
+  }
+
+  .user-name {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow-x: clip;
+    width: 4.5rem;
   }
 
   .avatar-wrapper {
     display: none;
+  }
+
+  .dropdown-menu {
+    right: -6.5rem;
   }
 }
 

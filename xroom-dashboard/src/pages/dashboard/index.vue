@@ -4,7 +4,7 @@
       <!-- Right Section -->
       <div class="right-section">
         <h2 class="section-title">راهنمای شروع</h2>
-        <swiper
+<!--         <swiper
           :slides-per-view="1.5"
           :space-between="10"
           :loop="true"
@@ -80,7 +80,7 @@
               </span>
             </div>
           </swiper-slide>
-        </swiper>
+        </swiper> -->
         <div class="tutorial-grid">
           <div
             class="tutorial-item"
@@ -579,6 +579,7 @@ export default {
   color: #101010;
   font-weight: 600;
   font-size: 19px;
+  margin: 0 !important;
 }
 
 .tutorial-item span{
@@ -649,14 +650,12 @@ export default {
 
 /* Mobile (max-width: 600px) */
 @media (max-width: 600px) {
-
   .white-button {
     font-size: 12px;
   }
   
   .section-title {
     margin-bottom: 0;
-
   }
 
   .files-title {
@@ -674,28 +673,62 @@ export default {
     gap: 2.5rem;
   }
 
-   .left-section {
-    gap: 10px !important;
-   }
-
-  .my-swiper, .last-files-swiper {
-    margin: 0;
-  }
-
-  .right-section,
   .left-section {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 0.5rem;  
   }
 
   .tutorial-grid {
-    display: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .tutorial-item {
+    width: 100%;
+    margin: 0;
+    min-height: 5rem;
+  }
+
+  .tutorial-item h2 {
+    font-size: 15px;
+  }
+
+  .tutorial-item span {
+    font-size: 12px;
+    line-height: 160%;
+  }
+
+  .tutorial-item svg {
+    width: 30px !important;
+    height: 30px !important;
+  }
+
+  .tutorial-item div {
+    gap: 0.5rem;
+  }
+
+  .last-files-swiper {
+    margin: 0;
   }
 
   .meeting-card {
     width: 250px;
     flex-shrink: 0;
+  }
+
+  .right-section {
+    gap: 1rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-image {
+    height: 7.5rem;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
   }
 }
 
