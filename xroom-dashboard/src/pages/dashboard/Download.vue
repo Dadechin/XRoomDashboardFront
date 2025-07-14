@@ -105,7 +105,7 @@ export default {
         if (downloadItem && downloadItem.file) {
           return {
             ...platform,
-            downloadUrl: downloadItem.file,
+            downloadUrl: "http://my.xroomapp.com:8000"+downloadItem.file,
             version: downloadItem.version,
             buttonText: `دانلود اپلیکیشن (نسخه ${downloadItem.version})`
           };
