@@ -1,62 +1,66 @@
 <template>
-        <div>
-            <!-- Top Header -->
+  <div>
+    <!-- Top Header -->
 
-            <!-- Description -->
-            <div class="section-description">
-                <div class="section-title">دانلود XRoom</div>
-                <p class="title-description">
-                    برای شروع , برنامه XRoom را برای پلتفرم خود دانلود کنید
-                </p>
+    <!-- Description -->
+    <div class="section-description">
+      <div class="section-title">دانلود XRoom</div>
+      <p class="title-description">
+        برای شروع , برنامه XRoom را برای پلتفرم خود دانلود کنید
+      </p>
+    </div>
+
+    <!-- Choose Device -->
+    <div class="chose-device">
+      <div class="section-title">لطفا پلتفرم خود را انتخاب کنید :</div>
+      
+      <div class="cards">
+        <div class="platform-card" v-for="(item, index) in platforms" :key="index">
+          <div class="card-objects">
+            <img :src="item.img" :alt="item.title" :style="item.imgStyle" />
+
+            <p class="card-title">{{ item.title }}</p>
+
+            <span class="card-subtitle">{{ item.subtitle }}</span>
+
+            <a
+              v-if="item.downloadUrl"
+              :href="item.downloadUrl"
+              target="_blank"
+              class="active-button"
+            >
+              دانلود اپلیکیشن (نسخه {{ item.version }})
+            </a>
+            <div v-else class="disabled-button">
+              {{ item.buttonText }}
             </div>
-
-            <!-- Choose Device -->
-             <div class="chose-device">
-                <div class="section-title">لطفا پلتفرم خود را انتخاب کنید :</div>
-                
-                    <div class="cards">
-                        <div class="platform-card" v-for="(item, index) in platforms" :key="index">
-                            <div class="card-objects">
-                                <img :src="item.img" :alt="item.title" :style="item.imgStyle" />
-
-                                <p class="card-title">{{ item.title }}</p>
-
-                                <span class="card-subtitle">{{ item.subtitle }}</span>
-
-                                <router-link
-                                to="/dashboard/download"
-                                :class="item.buttonText === 'دانلود اپلیکیشن' ? 'active-button' : 'disabled-button'"
-                                >
-                                {{ item.buttonText }}
-                                </router-link>
-                            </div>
-                        </div>
-                    </div>
-             </div>
-
-             <!-- download instructions -->
-              <span class="instructions-text">
-                برای دستورالعمل‌های نصب ، حتماً از <router-link to="/dashboard/download" style="color: #3A57E8;">پایگاه دانش ما</router-link> دیدن کنید.
-              </span>
+          </div>
         </div>
+      </div>
+    </div>
+
+    <!-- download instructions -->
+    <span class="instructions-text">
+      برای دستورالعمل‌های نصب ، حتماً از <router-link to="/dashboard/download" style="color: #3A57E8;">پایگاه دانش ما</router-link> دیدن کنید.
+    </span>
+  </div>
 </template>
 
 <script>
-
 export default {
   name: 'DashboardPage',
-  components: {
-
-  },
-  data () {
+  data() {
     return {
-        platforms: [
+      platforms: [
         {
           title: "Headsets",
           subtitle: "Meta Quest 2, Meta Quest Pro, Meta Quest 3",
           img: require("@/assets/img/image11.png"),
           imgStyle: "width: 70px;height: 80px;",
-          buttonText: "دانلود اپلیکیشن",
+          buttonText: "بزودی",
+          type: "metaquest",
+          downloadUrl: "",
+          version: ""
         },
         {
           title: "Windows",
@@ -64,12 +68,56 @@ export default {
           img: require("@/assets/img/image10.png"),
           imgStyle: "width: 90px;height: 80px;",
           buttonText: "بزودی",
+          type: "windows",
+          downloadUrl: "",
+          version: ""
         },
+        {
+          title: "Android",
+          subtitle: "For mobile devices",
+          // img: require("@/assets/img/android-icon.png"), // Add your Android icon
+          img: require("@/assets/img/android.png"),
+
+          imgStyle: "width: 70px;height: 80px;",
+          buttonText: "بزودی",
+          type: "android",
+          downloadUrl: "",
+          version: ""
+        }
       ],
+    }
+  },
+  async mounted() {
+    try {
+      const response = await fetch('http://my.xroomapp.com:8000/latest-download/');
+      const downloadData = await response.json();
+      
+      this.updatePlatformsWithDownloadData(downloadData);
+    } catch (error) {
+      console.error('Error fetching download data:', error);
+    }
+  },
+  methods: {
+    updatePlatformsWithDownloadData(downloadData) {
+      this.platforms = this.platforms.map(platform => {
+        const downloadItem = downloadData.find(item => item.type === platform.type);
+        
+        if (downloadItem && downloadItem.file) {
+          return {
+            ...platform,
+            downloadUrl: downloadItem.file,
+            version: downloadItem.version,
+            buttonText: `دانلود اپلیکیشن (نسخه ${downloadItem.version})`
+          };
+        }
+        
+        return platform;
+      });
     }
   }
 }
 </script>
+
 
 <style scoped>
 
