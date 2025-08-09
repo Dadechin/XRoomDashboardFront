@@ -235,7 +235,7 @@ export default {
         glbs: [],
         others: [],
       },
-      baseUrl: 'https://my.xroomapp.com/api/',
+      baseUrl: 'https://my.xroomapp.com/',
       isNewFileDialogOpen: false,
       currentUploadType: 'image',
       isPreviewDialogOpen: false,
