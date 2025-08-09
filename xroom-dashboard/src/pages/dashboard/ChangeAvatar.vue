@@ -69,7 +69,7 @@ export default {
       passwordForm: { current_password: '', new_password: '', confirm_password: '' },
       saving: false,
       userAvatarUrl: 'https://i.imgur.com/QbXfV6C.png',
-      baseUrl: 'http://194.62.43.230:8000'
+      baseUrl: 'https://my.xroomapp.com/api'
     };
   },
   setup() {
@@ -104,7 +104,7 @@ export default {
     userProfilePicUrl() {
       const customer = JSON.parse(localStorage.getItem('customer') || {});
       if (!customer.profile_img) return this.defaultProfileImage;
-      return `http://194.62.43.230:8000/media/${customer.profile_img}`;
+      return `https://my.xroomapp.com/api/media/${customer.profile_img}`;
     }
   },
   methods: {

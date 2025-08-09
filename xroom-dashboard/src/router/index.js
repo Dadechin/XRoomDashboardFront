@@ -122,7 +122,7 @@ router.beforeEach(async (to, from, next) => {
       if (response.data?.user) {
         localStorage.setItem('user', JSON.stringify(response.data.user));
       }
-      localStorage.setItem('baseUrl','http://194.62.43.230:8000');
+      localStorage.setItem('baseUrl','https://my.xroomapp.com/api');
       
       // If trying to access login page while authenticated, redirect to dashboard
       if (to.path === '/') {

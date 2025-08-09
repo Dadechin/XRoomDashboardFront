@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: 'http://194.62.43.230:8000',
+  baseURL: 'https://my.xroomapp.com/api/',
 });
 
 instance.interceptors.request.use(config => {

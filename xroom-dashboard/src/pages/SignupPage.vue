@@ -105,7 +105,7 @@ export default {
       };
 
       try {
-        const response = await axios.post('http://194.62.43.230:8000/signup', signupData);
+        const response = await axios.post('https://my.xroomapp.com/api/signup', signupData);
 
         if (response.data.token) {
           localStorage.setItem('token', response.data.token);

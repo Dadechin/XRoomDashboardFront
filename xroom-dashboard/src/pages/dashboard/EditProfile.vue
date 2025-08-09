@@ -143,7 +143,7 @@ export default {
       initialFormState: { first_name: '', last_name: '', semat: '' },
       saving: false,
       userAvatarUrl: 'https://i.imgur.com/QbXfV6C.png',
-      baseUrl: 'http://194.62.43.230:8000',
+      baseUrl: 'https://my.xroomapp.com/api',
     };
   },
   created() {

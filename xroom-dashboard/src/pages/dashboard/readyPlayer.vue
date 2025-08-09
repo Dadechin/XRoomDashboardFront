@@ -31,15 +31,15 @@ export default {
         user: { first_name: '', last_name: '' },
       },
       maleAvatars: [
-        { id: 1, name: 'مرد ۱', src: 'http://194.62.43.230:8000/media/2025/5/5/men1.glb' },
-        { id: 2, name: 'مرد ۲', src: 'http://194.62.43.230:8000/media/2025/5/5/men1.glb' },
-        { id: 7, name: 'مرد ۳', src: 'http://194.62.43.230:8000/media/2025/5/5/men1.glb' },
+        { id: 1, name: 'مرد ۱', src: 'https://my.xroomapp.com/api/media/2025/5/5/men1.glb' },
+        { id: 2, name: 'مرد ۲', src: 'https://my.xroomapp.com/api/media/2025/5/5/men1.glb' },
+        { id: 7, name: 'مرد ۳', src: 'https://my.xroomapp.com/api/media/2025/5/5/men1.glb' },
       ],
       femaleAvatars: [
-        { id: 4, name: 'زن ۱', src: 'http://194.62.43.230:8000/media/2025/5/5/men1.glb' },
-        { id: 10, name: 'زن ۳', src: 'http://194.62.43.230:8000/media/2025/5/5/men1.glb' },
+        { id: 4, name: 'زن ۱', src: 'https://my.xroomapp.com/api/media/2025/5/5/men1.glb' },
+        { id: 10, name: 'زن ۳', src: 'https://my.xroomapp.com/api/media/2025/5/5/men1.glb' },
       ],
-      baseUrl: 'http://194.62.43.230:8000',
+      baseUrl: 'https://my.xroomapp.com/api',
     };
   },
   computed: {

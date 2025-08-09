@@ -283,7 +283,7 @@ export default {
       currentPreviewType: null,
       currentPreviewIndex: null,
       previewUrl: '',
-      baseUrl: 'http://194.62.43.230:8000',
+      baseUrl: 'https://my.xroomapp.com/api',
       videoOptions: {
         autoplay: false,
         controls: true,
