@@ -185,7 +185,7 @@ export default {
 
       try {
         const token = localStorage.getItem('token');
-        let uploadUrl = `${this.baseUrl}/upload${this.currentUploadType.charAt(0).toUpperCase() + this.currentUploadType.slice(1)}/`;
+        let uploadUrl = `${this.baseUrl}upload${this.currentUploadType.charAt(0).toUpperCase() + this.currentUploadType.slice(1)}/`;
 
         if (this.currentUploadType === 'other') {
           console.log('File sent to "other" category:', this.selectedFile.name);
