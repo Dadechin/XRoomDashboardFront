@@ -414,7 +414,8 @@ export default {
     },
     getFullFileUrl(relativePath) {
       if (!relativePath) return '';
-      return `${this.baseUrl}${relativePath}`;
+      return `${"https://my.xroomapp.com"}${relativePath}`;
+      // return `${this.baseUrl}${relativePath}`;
     },
     formatDate(dateString) {
       if (!dateString) return '';
