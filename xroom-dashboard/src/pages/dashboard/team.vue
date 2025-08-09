@@ -88,7 +88,7 @@ export default {
       teamId: null,
       subscriptionId: null,
       isBillingModalVisible: false,
-      baseUrl: 'http://my.xroomapp.com:8000',
+      baseUrl: 'https://my.xroomapp.com/api',
     };
   },
   created() {

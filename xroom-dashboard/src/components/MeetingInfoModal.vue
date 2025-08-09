@@ -454,7 +454,7 @@ import moment from 'moment-jalaali';
 import RoomSelectionModal from './RoomSelectionModal.vue';
 import axios from 'axios';
 
-const API_BASE_URL = 'http://my.xroomapp.com:8000';
+const API_BASE_URL = 'https://my.xroomapp.com/api';
 
 export default {
   name: 'MeetingInfoModal',

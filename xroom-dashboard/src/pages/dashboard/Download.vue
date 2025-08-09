@@ -89,7 +89,7 @@ export default {
   },
   async mounted() {
     try {
-      const response = await fetch('http://my.xroomapp.com:8000/latest-download/');
+      const response = await fetch('https://my.xroomapp.com/api/latest-download/');
       const downloadData = await response.json();
       
       this.updatePlatformsWithDownloadData(downloadData);
@@ -105,7 +105,7 @@ export default {
         if (downloadItem && downloadItem.file) {
           return {
             ...platform,
-            downloadUrl: "http://my.xroomapp.com:8000"+downloadItem.file,
+            downloadUrl: "https://my.xroomapp.com/api"+downloadItem.file,
             version: downloadItem.version,
             buttonText: `دانلود اپلیکیشن (نسخه ${downloadItem.version})`
           };

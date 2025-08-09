@@ -40,7 +40,7 @@
             @click="selectSpace(space)"
             :class="{ selected: selectedSpace === space }"  
           >
-            <img :src="'http://my.xroomapp.com:8000' + space.img" alt="فضای اختصاصی" class="space-img" />
+            <img :src="'https://my.xroomapp.com/api' + space.img" alt="فضای اختصاصی" class="space-img" />
             <div class="space-info">
               <h3 class="space-name">{{ space.name }}</h3>
               <p class="space-type">{{ space.type }}</p>
@@ -159,7 +159,7 @@ export default {
         }
 
         const response = await axios.get(
-          'http://my.xroomapp.com:8000/get_assigned_assetbundle_rooms',
+          'https://my.xroomapp.com/api/get_assigned_assetbundle_rooms',
           {
             headers: {
               Authorization: `Token ${token}`,
@@ -220,7 +220,7 @@ export default {
         }
 
         const response = await axios.post(
-          'http://my.xroomapp.com:8000/add_space',
+          'https://my.xroomapp.com/api/add_space',
           spaceData,
           {
             headers: {

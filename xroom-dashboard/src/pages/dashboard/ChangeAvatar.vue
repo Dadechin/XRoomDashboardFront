@@ -74,19 +74,19 @@ export default {
   },
   setup() {
     const maleAvatars = ref([
-      { id: 1, name: 'مرد ۱', src: 'http://my.xroomapp.com:8000/media/user_glbs/men1.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/men1.png' },
-      { id: 2, name: 'مرد ۲', src: 'http://my.xroomapp.com:8000/media/user_glbs/men2.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/men2.png' },
-      { id: 7, name: 'مرد ۳', src: 'http://my.xroomapp.com:8000/media/user_glbs/men3.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/men3.png' },
-      { id: 17, name: 'مرد ۴', src: 'http://my.xroomapp.com:8000/media/user_glbs/men4.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/men4.png' },
+      { id: 1, name: 'مرد ۱', src: 'https://my.xroomapp.com/api/media/user_glbs/men1.glb', profile_img: 'https://my.xroomapp.com/api/media/user_images/men1.png' },
+      { id: 2, name: 'مرد ۲', src: 'https://my.xroomapp.com/api/media/user_glbs/men2.glb', profile_img: 'https://my.xroomapp.com/api/media/user_images/men2.png' },
+      { id: 7, name: 'مرد ۳', src: 'https://my.xroomapp.com/api/media/user_glbs/men3.glb', profile_img: 'https://my.xroomapp.com/api/media/user_images/men3.png' },
+      { id: 17, name: 'مرد ۴', src: 'https://my.xroomapp.com/api/media/user_glbs/men4.glb', profile_img: 'https://my.xroomapp.com/api/media/user_images/men4.png' },
     ]);
 
     const femaleAvatars = ref([
-      { id: 4, name: 'زن ۱', src: 'http://my.xroomapp.com:8000/media/user_glbs/women1.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/women1.png' },
-      { id: 10, name: 'زن ۲', src: 'http://my.xroomapp.com:8000/media/user_glbs/women2.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/women2.png' },
-      { id: 11, name: 'زن ۳', src: 'http://my.xroomapp.com:8000/media/user_glbs/women3.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/women3.png' },
-      { id: 12, name: 'زن ۴', src: 'http://my.xroomapp.com:8000/media/user_glbs/women4.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/women4.png' },
-      { id: 13, name: 'زن ۵', src: 'http://my.xroomapp.com:8000/media/user_glbs/women6.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/women6.png' },
-      { id: 14, name: 'زن ۶', src: 'http://my.xroomapp.com:8000/media/user_glbs/women7.glb', profile_img: 'http://my.xroomapp.com:8000/media/user_images/women7.png' },
+      { id: 4, name: 'زن ۱', src: 'https://my.xroomapp.com/api/media/user_glbs/women1.glb', profile_img: 'https://my.xroomapp.com/api/media/user_images/women1.png' },
+      { id: 10, name: 'زن ۲', src: 'https://my.xroomapp.com/api/media/user_glbs/women2.glb', profile_img: 'https://my.xroomapp.com/api/media/user_images/women2.png' },
+      { id: 11, name: 'زن ۳', src: 'https://my.xroomapp.com/api/media/user_glbs/women3.glb', profile_img: 'https://my.xroomapp.com/api/media/user_images/women3.png' },
+      { id: 12, name: 'زن ۴', src: 'https://my.xroomapp.com/api/media/user_glbs/women4.glb', profile_img: 'https://my.xroomapp.com/api/media/user_images/women4.png' },
+      { id: 13, name: 'زن ۵', src: 'https://my.xroomapp.com/api/media/user_glbs/women6.glb', profile_img: 'https://my.xroomapp.com/api/media/user_images/women6.png' },
+      { id: 14, name: 'زن ۶', src: 'https://my.xroomapp.com/api/media/user_glbs/women7.glb', profile_img: 'https://my.xroomapp.com/api/media/user_images/women7.png' },
     ]);
 
     const selectedAvatar = ref(null);

@@ -114,7 +114,7 @@ export default {
         { path: '/img/sample-logo.png', alt: 'نمونه لوگو' },
         { path: '/img/sample-logo.png', alt: 'نمونه لوگو' },
       ],
-      baseUrl: 'http://my.xroomapp.com:8000',
+      baseUrl: 'https://my.xroomapp.com/api',
     };
   },
   created() {

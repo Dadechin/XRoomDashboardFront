@@ -319,7 +319,7 @@
 <script>
 import axios from 'axios';
 
-const API_BASE_URL = 'http://my.xroomapp.com:8000';
+const API_BASE_URL = 'https://my.xroomapp.com/api';
 const DEFAULT_IMAGE = 'https://via.placeholder.com/150';
 
 export default {

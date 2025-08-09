@@ -233,7 +233,7 @@ import 'swiper/css';
 import { FreeMode, Pagination } from 'swiper/modules';
 import axios from 'axios';
 
-const API_BASE_URL = 'http://my.xroomapp.com:8000';
+const API_BASE_URL = 'https://my.xroomapp.com/api';
 
 export default {
   name: 'Meetings',
