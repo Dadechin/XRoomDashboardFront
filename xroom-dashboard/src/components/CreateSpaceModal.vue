@@ -40,7 +40,7 @@
             @click="selectSpace(space)"
             :class="{ selected: selectedSpace === space }"  
           >
-            <img :src="'https://my.xroomapp.com/api' + space.img" alt="فضای اختصاصی" class="space-img" />
+            <img :src="'https://my.xroomapp.com' + space.img" alt="فضای اختصاصی" class="space-img" />
             <div class="space-info">
               <h3 class="space-name">{{ space.name }}</h3>
               <p class="space-type">{{ space.type }}</p>
