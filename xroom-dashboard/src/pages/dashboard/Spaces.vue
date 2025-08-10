@@ -34,7 +34,7 @@
           class="mySwiper"
         >
           <swiper-slide v-for="(space, index) in filteredSpaces" :key="index" class="card">
-            <img :src="'https://my.xroomapp.com/api' + space.img" alt="تصویر فضا" />
+            <img :src="'https://my.xroomapp.com' + space.img" alt="تصویر فضا" />
             <div class="card-texts">
               <h2>{{ space.name }}</h2>
               <p class="space-capacity">
