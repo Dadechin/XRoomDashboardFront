@@ -362,7 +362,7 @@ export default {
             image: imagePath
               ? imagePath.startsWith('http')
                 ? imagePath
-                : `${API_BASE_URL}${imagePath}`
+                : `${"https://my.xroomapp.com"}${imagePath}`
               : 'https://via.placeholder.com/150',
             type: isSpaceUsed
               ? meeting.space_data?.name || 'جلسه'
