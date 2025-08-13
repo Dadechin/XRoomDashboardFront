@@ -60,7 +60,7 @@
               این نماد در کنار نام شما و برای دیگران در واقعیت مجازی و در پلتفرم وب قابل مشاهده خواهد بود.
             </p>
             <div style="display: flex; align-items: center;">
-              <img :src="userProfilePicUrl" class="profile-image" />
+              <img :src="'/api/media/'+userProfilePicUrl" class="profile-image" />
               <label class="profile-upload" for="profile-upload">
                 <span>
                   <svg
