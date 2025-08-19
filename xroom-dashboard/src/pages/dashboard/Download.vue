@@ -1,38 +1,41 @@
 <template>
   <div>
-    <!-- Top Header -->
-
     <!-- Description -->
     <div class="section-description">
       <div class="section-title">دانلود XRoom</div>
       <p class="title-description">
-        برای شروع , برنامه XRoom را برای پلتفرم خود دانلود کنید
+        برای شروع، برنامه XRoom را دانلود کنید
       </p>
     </div>
 
-    <!-- Choose Device -->
+    <!-- Cards -->
     <div class="chose-device">
-      <div class="section-title">لطفا پلتفرم خود را انتخاب کنید :</div>
-      
       <div class="cards">
-        <div class="platform-card" v-for="(item, index) in platforms" :key="index">
+        <div 
+          class="platform-card" 
+          v-for="(item, index) in downloads" 
+          :key="index"
+        >
           <div class="card-objects">
-            <img :src="item.img" :alt="item.title" :style="item.imgStyle" />
+            <img 
+              :src="item.thumbnail" 
+              :alt="item.name" 
+              style="width: 80px; height: 80px; object-fit: contain;" 
+            />
 
-            <p class="card-title">{{ item.title }}</p>
-
-            <span class="card-subtitle">{{ item.subtitle }}</span>
+            <p class="card-title">{{ item.name }}</p>
+            <span class="card-subtitle">{{ item.description }}</span>
 
             <a
-              v-if="item.downloadUrl"
-              :href="item.downloadUrl"
+              v-if="item.file"
+              :href="item.file"
               target="_blank"
               class="active-button"
             >
-              دانلود اپلیکیشن (نسخه {{ item.version }})
+              دانلود  (نسخه {{ item.version }})
             </a>
             <div v-else class="disabled-button">
-              {{ item.buttonText }}
+              بزودی
             </div>
           </div>
         </div>
@@ -41,82 +44,33 @@
 
     <!-- download instructions -->
     <span class="instructions-text">
-      برای دستورالعمل‌های نصب ، حتماً از <router-link to="/dashboard/download" style="color: #3A57E8;">پایگاه دانش ما</router-link> دیدن کنید.
+      برای دستورالعمل‌های نصب ، حتماً از 
+      <router-link to="/dashboard/download" style="color: #3A57E8;">پایگاه دانش ما</router-link> 
+      دیدن کنید.
     </span>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'DashboardPage',
+  name: 'DownloadPage',
   data() {
     return {
-      platforms: [
-        {
-          title: "Headsets",
-          subtitle: "Meta Quest 2, Meta Quest Pro, Meta Quest 3",
-          img: require("@/assets/img/image11.png"),
-          imgStyle: "width: 70px;height: 80px;",
-          buttonText: "بزودی",
-          type: "metaquest",
-          downloadUrl: "",
-          version: ""
-        },
-        {
-          title: "Windows",
-          subtitle: "Desktop mode for PC",
-          img: require("@/assets/img/image10.png"),
-          imgStyle: "width: 90px;height: 80px;",
-          buttonText: "بزودی",
-          type: "windows",
-          downloadUrl: "",
-          version: ""
-        },
-        {
-          title: "Android",
-          subtitle: "For mobile devices",
-          // img: require("@/assets/img/android-icon.png"), // Add your Android icon
-          img: require("@/assets/img/android.png"),
-
-          imgStyle: "width: 70px;height: 80px;",
-          buttonText: "بزودی",
-          type: "android",
-          downloadUrl: "",
-          version: ""
-        }
-      ],
+      downloads: []
     }
   },
   async mounted() {
     try {
       const response = await fetch('https://my.xroomapp.com/api/latest-download/');
-      const downloadData = await response.json();
-      
-      this.updatePlatformsWithDownloadData(downloadData);
+      this.downloads = await response.json();
     } catch (error) {
       console.error('Error fetching download data:', error);
-    }
-  },
-  methods: {
-    updatePlatformsWithDownloadData(downloadData) {
-      this.platforms = this.platforms.map(platform => {
-        const downloadItem = downloadData.find(item => item.type === platform.type);
-        
-        if (downloadItem && downloadItem.file) {
-          return {
-            ...platform,
-            downloadUrl: "https://my.xroomapp.com"+downloadItem.file,
-            version: downloadItem.version,
-            buttonText: `دانلود اپلیکیشن (نسخه ${downloadItem.version})`
-          };
-        }
-        
-        return platform;
-      });
     }
   }
 }
 </script>
+
+
 
 
 <style scoped>
