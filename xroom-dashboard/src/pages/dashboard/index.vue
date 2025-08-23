@@ -170,7 +170,7 @@
               بارگذاری فایل
             </button>
             <router-link class="white-button" to="/dashboard/files">
-              مدیریت فایل‌ها fffffffffffffffff
+              مدیریت فایل‌ها
             </router-link>
           </div>
         </div>
