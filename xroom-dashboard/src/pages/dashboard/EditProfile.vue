@@ -8,7 +8,7 @@
               می‌توانید با آپلود یک تصویر، به شخصی‌سازی آواتار خود، ظاهر خود را در محیط واقعیت مجازی ویرایش کنید.
             </p>
             <div class="avatar-actions">
-              <img :src="'/api/media/'+userProfilePicUrl" class="avatar-image" />
+              <img :src="userProfilePicUrl" class="avatar-image" />
               <div style="display: flex;align-items: center;gap: 2.5rem;">
                 <span style="display: flex;align-items: center;">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -60,7 +60,7 @@
               این نماد در کنار نام شما و برای دیگران در واقعیت مجازی و در پلتفرم وب قابل مشاهده خواهد بود.
             </p>
             <div style="display: flex; align-items: center;">
-              <img :src="'/api/media/'+userProfilePicUrl" class="profile-image" />
+              <img :src=" userProfilePicUrl" class="profile-image" />
               <label class="profile-upload" for="profile-upload">
                 <span>
                   <svg
