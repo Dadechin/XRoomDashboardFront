@@ -170,7 +170,7 @@
               بارگذاری فایل
             </button>
             <router-link class="white-button" to="/dashboard/files">
-              مدیریت فایل‌ها
+              مدیریت فایل‌ها fffffffffffffffff
             </router-link>
           </div>
         </div>
@@ -235,7 +235,7 @@
     <NewFileDialog
       :is-open="isNewFileDialogOpen"
       :initial-upload-type="currentUploadType"
-      :base-url="baseUrl"
+      :base-url="(baseUrl+'/')"
       @close="closeDialog"
       @upload-success="fetchUserData"
     />
