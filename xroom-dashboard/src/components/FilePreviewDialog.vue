@@ -13,20 +13,8 @@
           >
             <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" fill="#101010" />
             <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" stroke="#E2DEE9" />
-            <path
-              d="M21 11L11 21"
-              stroke="white"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M11 11L21 21"
-              stroke="white"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
+            <path d="M21 11L11 21" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M11 11L21 21" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </button>
       </div>
@@ -66,6 +54,18 @@
           ></model-viewer>
         </div>
       </div>
+
+      <!-- === Edit Form === -->
+     <div
+        class="edit-form"
+        v-if="previewIndex !== null && previewType === 'image'"
+        style="margin: 30px; padding-right: 12px; display: flex; flex-direction: column; align-items: center; gap: 12px;"
+      >
+        <h3>ویرایش اطلاعات تصویر</h3>
+        <input type="text" v-model="editName" placeholder="نام جدید" />
+        <button class="download-btn" @click="editFile">ثبت تغییرات</button>
+      </div>
+
       <div class="modal-actions">
         <button class="close-btn" @click="closePreviewDialog">بستن</button>
         <button class="delete-btn" @click="deleteFile" v-if="previewIndex !== null">حذف</button>
@@ -89,26 +89,11 @@ export default {
     VuePlyr,
   },
   props: {
-    isOpen: {
-      type: Boolean,
-      default: false,
-    },
-    previewUrl: {
-      type: String,
-      default: '',
-    },
-    previewType: {
-      type: String,
-      default: null,
-    },
-    previewIndex: {
-      type: Number,
-      default: null,
-    },
-    baseUrl: {
-      type: String,
-      required: true,
-    },
+    isOpen: Boolean,
+    previewUrl: String,
+    previewType: String,
+    previewIndex: Number,
+    baseUrl: String,
     plyrOptions: {
       type: Object,
       default: () => ({
@@ -117,6 +102,12 @@ export default {
         autoplay: false,
       }),
     },
+  },
+  data() {
+    return {
+      editName: '',
+      editDescription: '',
+    };
   },
   watch: {
     isOpen(newVal) {
@@ -137,19 +128,6 @@ export default {
       this.$emit('close');
     },
     async downloadFile() {
-      // Define Toast configuration with SweetAlert2
-      const Toast = this.$swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-          toast.onmouseenter = this.$swal.stopTimer;
-          toast.onmouseleave = this.$swal.resumeTimer;
-        },
-      });
-
       try {
         const response = await fetch(this.previewUrl);
         const blob = await response.blob();
@@ -162,77 +140,74 @@ export default {
         window.URL.revokeObjectURL(downloadUrl);
         document.body.removeChild(a);
 
-        // Show success Toast
-        Toast.fire({
-          icon: 'success',
-          title: 'فایل با موفقیت دانلود شد',
-        });
+        this.showToast('success', 'فایل با موفقیت دانلود شد');
       } catch (error) {
         console.error('Error downloading file:', error);
-
-        // Show error Toast
-        Toast.fire({
-          icon: 'error',
-          title: 'خطا در دانلود فایل',
-        });
+        this.showToast('error', 'خطا در دانلود فایل');
       }
     },
     async deleteFile() {
       if (this.previewIndex === null || !this.previewType) return;
 
-      // Define Toast configuration with SweetAlert2
-      const Toast = this.$swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-          toast.onmouseenter = this.$swal.stopTimer;
-          toast.onmouseleave = this.$swal.resumeTimer;
-        },
-      });
-
       try {
         const token = localStorage.getItem('token');
-        const deleteUrl = `${this.baseUrl}/delete${this.previewType.charAt(0).toUpperCase() + this.previewType.slice(1)}/${this.previewIndex}/`;
+        const deleteUrl = `${this.baseUrl}deleteImage/${this.previewIndex}/`;
 
         await axios.delete(deleteUrl, {
-          headers: {
-            'Authorization': `Token ${token}`,
-          },
+          headers: { Authorization: `Token ${token}` },
         });
 
         this.$emit('delete-success');
         this.closePreviewDialog();
+        this.showToast('success', 'فایل با موفقیت حذف شد');
+        window.location.reload();
 
-        // Show success Toast
-        Toast.fire({
-          icon: 'success',
-          title: 'فایل با موفقیت حذف شد',
-        });
       } catch (error) {
         console.error('Error deleting file:', error);
-
-        let errorMessage = 'خطا در حذف فایل';
-        if (error.response) {
-          if (error.response.status === 401) {
-            errorMessage = 'عدم دسترسی: لطفا دوباره وارد شوید.';
-          } else if (error.response.status === 400) {
-            errorMessage = 'درخواست نامعتبر است.';
-          } else {
-            errorMessage = error.response.data.message || errorMessage;
-          }
-        } else if (error.request) {
-          errorMessage = 'مشکل در ارتباط با سرور. لطفا دوباره تلاش کنید.';
-        }
-
-        // Show error Toast
-        Toast.fire({
-          icon: 'error',
-          title: errorMessage,
-        });
+        this.showToast('error', 'خطا در حذف فایل');
       }
+    },
+    async editFile() {
+      if (!this.editName && !this.editDescription) {
+        this.showToast('error', 'لطفا نام یا توضیحات را وارد کنید');
+        return;
+      }
+
+      try {
+        const token = localStorage.getItem('token');
+        const editUrl = `${this.baseUrl}editImage/`;
+
+        const response = await axios.patch(
+          editUrl,
+          {
+            name: this.editName,
+            description: this.editDescription,
+            image_id:this.previewIndex,
+          },
+          {
+            headers: { Authorization: `Token ${token}` },
+          }
+        );
+
+        this.$emit('edit-success', response.data);
+        this.showToast('success', 'اطلاعات تصویر با موفقیت ویرایش شد');
+        window.location.reload();
+
+
+      } catch (error) {
+        console.error('Error editing file:', error);
+        this.showToast('error', 'خطا در ویرایش فایل');
+      }
+    },
+    showToast(icon, title) {
+      this.$swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon,
+        title,
+        showConfirmButton: false,
+        timer: 3000,
+      });
     },
   },
 };
