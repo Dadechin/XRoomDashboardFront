@@ -1,72 +1,5 @@
 <template>
   <div class="tab-content">
-    <!-- Team Logo Section -->
-    <div class="team-logo">
-      <div class="card-title">
-        <h2>لوگوی تیم</h2>
-        <p>این لوگو در اتاق‌های شما نمایش داده می‌شود. توصیه می‌شود از تصویر شفاف با نسبت 2:1 استفاده کنید.</p>
-      </div>
-      <div class="logo-info">
-        <img :src="teamLogo || require('@/assets/img/team-logo.jpg')" alt="team logo" />
-        <label for="file-upload">
-          <span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="19"
-              height="19"
-              viewBox="0 0 16 16"
-              fill="none"
-            >
-              <path
-                d="M2.66602 11.3333V12.6666C2.66602 13.0202 2.80649 13.3593 3.05654 13.6094C3.30659 13.8594 3.64573 13.9999 3.99935 13.9999H11.9993C12.353 13.9999 12.6921 13.8594 12.9422 13.6094C13.1922 13.3593 13.3327 13.0202 13.3327 12.6666V11.3333"
-                stroke="white"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M4.66602 6.00008L7.99935 2.66675L11.3327 6.00008"
-                stroke="white"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M8 2.66675V10.6667"
-                stroke="white"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </span>
-          <span>آپلود</span>
-        </label>
-        <input
-          id="file-upload"
-          type="file"
-          accept="image/*"
-          style="display: none;"
-          @change="handleLogoUpload"
-          ref="fileUpload"
-        />
-      </div>
-      <div class="logo-sample">
-        <div class="logo-sample-title">
-          <h2>نمونه</h2>
-          <span>نمایش لوگوی تیم شما در اتاق‌ها به این شکل خواهد بود.</span>
-        </div>
-        <div class="sample-logos">
-          <img
-            v-for="(logo, index) in sampleLogos"
-            :key="index"
-            :src="require(`@/assets${logo.path}`)"
-            :alt="logo.alt"
-          />
-        </div>
-      </div>
-    </div>
-
     <!-- Team Info Section -->
     <div class="team-info">
       <div class="card-title">
@@ -88,6 +21,15 @@
               v-model="form.activityType"
             />
           </div>
+          <div class="form-group">
+            <label for="max_persons">حداکثر اعضا</label>
+            <input
+              id="max_persons"
+              type="number"
+              v-model="form.maxPersons"
+              min="1"
+            />
+          </div>
           <button type="submit" class="submit-btn">تایید</button>
         </form>
       </div>
@@ -96,25 +38,19 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
-  name: 'TeamDetails',
+  name: "TeamDetails",
   data() {
     return {
       form: {
-        teamName: '',
-        activityType: '',
+        teamName: "",
+        activityType: "",
+        maxPersons: null,
         teamId: null,
       },
-      teamLogo: null,
-      uploadedLogoFile: null,
-      sampleLogos: [
-        { path: '/img/sample-logo.png', alt: 'نمونه لوگو' },
-        { path: '/img/sample-logo.png', alt: 'نمونه لوگو' },
-        { path: '/img/sample-logo.png', alt: 'نمونه لوگو' },
-      ],
-      baseUrl: 'https://my.xroomapp.com/api',
+      baseUrl: "https://my.xroomapp.com/api",
     };
   },
   created() {
@@ -122,134 +58,73 @@ export default {
   },
   methods: {
     async fetchTeamData() {
-      // Define Toast configuration with SweetAlert2
       const Toast = this.$swal.mixin({
         toast: true,
-        position: 'top-end',
+        position: "top-end",
         showConfirmButton: false,
         timer: 3000,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-          toast.onmouseenter = this.$swal.stopTimer;
-          toast.onmouseleave = this.$swal.resumeTimer;
-        },
       });
 
       try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          // Show error Toast for missing token
-          Toast.fire({
-            icon: 'error',
-            title: 'توکن احراز هویت یافت نشد.',
-          });
-          throw new Error('No authentication token found.');
-        }
-
+        const token = localStorage.getItem("token");
         const response = await axios.get(`${this.baseUrl}/get_team`, {
-          headers: { Authorization: `Token ${token}`, 'Content-Type': 'application/json' },
+          headers: { Authorization: `Token ${token}` },
         });
+
         const team = response.data.teams[0];
         if (team) {
-          this.form.teamName = team.name || '';
-          this.form.activityType = team.description || '';
+          this.form.teamName = team.name || "";
+          this.form.activityType = team.description || "";
+          this.form.maxPersons = team.max_persons || null;
           this.form.teamId = team.id;
-          this.teamLogo = team.logo ? `${this.baseUrl}${team.logo}` : null;
         } else {
-          // Show error Toast for no team data
-          Toast.fire({
-            icon: 'error',
-            title: 'هیچ اطلاعاتی برای تیم یافت نشد.',
-          });
+          Toast.fire({ icon: "error", title: "هیچ اطلاعاتی برای تیم یافت نشد." });
         }
       } catch (error) {
-        // Show error Toast for fetch failure
-        Toast.fire({
-          icon: 'error',
-          title: 'خطا در بارگذاری اطلاعات تیم.',
-        });
-        console.error('Fetch team error:', error);
+        Toast.fire({ icon: "error", title: "خطا در بارگذاری اطلاعات تیم." });
+        console.error("Fetch team error:", error);
       }
     },
-    handleLogoUpload(event) {
-      this.uploadedLogoFile = event.target.files[0];
-      if (this.uploadedLogoFile) {
-        this.teamLogo = URL.createObjectURL(this.uploadedLogoFile);
-      }
-    },
+
     async submitForm() {
-      // Define Toast configuration with SweetAlert2
       const Toast = this.$swal.mixin({
         toast: true,
-        position: 'top-end',
+        position: "top-end",
         showConfirmButton: false,
         timer: 3000,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-          toast.onmouseenter = this.$swal.stopTimer;
-          toast.onmouseleave = this.$swal.resumeTimer;
-        },
       });
 
-      if (!this.form.teamName && !this.form.activityType && !this.uploadedLogoFile) {
-        // Show error Toast for empty form
-        Toast.fire({
-          icon: 'error',
-          title: 'لطفاً حداقل یک فیلد یا لوگو وارد کنید.',
-        });
+      if (!this.form.teamName && !this.form.activityType && !this.form.maxPersons) {
+        Toast.fire({ icon: "error", title: "لطفاً حداقل یک فیلد وارد کنید." });
         return;
       }
 
       try {
-        const formData = new FormData();
-        if (this.form.teamName) formData.append('name', this.form.teamName);
-        if (this.form.activityType) formData.append('description', this.form.activityType);
-        if (this.uploadedLogoFile) formData.append('logo', this.uploadedLogoFile);
+        const token = localStorage.getItem("token");
 
-        const token = localStorage.getItem('token');
-        if (!token) {
-          // Show error Toast for missing token
-          Toast.fire({
-            icon: 'error',
-            title: 'توکن احراز هویت یافت نشد.',
-          });
-          throw new Error('No authentication token found.');
-        }
+        const response = await axios.patch(
+          `${this.baseUrl}/editTeam/`,
+          {
+            team_id: this.form.teamId,
+            name: this.form.teamName,
+            description: this.form.activityType,
+            max_persons: this.form.maxPersons,
+          },
+          {
+            headers: { Authorization: `Token ${token}` },
+          }
+        );
 
-        await axios.patch(`${this.baseUrl}/update_team/${this.form.teamId}/`, formData, {
-          headers: { Authorization: `Token ${token}`, 'Content-Type': 'multipart/form-data' },
-        });
+        console.log(response.data);
+        
 
-        this.$emit('update:team-data', {
-          teamName: this.form.teamName,
-          activityType: this.form.activityType,
-          teamLogo: this.uploadedLogoFile,
-        });
+        Toast.fire({ icon: "success", title: "اطلاعات تیم با موفقیت به‌روزرسانی شد." });
 
-        // Show success Toast
-        Toast.fire({
-          icon: 'success',
-          title: 'اطلاعات تیم با موفقیت به‌روزرسانی شد.',
-        });
-
-        this.resetForm();
-        await this.fetchTeamData();
+        // refresh data
+        this.fetchTeamData();
       } catch (error) {
-        // Show error Toast for update failure
-        Toast.fire({
-          icon: 'error',
-          title: 'خطا در به‌روزرسانی اطلاعات تیم.',
-        });
-        console.error('Update team error:', error);
-      }
-    },
-    resetForm() {
-      this.form.teamName = '';
-      this.form.activityType = '';
-      this.teamLogo = null;
-      this.uploadedLogoFile = null;
-      if (this.$refs.fileUpload) {
-        this.$refs.fileUpload.value = '';
+        Toast.fire({ icon: "error", title: "خطا در به‌روزرسانی اطلاعات تیم." });
+        console.error("Update team error:", error);
       }
     },
   },
