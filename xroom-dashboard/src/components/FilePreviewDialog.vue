@@ -147,58 +147,96 @@ export default {
       }
     },
     async deleteFile() {
-      if (this.previewIndex === null || !this.previewType) return;
+  if (this.previewIndex === null || !this.previewType) return;
 
-      try {
-        const token = localStorage.getItem('token');
-        const deleteUrl = `${this.baseUrl}deleteImage/${this.previewIndex}/`;
+  try {
+    const token = localStorage.getItem('token');
 
-        await axios.delete(deleteUrl, {
-          headers: { Authorization: `Token ${token}` },
-        });
-
-        this.$emit('delete-success');
-        this.closePreviewDialog();
-        this.showToast('success', 'فایل با موفقیت حذف شد');
-        window.location.reload();
-
-      } catch (error) {
-        console.error('Error deleting file:', error);
-        this.showToast('error', 'خطا در حذف فایل');
-      }
-    },
-    async editFile() {
-      if (!this.editName && !this.editDescription) {
-        this.showToast('error', 'لطفا نام یا توضیحات را وارد کنید');
+    let deleteUrl = '';
+    switch (this.previewType) {
+      case 'image':
+        deleteUrl = `${this.baseUrl}deleteImage/${this.previewIndex}/`;
+        break;
+      case 'pdf':
+        deleteUrl = `${this.baseUrl}deletePdf/${this.previewIndex}/`;
+        break;
+      case 'video':
+        deleteUrl = `${this.baseUrl}deleteVideo/${this.previewIndex}/`;
+        break;
+      case 'glb':
+        deleteUrl = `${this.baseUrl}deleteGlb/${this.previewIndex}/`;
+        break;
+      default:
+        this.showToast('error', 'نوع فایل پشتیبانی نمی‌شود');
         return;
-      }
+    }
 
-      try {
-        const token = localStorage.getItem('token');
-        const editUrl = `${this.baseUrl}editImage/`;
+    await axios.delete(deleteUrl, {
+      headers: { Authorization: `Token ${token}` },
+    });
 
-        const response = await axios.patch(
-          editUrl,
-          {
-            name: this.editName,
-            description: this.editDescription,
-            image_id:this.previewIndex,
-          },
-          {
-            headers: { Authorization: `Token ${token}` },
-          }
-        );
+    this.$emit('delete-success');
+    this.closePreviewDialog();
+    this.showToast('success', 'فایل با موفقیت حذف شد');
+    window.location.reload();
 
-        this.$emit('edit-success', response.data);
-        this.showToast('success', 'اطلاعات تصویر با موفقیت ویرایش شد');
-        window.location.reload();
+  } catch (error) {
+    console.error('Error deleting file:', error);
+    this.showToast('error', 'خطا در حذف فایل');
+  }
+},
 
+async editFile() {
+  if (!this.editName && !this.editDescription) {
+    this.showToast('error', 'لطفا نام یا توضیحات را وارد کنید');
+    return;
+  }
 
-      } catch (error) {
-        console.error('Error editing file:', error);
-        this.showToast('error', 'خطا در ویرایش فایل');
-      }
-    },
+  try {
+    const token = localStorage.getItem('token');
+
+    let editUrl = '';
+    let payload = {
+      name: this.editName,
+      description: this.editDescription,
+    };
+
+    switch (this.previewType) {
+      case 'image':
+        editUrl = `${this.baseUrl}editImage/`;
+        payload.image_id = this.previewIndex;
+        break;
+      case 'pdf':
+        editUrl = `${this.baseUrl}editPdf/`;
+        payload.pdf_id = this.previewIndex;
+        break;
+      case 'video':
+        editUrl = `${this.baseUrl}editVideo/`;
+        payload.video_id = this.previewIndex;
+        break;
+      case 'glb':
+        editUrl = `${this.baseUrl}editGlb/`;
+        payload.glb_id = this.previewIndex;
+        break;
+      default:
+        this.showToast('error', 'نوع فایل پشتیبانی نمی‌شود');
+        return;
+    }
+
+    const response = await axios.patch(editUrl, payload, {
+      headers: { Authorization: `Token ${token}` },
+    });
+
+    this.$emit('edit-success', response.data);
+    this.showToast('success', 'اطلاعات فایل با موفقیت ویرایش شد');
+    window.location.reload();
+
+  } catch (error) {
+    console.error('Error editing file:', error);
+    this.showToast('error', 'خطا در ویرایش فایل');
+  }
+},
+
     showToast(icon, title) {
       this.$swal.fire({
         toast: true,
