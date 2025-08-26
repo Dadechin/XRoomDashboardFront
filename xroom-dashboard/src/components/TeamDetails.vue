@@ -3,33 +3,36 @@
     <!-- Team Info Section -->
     <div class="team-info">
       <div class="card-title">
-        <h2>جزئیات تیم</h2>
+        <div class="title-with-image">
+          <h2>جزئیات تیم</h2>
+          <div v-if="form.image" class="team-image">
+            <img :src="form.image" alt="تصویر تیم" />
+          </div>
+        </div>
+
         <form @submit.prevent="submitForm">
           <div class="form-group">
             <label for="team_name">نام تیم</label>
-            <input
-              id="team_name"
-              type="text"
-              v-model="form.teamName"
-            />
+            <input id="team_name" type="text" v-model="form.teamName" />
           </div>
+ 
+        
+
           <div class="form-group">
             <label for="type_activity">نوع فعالیت</label>
-            <input
-              id="type_activity"
-              type="text"
-              v-model="form.activityType"
-            />
+            <input id="type_activity" type="text" v-model="form.activityType" />
           </div>
           <div class="form-group">
             <label for="max_persons">حداکثر اعضا</label>
-            <input
-              id="max_persons"
-              type="number"
-              v-model="form.maxPersons"
-              min="1"
-            />
+            <input id="max_persons" type="number" v-model="form.maxPersons" min="1" />
           </div>
+
+          <!-- New file input -->
+          <div class="form-group">
+            <label for="team_image">تصویر پروفایل تیم</label>
+            <input id="team_image" type="file" @change="uploadImage" />
+          </div>
+
           <button type="submit" class="submit-btn">تایید</button>
         </form>
       </div>
@@ -49,6 +52,7 @@ export default {
         activityType: "",
         maxPersons: null,
         teamId: null,
+        image: null, // ✅ add image
       },
       baseUrl: "https://my.xroomapp.com/api",
     };
@@ -57,79 +61,124 @@ export default {
     this.fetchTeamData();
   },
   methods: {
-    async fetchTeamData() {
-      const Toast = this.$swal.mixin({
-        toast: true,
-        position: "top-end",
-        showConfirmButton: false,
-        timer: 3000,
+  async fetchTeamData() {
+    const Toast = this.$swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+    });
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(`${this.baseUrl}/get_team`, {
+        headers: { Authorization: `Token ${token}` },
       });
 
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(`${this.baseUrl}/get_team`, {
-          headers: { Authorization: `Token ${token}` },
-        });
-
-        const team = response.data.teams[0];
-        if (team) {
-          this.form.teamName = team.name || "";
-          this.form.activityType = team.description || "";
-          this.form.maxPersons = team.max_persons || null;
-          this.form.teamId = team.id;
-        } else {
-          Toast.fire({ icon: "error", title: "هیچ اطلاعاتی برای تیم یافت نشد." });
-        }
-      } catch (error) {
-        Toast.fire({ icon: "error", title: "خطا در بارگذاری اطلاعات تیم." });
-        console.error("Fetch team error:", error);
-      }
-    },
-
-    async submitForm() {
-      const Toast = this.$swal.mixin({
-        toast: true,
-        position: "top-end",
-        showConfirmButton: false,
-        timer: 3000,
-      });
-
-      if (!this.form.teamName && !this.form.activityType && !this.form.maxPersons) {
-        Toast.fire({ icon: "error", title: "لطفاً حداقل یک فیلد وارد کنید." });
-        return;
-      }
-
-      try {
-        const token = localStorage.getItem("token");
-
-        const response = await axios.patch(
-          `${this.baseUrl}/editTeam/`,
-          {
-            team_id: this.form.teamId,
-            name: this.form.teamName,
-            description: this.form.activityType,
-            max_persons: this.form.maxPersons,
-          },
-          {
-            headers: { Authorization: `Token ${token}` },
-          }
-        );
-
-        console.log(response.data);
+      const team = response.data.teams[0];
+      if (team) {
+        this.form.image = "https://my.xroomapp.com" + team.image;
+        console.log(this.form.image);
+        this.form.teamName = team.name || "";
+        this.form.activityType = team.description || "";
+        this.form.maxPersons = team.max_persons || null;
+        this.form.teamId = team.id;
         
-
-        Toast.fire({ icon: "success", title: "اطلاعات تیم با موفقیت به‌روزرسانی شد." });
-
-        // refresh data
-        this.fetchTeamData();
-      } catch (error) {
-        Toast.fire({ icon: "error", title: "خطا در به‌روزرسانی اطلاعات تیم." });
-        console.error("Update team error:", error);
+        
+      } else {
+        Toast.fire({ icon: "error", title: "هیچ اطلاعاتی برای تیم یافت نشد." });
       }
-    },
+    } catch (error) {
+      Toast.fire({ icon: "error", title: "خطا در بارگذاری اطلاعات تیم." });
+      console.error("Fetch team error:", error);
+    }
   },
+
+  async uploadImage(event) {
+    const file = event.target.files[0];
+    if (!file || !this.form.teamId) return;
+
+    const Toast = this.$swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+    });
+
+    try {
+      const token = localStorage.getItem("token");
+      const formData = new FormData();
+      formData.append("image", file);
+      formData.append("team_id", this.form.teamId);
+
+      const response = await axios.post(
+        `${this.baseUrl}/teams/upload_image/`,
+        formData,
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      Toast.fire({ icon: "success", title: "تصویر تیم با موفقیت بارگذاری شد." });
+      console.log("Image uploaded:", response.data);
+
+      // Refresh data if needed
+      this.fetchTeamData();
+    } catch (error) {
+      Toast.fire({ icon: "error", title: "خطا در بارگذاری تصویر." });
+      console.error("Upload image error:", error);
+    }
+  },
+
+  async submitForm() {
+    const Toast = this.$swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+    });
+
+    if (!this.form.teamName && !this.form.activityType && !this.form.maxPersons) {
+      Toast.fire({ icon: "error", title: "لطفاً حداقل یک فیلد وارد کنید." });
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await axios.patch(
+        `${this.baseUrl}/editTeam/`,
+        {
+          team_id: this.form.teamId,
+          name: this.form.teamName,
+          description: this.form.activityType,
+          max_persons: this.form.maxPersons,
+        },
+        {
+          headers: { Authorization: `Token ${token}` },
+        }
+      );
+
+      console.log(response.data);
+
+      Toast.fire({ icon: "success", title: "اطلاعات تیم با موفقیت به‌روزرسانی شد." });
+
+      // refresh data
+      this.fetchTeamData();
+    } catch (error) {
+      Toast.fire({ icon: "error", title: "خطا در به‌روزرسانی اطلاعات تیم." });
+      console.error("Update team error:", error);
+    }
+  },
+}
+
 };
 </script>
+
+
 
 <style scoped>
 .tab-content {
@@ -454,4 +503,27 @@ export default {
     width: 49%;
   }
 }
+
+
+
+.title-with-image {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem; /* smaller gap so it looks stuck */
+}
+
+.title-with-image h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.team-image img {
+  height: 90px;
+  width: 90px;
+  object-fit: cover;
+  border-radius: 50%; /* round avatar */
+  margin-right: 4px;   /* small spacing in RTL */
+}
+
 </style>
