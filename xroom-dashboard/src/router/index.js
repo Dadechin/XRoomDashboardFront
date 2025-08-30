@@ -57,6 +57,14 @@ const routes = [
     meta: { requiresAuth: true , title : 'فضاها'}
   },
   {
+  path: '/dashboard/spaces/:id',
+  name: 'SpaceDetail',
+  component: () => import('@/pages/dashboard/SpaceDetail.vue'),
+    meta: { requiresAuth: true , title : 'فضاها'},
+
+  props: true
+  },
+  {
     path: '/dashboard/meetings',
     name: 'meetings',
     component: MeetingPage,

@@ -33,18 +33,23 @@
           }"
           class="mySwiper"
         >
-          <swiper-slide v-for="(space, index) in filteredSpaces" :key="index" class="card">
-            <img :src="'https://my.xroomapp.com' + space.img" alt="تصویر فضا" />
-            <div class="card-texts">
-              <h2>{{ space.name }}</h2>
-              <p class="space-capacity">
-                حداکثر: {{ space.capacity }} کاربر
-              </p>
-              <p class="space-type">
-                {{ space.type }}
-              </p>
-            </div>
+          <swiper-slide
+            v-for="(space) in filteredSpaces"
+            :key="space.id"
+            class="card"
+          >
+          
+            <router-link :to="{ name: 'SpaceDetail', params: { id: space.id } }" style="text-decoration: none;">
+              <img :src="'https://my.xroomapp.com' + space.img" alt="تصویر فضا" />
+              <div class="card-texts">
+                <h2>{{ space.name }}</h2>
+                <p class="space-capacity">حداکثر: {{ space.capacity }} کاربر</p>
+                <p class="space-type">{{ space.type }}</p>
+              </div>
+            </router-link>
           </swiper-slide>
+
+
         </swiper>
       </div>
       <div v-else class="no-spaces-message">
@@ -143,6 +148,7 @@ export default {
         );
 
         this.spaces = response.data.spaces.map(space => ({
+          id: space.id, // 👈 add this line
           name: space.name,
           img: space.assetBundleRoomId.img,
           capacity: space.capacity,
