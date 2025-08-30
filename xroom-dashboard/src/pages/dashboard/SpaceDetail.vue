@@ -74,7 +74,6 @@
 
 <script>
 import axios from "axios";
-import 'flowbite';
 
 export default {
   name: "SpaceDetail",
