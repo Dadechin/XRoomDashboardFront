@@ -19,6 +19,27 @@
     </button>
 
 
+
+
+
+
+<!-- Unity WebGL -->
+    <UnityPlayer v-if="space" :space="space" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <!-- Space Info -->
     <div class="info">
       <h1>{{ space.name }}</h1>
@@ -26,6 +47,8 @@
       <p class="type">نوع: {{ space.type }}</p>
       <p class="description">{{ space.description }}</p>
     </div>
+
+
 
 
 
@@ -74,10 +97,13 @@
 
 <script>
 import axios from "axios";
+import UnityPlayer from "@/components/UnityPlayer.vue"; // adjust path
+
 
 export default {
   name: "SpaceDetail",
   props: ["id"], // comes from route params
+  components: { UnityPlayer },
   data() {
     return {
       space: null,
@@ -107,6 +133,18 @@ export default {
       }));
 
       this.space = spaces.find(s => s.id == this.id);
+      if (this.space && this.unityInstance) 
+      {
+        // send token
+        const token = localStorage.getItem("token");
+        this.unityInstance.SendMessage("GameController", "SetToken", token);
+
+        // send space name
+        this.unityInstance.SendMessage("GameController", "SetSpaceName", this.space.name);
+
+        // send port (must be string for Unity SendMessage)
+        this.unityInstance.SendMessage("GameController", "SetSpacePort", String(this.space.port));
+      }
     } catch (error) {
       console.error("Error loading space:", error);
     }
